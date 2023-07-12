@@ -1,0 +1,116 @@
+import React, { useState } from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import './login.css'
+import {
+  login,
+  selectSuccess,
+  selectMessage,
+  selectError,
+  selectToken,
+} from './loginSlice';
+//import PulseLoader from "react-spinners/PulseLoader";
+
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [checked, setChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+
+  const userLoginAPI = 'http://bevm.e-biz.com.vn/api/Login/User';
+  const customerLoginAPI = 'http://bevm.e-biz.com.vn/api/Login/Customer';
+  const loginLink = checked ? userLoginAPI : customerLoginAPI;
+
+  // Select data from store
+  //const isLoading = useAppSelector(selectLoading);
+  //const errorMessage = useAppSelector(selectErrorMessage);
+  const isSuccess = useAppSelector(selectSuccess);
+  const errorMessage1 = useAppSelector(selectMessage);
+  const errorMessage2 = useAppSelector(selectError);
+  const token = useAppSelector(selectToken);
+
+  const errorMessage = () => {
+    if (errorMessage2) {
+      return Object.values(errorMessage2)[0][0]; }
+    if (errorMessage1)
+      return errorMessage1;
+  };
+
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }));
+    //dispatch(login({ "Tocken": "C29B402A-7E06-4CDB-9BA6-DCFB4205AD3C", "Member_Code": email }));
+    setIsLoading(false);
+
+  };
+
+  const checkKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleLogin();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(e.target.checked);
+  };
+
+
+  // Navigate to dashboard page if login successful
+  if (token)
+    return <Navigate to='/dashboard' />;
+
+  return (
+    <div className="login">
+      <div className="box-form">
+        <h1>Đăng nhập</h1>      <br />
+        <label style={{ display: "inline-block" }} className={checked ? 'switch2 checked' : 'switch2'}>
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={handleChange}
+            hidden
+          />
+          <span className={checked ? '' : 'active'}>Khách hàng</span>
+          <span className={checked ? 'active' : ''}>Nhân viên</span>
+        </label>
+        <br />
+        {//errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        }
+        <input
+          type="text"
+          placeholder="Tên đăng nhập"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          onKeyDown={(e) => checkKeyDown(e)}
+        />
+        <br />
+
+        <input
+          type="password"
+          placeholder="Mật khẩu"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          onKeyDown={(e) => checkKeyDown(e)}
+        />
+        <br />
+
+        <button onClick={handleLogin} disabled={isLoading}>
+          Login
+        </button>
+        {(errorMessage()) &&
+          <span style={{
+            color: "red",
+            textAlign: "center",
+            fontSize: "13px"
+          }}><br /> {errorMessage()}</span>
+        }
+      </div>
+    </div>
+  );
+}
+
