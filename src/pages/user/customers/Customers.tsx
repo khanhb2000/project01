@@ -26,6 +26,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Tình trạng',
         dataIndex: 'status',
+        width:'150px',
         filters: [
             {
                 text: 'Đang hoạt động',
@@ -42,6 +43,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Action',
         key: 'action',
+        width:'112px',
         render: (_, record) => (
             <Space size="middle">
                 <a>Edit {/*record.name*/}</a>

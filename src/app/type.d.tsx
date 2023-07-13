@@ -77,6 +77,24 @@ export type ServicePackageState = {
 
 export type ServicePackageListState = ServicePackageState[];
 
+export type VoucherTypeState = {
+  href: string | undefined;
+  image: string;
+
+  "id": number,
+  "typeName": string,
+  "isAvailable": boolean,
+  "commonPrice": number,
+  "availableNumberOfVouchers": number,
+  "percentageDiscount": number,
+  "maximumValueDiscount": number,
+  "conditionsAndPolicies": string,
+  "vouchers": [],
+  "usableServicePackages": []
+};
+
+export type VoucherTypeListState = VoucherTypeState[];
+
 export type CustomerState = {
   "id": string,
   "name": string,

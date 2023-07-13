@@ -13,10 +13,15 @@
 .item-content{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    height: 150px;
+    gap:5px;
 }
 .bonus-content{
-justify-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap:15px;
 }
 .item-title{
     display: flex;
@@ -24,6 +29,4 @@ justify-self: flex-end;
     align-items: flex-start;
     max-width: 100%;
 }
-.ant-table-cell{
 
-}

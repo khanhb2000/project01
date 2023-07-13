@@ -31,17 +31,18 @@ const columns: ColumnsType<DataType> = [
     {
         title: '',
         dataIndex: 'name',
-        render: (item) => <div className='item-content'>
+        render: (item) => <>
+        <div className='item-content'>
             <a>{item}</a>
+            <span>Nội dung </span></div>
             <div className='bonus-content'>
-            <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />
-            <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />
-            <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />
-        </div></div>,
+            <div>Đã bán: </div>
+        </div></>,
     },
     {
         title: 'Action',
         key: 'action',
+        width:'112px',
         render: (_, record) => (
             <Space size="middle">
                 <a>Edit {/*record.name*/}</a>
@@ -56,6 +57,10 @@ const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
         {React.createElement(icon)}
         {text}
     </Space>
+    /* Usage
+     <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />
+            <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />
+            <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />*/
 );
 
 export default function Services() {
@@ -230,7 +235,7 @@ export default function Services() {
                     <th>TÊN</th>
                     <th>MÔ TẢ</th>
                     <th>GÓI DỊCH VỤ</th>
-                </thead>*/}
+                </thead>
 
 
                 <List

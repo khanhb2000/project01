@@ -11,3 +11,26 @@
     overflow: auto;
     width: 100%;
 }
+.item-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 150px;
+    gap:5px;
+}
+.bonus-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap:15px;
+}
+.item-title{
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+    max-width: 100%;
+}
+
+.item-content a{
+font-weight: bold;
+}
