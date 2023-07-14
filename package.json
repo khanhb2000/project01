@@ -26,6 +26,7 @@
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
     "react-widgets": "^5.8.4",
+    "scss": "^0.2.4",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },

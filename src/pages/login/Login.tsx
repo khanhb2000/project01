@@ -9,8 +9,11 @@ import {
   selectMessage,
   selectError,
   selectToken,
+  selectRole
+
 } from './loginSlice';
-//import PulseLoader from "react-spinners/PulseLoader";
+import api_links from '../../utils/api_links';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -20,13 +23,13 @@ export default function Login() {
 
   const dispatch = useAppDispatch();
 
-  const userLoginAPI = 'http://bevm.e-biz.com.vn/api/Login/User';
-  const customerLoginAPI = 'http://bevm.e-biz.com.vn/api/Login/Customer';
+  const userLoginAPI = api_links.user.superAdmin.login;
+  const customerLoginAPI = api_links.user.customer.login;
   const loginLink = checked ? userLoginAPI : customerLoginAPI;
 
   // Select data from store
-  //const isLoading = useAppSelector(selectLoading);
-  //const errorMessage = useAppSelector(selectErrorMessage);
+  //not using const isLoading = useAppSelector(selectLoading);
+  //not using const errorMessage = useAppSelector(selectErrorMessage);
   const isSuccess = useAppSelector(selectSuccess);
   const errorMessage1 = useAppSelector(selectMessage);
   const errorMessage2 = useAppSelector(selectError);
