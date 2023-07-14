@@ -7,7 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 interface DataType {
     key: React.Key;
-    id:string;
+    id: string;
     name: string;
     contact: string;
     status: string;
@@ -26,7 +26,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Tình trạng',
         dataIndex: 'status',
-        width:'150px',
+        width: '150px',
         filters: [
             {
                 text: 'Đang hoạt động',
@@ -43,7 +43,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Action',
         key: 'action',
-        width:'112px',
+        width: '112px',
         render: (_, record) => (
             <Space size="middle">
                 <a>Edit {/*record.name*/}</a>
@@ -83,7 +83,6 @@ export default function Customers() {
             .then(data => {
                 setAllData(data);
                 setData(data);
-                console.log(data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);
@@ -94,12 +93,11 @@ export default function Customers() {
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id:dataTemp.id,
+        id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.lockoutEnabled ? "Đang hoạt động" : "Đã khóa",
     }));
-    console.log(data)
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -140,20 +138,20 @@ export default function Customers() {
     }
 
     function filterList(filtype: number) {
-            switch (filtype) {
-                case 0:
-                    setData(all_data);
-                    sortList(ascending, sortType);
-                    break;
-                case 1:
-                    setData(data?.filter((a)=>(a.lockoutEnabled==true)));
-                    break;
-                case 2:
-                    setData(data?.filter((a)=>(a.lockoutEnabled==false)));
-                    break;
-                default:
-                    break;
-            }
+        switch (filtype) {
+            case 0:
+                setData(all_data);
+                sortList(ascending, sortType);
+                break;
+            case 1:
+                setData(data?.filter((a) => (a.lockoutEnabled == true)));
+                break;
+            case 2:
+                setData(data?.filter((a) => (a.lockoutEnabled == false)));
+                break;
+            default:
+                break;
+        }
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -227,8 +225,8 @@ export default function Customers() {
             </>
             }
 
-            {addForm && <><Add />        
-            <button type="submit" className="btn btn-primary"
+            {addForm && <><Add />
+                <button type="submit" className="btn btn-primary"
                     onClick={() => setAddForm(!addForm)}>Cancel</button>
             </>}
         </div>
