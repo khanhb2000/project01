@@ -15,7 +15,7 @@ const initialState: LoginState = {
   "token": "",
   "customerInformation": null,
   "userInformation": null,
-  "role": {
+  "role":{
     "id": "",
     "normalizedName": "",
     "isManager": true,
@@ -53,42 +53,16 @@ export const login = createAsyncThunk(
   }
 );
 
-
-
-/*
-export const login = createAsyncThunk(
-  'user/login',
-  async (data:{"Tocken":"C29B402A-7E06-4CDB-9BA6-DCFB4205AD3C","Member_Code":string}, { rejectWithValue }) => {
-    const response = await fetch(
-      'http://hoangthiapi.e-biz.com.vn/api/HoangThi/HoangThi/GetTrasaction',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    );
-
-    const jsonData = await response.json();
-
-    if (response.status < 200 || response.status >= 300) {
-      return rejectWithValue(jsonData);
-    }
-    return jsonData;
-  }
-);
-*/
 // Config slice
 export const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
     logout: () => initialState,
-    /*    setOpenMenu: (state) => { 
+    /*    setOpenMenu: (state) => {
           //state.isOpenMenu = !state.isOpenMenu;
         },*/
-  },
+ },
   extraReducers: (builder) => {
     // Start login request
     builder.addCase(login.pending, (state) => {
@@ -104,7 +78,7 @@ export const loginSlice = createSlice({
       state.message = action.payload.message;
       state.customerInformation = action.payload.customerInformation;
       state.userInformation = action.payload.userInformation;
-      state.role = (action.payload.userInformation) ? action.payload.userInformation.roles : {
+      state.role = (action.payload.userInformation)?action.payload.userInformation.roles[0]:{
         "id": "0",
         "normalizedName": "Customer",
         "isManager": false,
@@ -114,7 +88,6 @@ export const loginSlice = createSlice({
 
     // Request error
     builder.addCase(login.rejected, (state, action) => {
-      
       //state.isLoading = false;
       //state.errorMessage = action.payload.message;
     });

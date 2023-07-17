@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './stylesEmployee.css';
 import Add from './addNew';
 import { UserListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider } from 'antd';
+import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 interface DataType {
     key: React.Key;
@@ -65,9 +67,9 @@ const columns: ColumnsType<DataType> = [
         key: 'action',
         width:'112px',
         render: (_, record) => (
-            <Space size="middle">
-                <a>Edit {/*record.name*/}</a>
-                <a>Delete</a>
+            <Space size="small">
+                <Button size={"middle"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
             </Space>
         ),
     },
@@ -232,12 +234,17 @@ export default function Employees() {
                     }}>
                         {ascending ? "Tăng dần" : "Giảm dần"}
                     </button>
-                    <select onChange={(e) => {
-                        sortList(ascending, e.target.value);
-                        setSortType(e.target.value)
-                    }}>
-                        <option value="name">Tên</option>
-                    </select>
+                    <Select
+                        defaultValue="name"
+                        style={{ width: 120 }}
+                        onChange={(e) => {
+                            sortList(ascending, e);
+                            setSortType(e)
+                        }}
+                        options={[
+                            { value: 'name', label: 'Tên' },
+                        ]}
+                    />
                 </div>
 
                 <span style={{ marginLeft: 8 }}>

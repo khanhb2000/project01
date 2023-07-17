@@ -5,6 +5,8 @@ import { VoucherTypeListState } from '../../../app/type.d';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
 import { Button, Table, Space, Select, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 interface DataType {
     key: React.Key;
@@ -42,7 +44,7 @@ const columns: ColumnsType<DataType> = [
             <div className='item-content'>
                 <div><a>{item.name} </a>
                     {item.isAvailable ? null : <Tag color="red">Hết hiệu lực</Tag>}</div>
-                <span>{item.conditionsAndPolicies}</span>
+                <span>{/*item.conditionsAndPolicies*/}</span>
                 <div>Giá trị: {
                     item.percentageDiscount ?
                         <>{item.percentageDiscount}% {item.maximumValueDiscount ? <> &#40;tối đa: {item.maximumValueDiscount?.toLocaleString('en-US')}&#41; </> : ""}</>
@@ -58,9 +60,9 @@ const columns: ColumnsType<DataType> = [
         key: 'action',
         width: '112px',
         render: (_, record) => (
-            <Space size="middle">
-                <a>Edit {/*record.name*/}</a>
-                <a>Delete</a>
+            <Space size="small">
+                <Button size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
             </Space>
         ),
     },

@@ -4,9 +4,11 @@ import './stylesServices.css';
 import { ServicePackageListState } from '../../../app/type.d';
 import { calculateRange, sliceData } from '../../table-pagination';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { Avatar, List, Space } from 'antd';
+import { Avatar, List, Select, Space } from 'antd';
 import { Button, Table, Divider } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 interface DataType {
     key: React.Key;
@@ -44,9 +46,9 @@ const columns: ColumnsType<DataType> = [
         key: 'action',
         width:'112px',
         render: (_, record) => (
-            <Space size="middle">
-                <a>Edit {/*record.name*/}</a>
-                <a>Delete</a>
+            <Space size="small">
+                <Button size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
             </Space>
         ),
     },
@@ -213,14 +215,17 @@ export default function Services() {
                     }}>
                         {ascending ? "Tăng dần" : "Giảm dần"}
                     </button>
-                    <select onChange={(e) => {
-                        sortList(ascending, e.target.value);
-                        setSortType(e.target.value)
-                    }}>
-                        <option value="id">ID</option>
-                        <option value="name">Tên</option>
-
-                    </select>
+                    <Select
+                        defaultValue="name"
+                        style={{ width: 120 }}
+                        onChange={(e) => {
+                            sortList(ascending, e);
+                            setSortType(e)
+                        }}
+                        options={[
+                            { value: 'name', label: 'Tên' },
+                        ]}
+                    />
                 </div>
 
                 <span style={{ marginLeft: 8 }}>
