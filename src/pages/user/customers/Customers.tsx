@@ -85,7 +85,6 @@ export default function Customers() {
             .then(data => {
                 setAllData(data);
                 setData(data);
-                console.log(data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);
@@ -101,7 +100,6 @@ export default function Customers() {
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.lockoutEnabled ? "Đang hoạt động" : "Đã khóa",
     }));
-    console.log(data)
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -159,7 +157,6 @@ export default function Customers() {
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
@@ -234,9 +231,12 @@ export default function Customers() {
             </>
             }
 
-            {addForm && <><Add />        
-            <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button>
+            {addForm && <><div className='dashboard-content-header2'>
+                <h2>Thông tin khách hàng</h2>
+                <button type="submit" className="btn btn-primary"
+                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
+                    <Add />        
+            
             </>}
         </div>
     )

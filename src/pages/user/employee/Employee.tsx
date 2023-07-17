@@ -105,7 +105,6 @@ export default function Employees() {
             .then(data => {
                 setAllData(data);
                 setData(data);
-                console.log(data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);
@@ -122,7 +121,6 @@ export default function Employees() {
         status: dataTemp.lockoutEnabled ? "Đang hoạt động" : "Đã khóa",
         level: dataTemp.roles.map((d)=>d.normalizedName).join(" / "),
     }));
-    console.log(data)
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -180,7 +178,6 @@ export default function Employees() {
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
 

@@ -3,9 +3,9 @@ import './stylesServices.css';
 //import Add from './addNew';
 import { ServicePackageListState } from '../../../app/type.d';
 import { calculateRange, sliceData } from '../../table-pagination';
-import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
+import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, List, Select, Space } from 'antd';
-import { Button, Table, Divider } from 'antd';
+import { Button, Table, Divider,Card, Col, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -65,6 +65,9 @@ const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
             <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />*/
 );
 
+const { Meta } = Card;
+
+
 export default function Services() {
     const [addForm, setAddForm] = useState(false);
     const [all_data, setAllData] = useState<ServicePackageListState>();
@@ -95,7 +98,6 @@ export default function Services() {
             .then(data => {
                 setAllData(data);
                 setData(data);
-                console.log(data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);
@@ -112,7 +114,6 @@ export default function Services() {
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
 
     }));
-    console.log(data)
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -161,7 +162,6 @@ export default function Services() {
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
@@ -231,9 +231,33 @@ export default function Services() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-
+{0&&
                 <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-
+            } 
+             <Row gutter={16}>
+    
+    {dataListShow.map((d) => { 
+    return(
+               <Col span={8}> <Card
+    style={{ width: 300 }}
+    cover={
+      <img
+        alt="example"
+        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+      />
+    }
+    actions={[
+      <SettingOutlined key="setting" />,
+      <EditOutlined key="edit" />,
+      <EllipsisOutlined key="ellipsis" />,
+    ]}
+  >
+    <Meta
+      title={d.name}
+      description="This is the description"
+    />
+  </Card></Col>)})} 
+  </Row>
                 {/*<table>
                 <thead>
                     <th>ID</th>

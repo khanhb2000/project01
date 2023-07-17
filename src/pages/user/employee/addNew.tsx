@@ -50,7 +50,6 @@ function Add() {
         })
             .then(data => {
                 setjsonData(data);
-                console.log(data);
             }).catch(error => {
                 switch (error.status) {
                     case 401: {
@@ -89,7 +88,7 @@ function Add() {
                     "isManager": false,
                     "users": [],
                   },});
-                console.log(jsonData);
+                //console.log(jsonData);
                 //throw new Error(`Something went wrong: ${error.message || error}`);
             })
 

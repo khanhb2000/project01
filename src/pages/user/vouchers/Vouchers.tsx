@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './stylesVouchers.css';
 //import Add from './addNew';
 import { VoucherTypeListState } from '../../../app/type.d';
-import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { Button, Table, Space, Select, Tag } from 'antd';
+import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Table, Space, Select, Tag,Card, Col, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -74,6 +74,8 @@ const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
         {text}
     </Space>
 );
+const { Meta } = Card;
+
 
 export default function Vouchers() {
     const [addForm, setAddForm] = useState(false);
@@ -104,7 +106,6 @@ export default function Vouchers() {
             .then(data => {
                 setAllData(data);
                 setData(data);
-                console.log(data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);
@@ -128,7 +129,6 @@ export default function Vouchers() {
             conditionsAndPolicies: dataTemp.conditionsAndPolicies,
         }
     }));
-    console.log(data)
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -195,7 +195,6 @@ export default function Vouchers() {
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
@@ -269,9 +268,32 @@ export default function Vouchers() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-
+{0&&
                 <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-
+               }               <Row gutter={16}>
+    
+    {dataListShow.map((d) => { 
+    return(
+               <Col span={8}> <Card
+    style={{ width: 300 }}
+    cover={
+      <img
+        alt="example"
+        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+      />
+    }
+    actions={[
+      <SettingOutlined key="setting" />,
+      <EditOutlined key="edit" />,
+      <EllipsisOutlined key="ellipsis" />,
+    ]}
+  >
+    <Meta
+      title={d.content.name}
+      description="This is the description"
+    />
+  </Card></Col>)})} 
+  </Row>
 
             </>}
         </div>

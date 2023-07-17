@@ -27,9 +27,18 @@ import "bootstrap/dist/js/bootstrap.min.js";
 const { Option } = Select;
 
 interface DataNodeType {
-    value: string;
-    label: string;
-    children?: DataNodeType[];
+    "Name": string,
+    "CitizenId": string,
+    "Email": string,
+    "PhoneNumber": string,
+    "EmailConfirmed": boolean|null,
+    "PhoneNumberConfirmed": boolean|null,
+    "TwoFactorEnabled": boolean|null,
+    "LockoutEnabled": boolean|null,
+    "LockoutEnd": string,
+    "Password": string,
+    "ConfirmPassword": string,
+    "SalesEmployeeIds": string[],
 }
 
 const formItemLayout = {
@@ -72,6 +81,21 @@ function Add() {
     const [jsonData, setjsonData] = useState<LoginState>();
     const token = useSelector(selectToken);
 
+    var register:DataNodeType={
+        Name: '',
+        CitizenId: '',
+        Email: '',
+        PhoneNumber: '',
+        EmailConfirmed: null,
+        PhoneNumberConfirmed: null,
+        TwoFactorEnabled: null,
+        LockoutEnabled: null,
+        LockoutEnd: '',
+        Password: '',
+        ConfirmPassword: '',
+        SalesEmployeeIds: []
+    }
+
     useEffect(() => {
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Users/All-Users',
@@ -87,10 +111,9 @@ function Add() {
         })
             .then(data => {
                 setNV(data);
+                setFilterNV(data);
             });
     }, []);
-
-    const dataListShow = (f: string) => setFilterNV(nhan_vien?.filter((d) => d.roles.filter((r) => r.normalizedName == f)));
 
     const newCustomer = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -127,7 +150,6 @@ function Add() {
         })
             .then(data => {
                 setjsonData(data);
-                console.log(data);
             }).catch(error => {
                 setjsonData({
                     "message": `Unknown server error occured: ${error.status}`,
@@ -143,7 +165,7 @@ function Add() {
                         "users": [],
                     },
                 });
-                console.log(jsonData);
+                //console.log(jsonData);
                 //throw new Error(`Something went wrong: ${error.message || error}`);
             })
 
@@ -156,6 +178,11 @@ function Add() {
         return jsonData;
 
     };
+
+    /*const handleChange = (value: string[]) => {
+        console.log(`selected ${value}`);
+    };*/
+
     const errorMessage = () => {
         if (jsonData?.errors != null) {
             if (typeof Object.values(jsonData?.errors)[0] == "string") {
@@ -168,7 +195,41 @@ function Add() {
     };
 
     const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
+                console.log('Received values of form: ', values);
+let date = new Date();
+        date.setFullYear(date.getFullYear() + 3);
+        register.CitizenId=values.citizenId;
+        register.ConfirmPassword=values.confirm;
+        register.Email=values.email;
+        register.Name=values.username;
+        register.Password=values.password;
+        register.PhoneNumber=values.phone;
+        register.LockoutEnabled=null;
+        register.PhoneNumberConfirmed=null;
+        register.EmailConfirmed=null;
+        register.TwoFactorEnabled=null;
+        register.LockoutEnd=date.toJSON();
+        values.employeeList.map((d: { employeename: string; })=>register.SalesEmployeeIds.push(d.employeename));
+        console.log('Received register: ', register);
+        const response = fetch(
+            'http://bevm.e-biz.com.vn/api/Register/Customer',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: JSON.stringify(
+                    register
+
+                ),
+            }
+        ).then(response => {
+            return response.json()
+        })
+            .then(data => {
+                setjsonData(data);
+            })
     };
 
     const prefixSelector = (
@@ -184,9 +245,7 @@ function Add() {
 
     return (
         <div>
-            <div className='dashboard-content-header'>
-                <h2>Khách hàng mới</h2></div>
-
+           
             <Form
                 {...formItemLayout}
                 form={form}
@@ -208,17 +267,17 @@ function Add() {
                 <Form.Item
                     name="email"
                     label="E-mail"
-                    rules={[
+                    /*rules={[
                         {
                             type: 'email',
                             message: 'The input is not valid E-mail!',
                             whitespace: false,
                         },
-                        /*{
+                        {
                             required: true,
                             message: 'Please input your E-mail!',
-                        },*/
-                    ]}
+                        },
+                    ]}*/
                 >
                     <Input />
                 </Form.Item>
@@ -226,12 +285,12 @@ function Add() {
                 <Form.Item
                     name="phone"
                     label="Số điện thoại"
-                    rules={[
+                    /*rules={[
                         {
                             pattern: /^((\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4}))||)$/,
                             message: 'The input is not valid phone number!'
                         }
-                    ]}
+                    ]}*/
                 >
                     <Input />
                 </Form.Item>
@@ -282,124 +341,80 @@ function Add() {
                 </Form.Item>
 
                 <Form.Item
-                    name="employee"
+                    //name="employee"
                     label="Nhân viên phụ trách"
-                    rules={[{ required: true, message: 'Thêm nhân viên!' }]}
                 >
-                    <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
-                    <Select style={{ width: 150 }} defaultValue={"all"}
-                        onChange={(e) => {
-                            if (e=="all") setFilterNV(nhan_vien);
-                            else
-                            setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e)>-1))
-                        console.log(filter_nhan_vien);
-                        console.log(e);
+                    <Form.List name="employeeList">
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map((field) => (
+                                    <Space key={field.key} align="baseline">
+                                        <Form.Item
+                                            noStyle
+                                            shouldUpdate={(prevValues, curValues) =>
+                                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                                            }
+                                        >
+                                            {() => (
+                                                <Form.Item
+                                                    {...field}
+                                                    name={[field.name, 'employeefilter']}
+                                                >
+                                                    <Select style={{ width: 150 }} defaultValue={"all"}
+                                                        onChange={(e) => {
+                                                            if (e == "all") setFilterNV(nhan_vien);
+                                                            else
+                                                                setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
+                                                        }}
+                                                    >
+                                                        <Option value="all">Tất cả</Option>
+                                                        <Option value="SALES">Sales</Option>
+                                                        <Option value="SALES ADMIN">Sales Admin</Option>
+                                                        <Option value="SUPER ADMIN">Super Admin</Option>
+                                                    </Select>
+                                                </Form.Item>
+                                            )}
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...field}
+                                            name={[field.name, 'employeename']}
+                                            rules={[{ required: true, message: 'Missing price' }]}
+                                        >
+                                            <Select
+                                                showSearch
+                                                style={{ width: 200 }}
+                                                placeholder=""
+                                                //onChange={handleChange}
+                                                optionFilterProp="children"
+                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                filterSort={(optionA, optionB) =>
+                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                }
 
-                    }}
-                    >
-                        <Option value="all">Tất cả</Option>
-                        <Option value="SALES">Sales</Option>
-                        <Option value="SALES ADMIN">Sales Admin</Option>
-                        <Option value="SUPER ADMIN">Super Admin</Option>
-                    </Select>
-                    <Select
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Search to Select"
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                        }
-                        options={/*[
-                            {
-                                value: '1',
-                                label: 'Not Identified',
-                            },
-                            {
-                                value: '2',
-                                label: 'Closed',
-                            },
-                            {
-                                value: '3',
-                                label: 'Communicated',
-                            },
-                            {
-                                value: '4',
-                                label: 'Identified',
-                            },
-                            {
-                                value: '5',
-                                label: 'Resolved',
-                            },
-                            {
-                                value: '6',
-                                label: 'Cancelled',
-                            },
-                        ]*/
-                            filter_nhan_vien?.map((d) => {
-                                return ({
-                                    label: d.name + " - " + (d.citizenId? d.citizenId?.slice(-4):""),
-                                })
-                            })
-                        }
-                    />
+                                                options={
+                                                    filter_nhan_vien?.map((d) => {
+                                                        return ({
+                                                            label: d.name + " - " + (d.citizenId ? d.citizenId?.slice(-4) : ""),
+                                                            value: d.id,
+                                                        })
+                                                    })
+                                                }
+                                            />
+                                        </Form.Item>
+
+                                        <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                    </Space>
+                                ))}
+
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Thêm nhân viên
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
                 </Form.Item>
-
-                <Form.List name="sights">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.map((field) => (
-                                <Space key={field.key} align="baseline">
-                                    <Form.Item
-                                        noStyle
-                                        shouldUpdate={(prevValues, curValues) =>
-                                            prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                                        }
-                                    >
-                                        {() => (
-                                            <Form.Item
-                                                {...field}
-                                                label="Sight"
-                                                name={[field.name, 'sight']}
-                                                rules={[{ required: true, message: 'Missing sight' }]}
-                                            >
-                                                <Select style={{ width: 150 }}>
-                                                    <Option value="sale">Sales</Option>
-                                                    <Option value="admin">Sales Admin</Option>
-                                                    <Option value="sup">Super Admin</Option>
-                                                </Select>
-                                                {/*<Select disabled={!form.getFieldValue('area')} style={{ width: 130 }}>
-                        {(sights[form.getFieldValue('area') as SightsKeys] || []).map((item) => (
-                          <Option key={item} value={item}>
-                            {item}
-                          </Option>
-                        ))}
-                        </Select>*/}
-                                            </Form.Item>
-                                        )}
-                                    </Form.Item>
-                                    <Form.Item
-                                        {...field}
-                                        label="Price"
-                                        name={[field.name, 'price']}
-                                        rules={[{ required: true, message: 'Missing price' }]}
-                                    >
-                                        <Input />
-                                    </Form.Item>
-
-                                    <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                </Space>
-                            ))}
-
-                            <Form.Item>
-                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                    Add sights
-                                </Button>
-                            </Form.Item>
-                        </>
-                    )}
-                </Form.List>
 
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
