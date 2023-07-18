@@ -14,7 +14,7 @@ export default function MyService () {
                     <div className='dashboard-content-search'>
                         <input
                             type='text'
-                            
+                            autoFocus
                             placeholder='Search..'
                             className='dashboard-content-input'
                              />

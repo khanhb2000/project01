@@ -14,7 +14,7 @@ export default function History() {
                 <div className='dashboard-content-search'>
                     <input
                         type='text'
-
+                        autoFocus
                         placeholder='Search..'
                         className='dashboard-content-input'
                     />

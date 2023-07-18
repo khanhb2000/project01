@@ -6,7 +6,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
-    gap:15px;
+    gap:15px;    
     overflow: auto;
-    width: 100%;
+    width:100%;
 }

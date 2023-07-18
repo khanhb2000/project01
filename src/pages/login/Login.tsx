@@ -9,34 +9,49 @@ import {
   selectMessage,
   selectError,
   selectToken,
-  selectRole
+  selectRole,
+  selectInformation
 
 } from './loginSlice';
 import api_links from '../../utils/api_links';
+import Cookies from 'universal-cookie';
 //import PulseLoader from "react-spinners/PulseLoader";
 
 export default function Login() {
+
+  // Select data from store
+  //not using const isLoading = useAppSelector(selectLoading);  
+  //not using const errorMessage = useAppSelector(selectErrorMessage);  const isSuccess = useAppSelector(selectSuccess);
+  const errorMessage1 = useAppSelector(selectMessage);
+  const errorMessage2 = useAppSelector(selectError);
+  const token = useAppSelector(selectToken);
+  const information = useSelector(selectInformation);
+
+  //useState
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  //variable
+  const cookies = new Cookies();
   const dispatch = useAppDispatch();
+  const storeCookieData = {
+    token: token,
+    information: information
+  }
 
+  //api_link
   const userLoginAPI = api_links.user.superAdmin.login;
   const customerLoginAPI = api_links.user.customer.login;
   const loginLink = checked ? userLoginAPI : customerLoginAPI;
 
-  // Select data from store
-//not using const isLoading = useAppSelector(selectLoading);  
-//not using const errorMessage = useAppSelector(selectErrorMessage);  const isSuccess = useAppSelector(selectSuccess);
-  const errorMessage1 = useAppSelector(selectMessage);
-  const errorMessage2 = useAppSelector(selectError);
-  const token = useAppSelector(selectToken);
+
 
   const errorMessage = () => {
     if (errorMessage2) {
-      return Object.values(errorMessage2)[0][0]; }
+      return Object.values(errorMessage2)[0][0];
+    }
     if (errorMessage1)
       return errorMessage1;
   };
@@ -61,10 +76,15 @@ export default function Login() {
     setChecked(e.target.checked);
   };
 
+  //check token existed 
+  if (token != "") {
+    cookies.set("token", storeCookieData, { path: '/', maxAge: 1800 })  // set cookies for 30 minutes
+  }
 
   // Navigate to dashboard page if login successful
-  if (token)
+  if (cookies.get("token")?.token != undefined) {
     return <Navigate to='/dashboard' />;
+  }
 
   return (
     <div className="login">

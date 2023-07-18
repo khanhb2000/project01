@@ -26,17 +26,17 @@ function App() {
         <Routes >
           <Route path="/" element={<Login />} />
           <Route path="login" element={<Login />} />
-          <Route path="dashboard/*" element={<Dashboard />} >
-            <Route path="*" element={<div></div>} />
-            <Route path="profile" element={< Profile />} />
-            <Route path="myservice" element={<MyService />} />
-            <Route path="myvoucher" element={<MyVoucher />} />
-            <Route path="history" element={< History />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="services" element={<Services />} />
-            <Route path="vouchers" element={<Vouchers />} />
-            <Route path="employee" element={<Employees />} />
-          </Route >
+          <Route path="dashboard/*" element={<Dashboard />} />
+          <Route path="*" element={<div></div>} />
+          <Route path="profile" element={< Profile />} />
+          <Route path="myservice" element={<MyService />} />
+          <Route path="myvoucher" element={<MyVoucher />} />
+          <Route path="history" element={< History />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="services" element={<Services />} />
+          <Route path="vouchers" element={<Vouchers />} />
+          <Route path="employee" element={<Employees />} />
+
         </Routes>
       </div>
     </BrowserRouter>

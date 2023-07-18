@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import "./header.css"
 import { logout, selectInformation, selectRole } from '../../pages/login/loginSlice';
@@ -14,36 +14,49 @@ import { Divider } from 'antd'
 import { ListItemIcon, ListItemText } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Cookies from 'universal-cookie';
 
 export default function Header() {
     // Select data from store
     const loginInfo = useSelector(selectInformation);
     const userRole = useSelector(selectRole);
+    const cookies = new Cookies()
+    
+    //useState, useDispatch, useNavigate
     const dispatch = useDispatch();
-
-
-    dispatch(setMenuRole(userRole));
-
-    const handleLogout = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-        dispatch(logout());
-        return (
-            <Navigate to='/login' />
-        )
-    };
-
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    console.log(open);
-    console.log(anchorEl);
+    const navigate = useNavigate();
 
+    // use to display userRole
+    dispatch(setMenuRole(userRole));
+
+    //log out
+    const handleLogout = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        dispatch(logout())
+        navigate("/login")
+        cookies.remove("token")
+    };
+
+
+    // show up the information of user on the screen
+    const handlePopUpInformation = () => {
+
+    }
+
+    // show settings
     const handleClickAccount = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         setAnchorEl(event.currentTarget);
     };
+
+     // use to display and disable sidebar
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    // use to display and disable sidebar
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
@@ -54,7 +67,7 @@ export default function Header() {
 
             <div className='dashbord-header-right'>
                 <h4>
-                    Welcome {loginInfo?.name}
+                    Welcome {cookies.get("token")?.information.name}
                 </h4>
                 <img
                     src={SettingsIcon}
@@ -108,7 +121,7 @@ src='https://reqres.in/img/faces/9-image.jpg' />*/}
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleLogout}>
+                    <MenuItem onClick={handlePopUpInformation}>
                         <ListItemIcon>
                             <PersonIcon fontSize='medium'/>
                         </ListItemIcon>

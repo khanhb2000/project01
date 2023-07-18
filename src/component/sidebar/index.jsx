@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import SideBarItem from './sidebar-item';
@@ -7,11 +7,10 @@ import './styles.css';
 import logo from '../../app/assets/images/white-logo.png';
 import LogoutIcon from '../../app/assets/icons/logout.svg';
 
-function SideBar ({ menu }) {
+function SideBar({ menu }) {
     const location = useLocation();
 
     const [active, setActive] = useState(1);
-
     useEffect(() => {
         menu.forEach(element => {
             if (location.pathname === element.path) {
@@ -24,27 +23,27 @@ function SideBar ({ menu }) {
         setActive(id);
     }
 
-    return(
+    return (
         <nav className='sidebar'>
-           <div className='sidebar-container'>
-                 {/*<div className='sidebar-logo-container'>
+            <div className='sidebar-container'>
+                {/*<div className='sidebar-logo-container'>
                     <img
                         src={logo}
                         alt="logo" />
     </div>
 
                 <div className='sidebar-container'>*/}
-                    <div className='sidebar-items'>
-                        {menu.map((item, index) => (
-                            <div key={index} onClick={() => __navigate(item.id)}>
-                                <SideBarItem
-                                    active={item.id === active}
-                                    item={item} />
-                            </div>
-                        ))}
-                    </div>
+                <div className='sidebar-items'>
+                    {menu.map((item, index) => (
+                        <div key={index} onClick={() => __navigate(item.id)}>
+                            <SideBarItem
+                                active={item.id === active}
+                                item={item} />
+                        </div>
+                    ))}
+                </div>
 
-                    {/*<div className='sidebar-footer'>
+                {/*<div className='sidebar-footer'>
                         <span className='sidebar-item-label'>Role</span>
                         <img 
                             src={LogoutIcon}

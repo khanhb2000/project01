@@ -14,9 +14,9 @@ export default function Profile () {
                     <div className='dashboard-content-search'>
                         <input
                             type='text'
-                            
                             placeholder='Search..'
                             className='dashboard-content-input'
+                            autoFocus
                              />
                     </div>
                 </div>

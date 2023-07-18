@@ -15,7 +15,7 @@ const initialState: LoginState = {
   "token": "",
   "customerInformation": null,
   "userInformation": null,
-  "role":{
+  "role": {
     "id": "",
     "normalizedName": "",
     "isManager": true,
@@ -44,11 +44,6 @@ export const login = createAsyncThunk(
     );
 
     const jsonData = await response.json();
-    /*
-        if (response.status < 200 || response.status >= 300) {
-          return rejectWithValue(jsonData);
-        }*/
-
     return jsonData;
   }
 );
@@ -62,7 +57,7 @@ export const loginSlice = createSlice({
     /*    setOpenMenu: (state) => {
           //state.isOpenMenu = !state.isOpenMenu;
         },*/
- },
+  },
   extraReducers: (builder) => {
     // Start login request
     builder.addCase(login.pending, (state) => {
@@ -78,7 +73,7 @@ export const loginSlice = createSlice({
       state.message = action.payload.message;
       state.customerInformation = action.payload.customerInformation;
       state.userInformation = action.payload.userInformation;
-      state.role = (action.payload.userInformation)?action.payload.userInformation.roles[0]:{
+      state.role = (action.payload.userInformation) ? action.payload.userInformation.roles[0] : {
         "id": "0",
         "normalizedName": "Customer",
         "isManager": false,
