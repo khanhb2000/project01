@@ -22,9 +22,9 @@ export type RoleState = {
 
 export type UserInformationLoginState = {
   "id": string,
-  "name": string,
+  "name": string | null,
   "citizenId": string | null,
-  "userName": string,
+  "userName": string | null,
   "normalizedUserName": string,
   "email": string | null,
   "normalizedEmail": string | null,
@@ -40,7 +40,7 @@ export type UserInformationLoginState = {
 };
 export type CustomerInformationLoginState = {
   "id": string,
-  "name": string,
+  "name": string | null,
   "citizenId": string | null,
   "email": string | null,
   "normalizedEmail": string | null,

@@ -28,10 +28,8 @@ export default function Dashboard() {
   const r = useSelector(selectRole);
   const cookies = new Cookies();
   // 
-  const sidebar_menu = (r.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
-  console.log("login",cookies.get("token")?.role.normalizedName);
+  const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
 
-  
   if (cookies.get("token")?.token == undefined ){
     return (<Navigate replace to ="/login"/>)
   }

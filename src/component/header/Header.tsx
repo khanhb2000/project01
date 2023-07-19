@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import "./header.css"
@@ -21,7 +21,7 @@ export default function Header() {
     const loginInfo = useSelector(selectInformation);
     const userRole = useSelector(selectRole);
     const cookies = new Cookies()
-    
+
     //useState, useDispatch, useNavigate
     const dispatch = useDispatch();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -35,9 +35,12 @@ export default function Header() {
     const handleLogout = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(logout())
+        cookies.remove("token");
         navigate("/login")
-        cookies.remove("token")
+        console.log(cookies.get("token")?.token);
+        
     };
+
 
 
     // show up the information of user on the screen
@@ -51,7 +54,7 @@ export default function Header() {
         setAnchorEl(event.currentTarget);
     };
 
-     // use to display and disable sidebar
+    // use to display and disable sidebar
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -61,6 +64,8 @@ export default function Header() {
         event.preventDefault();
         dispatch(setOpenMenu());
     };
+
+
     return (
         <div className='dashbord-header-container'>
             <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
@@ -123,19 +128,19 @@ src='https://reqres.in/img/faces/9-image.jpg' />*/}
                 >
                     <MenuItem onClick={handlePopUpInformation}>
                         <ListItemIcon>
-                            <PersonIcon fontSize='medium'/>
+                            <PersonIcon fontSize='medium' />
                         </ListItemIcon>
-                        <ListItemText style={{textAlign:"center"}}>
+                        <ListItemText style={{ textAlign: "center" }}>
                             {cookies.get("token")?.role.normalizedName}
                         </ListItemText>
 
                     </MenuItem>
-                    <Divider style={{margin:"13px 0px"}}/>
+                    <Divider style={{ margin: "13px 0px" }} />
                     <MenuItem onClick={handleLogout}>
                         <ListItemIcon>
-                            <LogoutIcon fontSize='medium'/>
+                            <LogoutIcon fontSize='medium' />
                         </ListItemIcon>
-                        <ListItemText style={{textAlign:"center"}}>
+                        <ListItemText style={{ textAlign: "center" }}>
                             Log Out
                         </ListItemText>
                     </MenuItem>

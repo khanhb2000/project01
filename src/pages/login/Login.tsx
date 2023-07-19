@@ -17,6 +17,8 @@ import {
 } from './loginSlice';
 import api_links from '../../utils/api_links';
 import Cookies from 'universal-cookie';
+import { log } from 'console';
+import { unescapeLeadingUnderscores } from 'typescript';
 //import PulseLoader from "react-spinners/PulseLoader";
 
 export default function Login() {
@@ -42,7 +44,7 @@ export default function Login() {
   const storeCookieData = {
     token: token,
     information: information,
-    role:role
+    role: role
   }
 
   //api_link
@@ -87,7 +89,7 @@ export default function Login() {
   }
 
   // Navigate to dashboard page if login successful
-  if (cookies.get("token")?.token != undefined) {
+  if (cookies.get("token")?.token !== undefined) {
     return <Navigate to='/dashboard' />;
   }
 
