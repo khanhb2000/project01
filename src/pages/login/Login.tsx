@@ -56,6 +56,9 @@ export default function Login() {
 
   const errorMessage = () => {
     if (errorMessage2) {
+      if (typeof Object.values(errorMessage2)[0] == "string") {
+        return Object.values(errorMessage2)[0];
+    }
       return Object.values(errorMessage2)[0][0];
     }
     if (errorMessage1)

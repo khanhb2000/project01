@@ -252,9 +252,11 @@ export default function Employees() {
             </>
             }
 
-            {addForm && <><Add />        
-            <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button>
+            {addForm && <><div className='dashboard-content-header2'>
+                <h2>Thông tin nhân viên</h2>
+                <button type="submit" className="btn btn-primary"
+                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
+                    <Add />        
             </>}
         </div>
     )

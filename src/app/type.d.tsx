@@ -17,8 +17,10 @@ export type RoleState = {
   "id": string,
   "normalizedName": string,
   "isManager": boolean,
-  "users": [],
+  "roleClaims": [],
 };
+
+export type RoleListState = RoleState[];
 
 export type UserInformationLoginState = {
   "id": string,

@@ -1,27 +1,178 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { selectToken } from '../../login/loginSlice';
 import { useSelector } from 'react-redux';
-import { LoginState } from '../../../app/type.d';
+import { LoginState, UserListState } from '../../../app/type.d';
+import { RoleListState } from '../../../app/type.d';
+import Cookies from 'universal-cookie';
+
+import type { CascaderProps } from 'antd';
+import {
+    AutoComplete,
+    Button,
+    Cascader,
+    Checkbox,
+    Col,
+    Form,
+    Input,
+    InputNumber,
+    Row,
+    Select,
+    Space,
+    message,
+} from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 //Importing Bootstrap 5
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
+const { Option } = Select;
+
+interface DataNodeType {
+    "Name": string,
+    "UserName": string,
+    "CitizenId": string,
+    "Email": string,
+    "PhoneNumber": string,
+    "EmailConfirmed": boolean | null,
+    "PhoneNumberConfirmed": boolean | null,
+    "TwoFactorEnabled": boolean | null,
+    "LockoutEnabled": boolean | null,
+    "LockoutEnd": string,
+    "Password": string,
+    "ConfirmPassword": string,
+    "ManagerId": string,
+    "RoleIds": string[],
+}
+
+const formItemLayout = {
+    labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 },
+    },
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+    },
+};
+
+const tailFormItemLayout = {
+    wrapperCol: {
+        xs: {
+            span: 24,
+            offset: 0,
+        },
+        sm: {
+            span: 16,
+            offset: 8,
+        },
+    },
+};
+
+
 function Add() {
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [ID, setID] = useState("");
+    /*
+        const [fullName, setUserName] = useState("");
+        const [password, setPassword] = useState("");
+        const [confirmPassword, setConfirmPassword] = useState("");
+        const [email, setEmail] = useState("");
+        const [phone, setPhone] = useState("");
+        const [citizenID, setcitizenID] = useState("");
+    */
+    const [form] = Form.useForm();
+    const [chuc_vu, setCV] = useState<RoleListState>();
+    const [nhan_vien, setNV] = useState<UserListState>();
+    const [filter_nhan_vien, setFilterNV] = useState<UserListState>();
 
     const [jsonData, setjsonData] = useState<LoginState>();
-    const token = useSelector(selectToken);
+    const cookies = new Cookies()
+    const token = cookies.get("token")?.token;
 
-    const newCustomer = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
+    var register: DataNodeType = {
+        Name: '',
+        UserName: '',
+        CitizenId: '',
+        Email: '',
+        PhoneNumber: '',
+        EmailConfirmed: null,
+        PhoneNumberConfirmed: null,
+        TwoFactorEnabled: null,
+        LockoutEnabled: null,
+        LockoutEnd: '',
+        Password: '',
+        ConfirmPassword: '',
+        ManagerId: '',
+        RoleIds: []
+    }
+
+    useEffect(() => {
+        const responseCV = fetch(
+            'http://bevm.e-biz.com.vn/api/Roles',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Authorization': 'Bearer ' + token,
+                },
+            }
+        ).then(response => {
+            return response.json()
+        })
+            .then(data => {
+                setCV(data);
+                setFilterNV(data);
+            });
+
+        const responseNV = fetch(
+            'http://bevm.e-biz.com.vn/api/Users/All-Users',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Authorization': 'Bearer ' + token,
+                },
+            }
+        ).then(response => {
+            return response.json();
+        })
+            .then(data => {
+                setNV(data);
+                setFilterNV(data);
+            });
+    }, []);
+
+    const errorMessage = () => {
+        if (jsonData?.errors != null) {
+            if (typeof Object.values(jsonData?.errors)[0] == "string") {
+                return Object.values(jsonData?.errors)[0];
+            }
+            else return Object.values(jsonData?.errors)[0][0];
+        }
+        if (jsonData?.message)
+            return jsonData?.message;
+        return "";
+    };
+
+    const onFinish = (values: any) => {
+        console.log('Received values of form: ', values);
+        let date = new Date();
+        date.setFullYear(date.getFullYear() + 3);
+        register.CitizenId = values.citizenId;
+        register.ConfirmPassword = values.confirm;
+        register.Email = values.email;
+        register.Name = values.name;
+        register.UserName = values.username;
+        register.Password = values.password;
+        register.PhoneNumber = values.phone;
+        register.LockoutEnabled = null;
+        register.PhoneNumberConfirmed = null;
+        register.EmailConfirmed = null;
+        register.TwoFactorEnabled = null;
+        register.LockoutEnd = date.toJSON();
+        values.employeeList?.map((d: { employeename: string; }) => register.RoleIds.push(d.employeename));
+        console.log('Received register: ', register);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Register/Customer',
+            'http://bevm.e-biz.com.vn/api/Register/User',
             {
                 method: 'POST',
                 headers: {
@@ -29,181 +180,266 @@ function Add() {
                     'Authorization': 'Bearer ' + token,
                 },
                 body: JSON.stringify(
-                    {
-                        "UserName": userName,
-                        "NormalizedUserName": "",
-                        "CitizenId": "",
-                        "Email": "",
-                        "NormalizedEmail": "",
-                        "PhoneNumber": "",
-                        "Password": password,
-                        "ConfirmPassword": confirmPassword,
-                        "SalesEmployeeIds": [
-                            "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                        ]
-                    }
+                    register
 
                 ),
             }
         ).then(response => {
-            return response.json()
+            if (response.ok) {
+                form.resetFields();
+                message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
+            } return response.json()
         })
             .then(data => {
                 setjsonData(data);
-            }).catch(error => {
-                switch (error.status) {
-                    case 401: {
-                        //throw new Error("Invalid login credentials");
-                        break;
-                    }
-                    case 400: {
-                        setjsonData({
-                            "message": "",
-                            "isSuccess": false,
-                            "errors": error.errors,
-                            "token": "",
-                            "role":{
-                                "id": "0",
-                                "normalizedName": "Customer",
-                                "isManager": false,
-                                "users": [],
-                              },
-                        });
-                        break;
-                    }
-                    /* ... */
-                    default:
-                        setjsonData({ "message": `Unknown server error occured: ${error.status}`, "isSuccess": false, "errors": [], "token": "", 
-                        "role":{
-                            "id": "0",
-                            "normalizedName": "Customer",
-                            "isManager": false,
-                            "users": [],
-                          },
-                        });
-                }
-                setjsonData({ "message": `Unknown server error occured: ${error.status}`, "isSuccess": false, "errors": [], "token": "",                     "role":{
-                    "id": "0",
-                    "normalizedName": "Customer",
-                    "isManager": false,
-                    "users": [],
-                  },});
-                //console.log(jsonData);
-                //throw new Error(`Something went wrong: ${error.message || error}`);
             })
 
-
-        /*
-            if (response.status < 200 || response.status >= 300) {
-              return rejectWithValue(jsonData);
-            }*/
-
-        return jsonData;
-
     };
-    const errorMessage = () => {
-        if (jsonData?.errors) {
-          return Object.values(jsonData?.errors)[0][0]; }
-        if (jsonData?.message)
-          return jsonData?.message;
-      };
+
+    const prefixSelector = (
+        <Form.Item name="prefix" noStyle>
+            <Select style={{ width: 150 }} defaultValue={"all"}>
+                <Option value="all">Tất cả</Option>
+                <Option value="SALES">Sales</Option>
+                <Option value="SALES ADMIN">Sales Admin</Option>
+                <Option value="SUPER ADMIN">Super Admin</Option>
+            </Select>
+        </Form.Item>
+    );
 
     return (
         <div>
-        <div className='dashboard-content-header'>
-        <h2>Nhân viên mới</h2></div>
-        <form>
-        <div className="form-group row">
-            <label htmlFor="inputUsername3"
-                className="col-sm-4 col-form-label">
-                Tên đăng nhập</label>
-            <div className="col-sm-6">
-                <input type="text"
-                    className="form-control"
-                    id="inputUsername3"
-                    onChange={(event) => setUserName(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-            <label htmlFor="inputPassword3"
-                className="col-sm-4 col-form-label">
-                Mật khẩu</label>
-            <div className="col-sm-6">
-                <input type="password"
-                    className="form-control"
-                    id="inputPassword3"
-                    onChange={(event) => setPassword(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-            <label htmlFor="inputConfirmPassword3"
-                className="col-sm-4 col-form-label">
-                Nhập lại mật khẩu</label>
-            <div className="col-sm-6">
-                <input type="password"
-                    className="form-control"
-                    id="inputConfirmPassword3"
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-            <label htmlFor="inputEmail3"
-                className="col-sm-4 col-form-label">
-                Email</label>
-            <div className="col-sm-6">
-                <input type="email"
-                    className="form-control"
-                    id="inputEmail3"
-                    onChange={(event) => setEmail(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-            <label htmlFor="inputPhone3"
-                className="col-sm-4 col-form-label">
-                Số điện thoại</label>
-            <div className="col-sm-6">
-                <input type="text"
-                    className="form-control"
-                    id="inputPhone3"
-                    onChange={(event) => setPhone(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-            <label htmlFor="inputID3"
-                className="col-sm-4 col-form-label">
-                CCCD/CMND</label>
-            <div className="col-sm-6">
-                <input type="text"
-                    className="form-control"
-                    id="inputID3"
-                    onChange={(event) => setID(event.target.value)}
-                />
-            </div>
-        </div>
-        <div className="form-group row">
-   Chức vụ sử dụng choose drop down
-        </div>
 
-        <div className="form-group row">
-            <div className="col-sm-10">
-                <button type="submit" className="btn btn-primary"
-                    onClick={newCustomer}>Tạo mới</button>
-            </div>
+            <Form
+                {...formItemLayout}
+                form={form}
+                name="register"
+                onFinish={onFinish}
+                //initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: 'Tất ' }}
+                style={{ maxWidth: 600 }}
+                scrollToFirstError
+            >
+                <Form.Item
+                    name="name"
+                    label="Tên nhân viên"
+                    rules={[{ required: true, message: 'Please input username!', whitespace: true }]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    name="username"
+                    label="Tên đăng nhập"
+                    rules={[{ required: true, message: 'Please input name!', whitespace: true }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name="email"
+                    label="E-mail"
+                /*rules={[
+                    {
+                        type: 'email',
+                        message: 'The input is not valid E-mail!',
+                        whitespace: false,
+                    },
+                    {
+                        required: true,
+                        message: 'Please input your E-mail!',
+                    },
+                ]}*/
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name="phone"
+                    label="Số điện thoại"
+                /*rules={[
+                    {
+                        pattern: /^((\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4}))||)$/,
+                        message: 'The input is not valid phone number!'
+                    }
+                ]}*/
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name="citizenId"
+                    label="CCCD/CMND"
+                //rules={[{ whitespace: false }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input your password!',
+                        },
+                    ]}
+                    hasFeedback
+                >
+                    <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                    name="confirm"
+                    label="Confirm Password"
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please confirm your password!',
+                        },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The new password that you entered do not match!'));
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                    //name="employee"
+                    label="Nhân viên quản lý"
+                >
+
+                    <Space  align="baseline">
+                        <Form.Item
+                            noStyle
+                            shouldUpdate={(prevValues, curValues) =>
+                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                            }
+                        > 
+                                <Form.Item
+                                    name='employeefilter'
+                                >
+                                    <Select style={{ width: 150 }}
+                                        onChange={(e) => {
+                                            if (e == "all") setFilterNV(nhan_vien);
+                                            else
+                                                setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
+                                        }}
+                                    > {chuc_vu?.map((d) =>{
+                                        if (d.isManager)
+                                        return(
+                                        <Option value={d.normalizedName}>{d.normalizedName}</Option>
+                                    )})} </Select>
+                                </Form.Item>
+                           
+                        </Form.Item>
+                        <Form.Item
+                            name='employeename'
+                            rules={[{ required: true, message: 'Missing price' }]}
+                        >
+                            <Select
+                                showSearch
+                                style={{ width: 200 }}
+                                placeholder=""
+                                //onChange={handleChange}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+
+                                options={
+                                    filter_nhan_vien?.map((d) => {
+                                        return ({
+                                            label: d.name + " - " + (d.citizenId ? d.citizenId?.slice(-4) : ""),
+                                            value: d.id,
+                                        })
+                                    })
+                                }
+                            />
+                        </Form.Item>
+                    </Space>
+                </Form.Item>
+
+                <Form.Item
+                    //name="employee"
+                    label="Vị trí"
+                >
+                    <Form.List name="roleList">
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map((field) => (
+                                    <Space key={field.key} align="baseline">
+                                        <Form.Item
+                                            noStyle
+                                            shouldUpdate={(prevValues, curValues) =>
+                                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                                            }
+                                        >
+                                            {() => (
+                                                <Form.Item
+                                                    {...field}
+                                                    name={[field.name, 'employeefilter']}
+                                                    rules={[{ required: true, message: 'Please input role!', whitespace: true }]}
+                                                >
+                                                    <Select style={{ width: 150 }} >
+                                                        {chuc_vu?.map((d) => {
+                                                            return (
+                                                                <Option value={d.id}>{d.normalizedName}</Option>
+                                                            )
+                                                        })}
+                                                    </Select>
+                                                </Form.Item>
+                                            )}
+                                        </Form.Item>
+
+
+                                        <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                    </Space>
+                                ))}
+
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Thêm vị trí
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
+                </Form.Item>
+                {(errorMessage()) &&
+                    <span style={{
+                        color: "red",
+                        textAlign: "center",
+                        fontSize: "13px"
+                    }}> {errorMessage()}<br /></span>}
+                <Form.Item {...tailFormItemLayout}>
+                    <Space size={'large'}>
+                        <Button type="primary" htmlType="submit">
+                            Tạo mới
+                        </Button>
+                        <Button type="default" htmlType="reset"
+                            onClick={() => setjsonData({
+                                "message": null,
+                                "isSuccess": false,
+                                "errors": null,
+                                "token": null,
+                                "userInformation": null,
+                                "customerInformation": null,
+                                "role": null,
+                            })}>
+                            Làm mới
+                        </Button>
+                    </Space>
+                </Form.Item>
+            </Form>
         </div>
-    </form>
-    {(errorMessage()) &&
-          <span style={{
-            color: "red",
-            textAlign: "center",
-            fontSize: "13px"
-          }}><br /> {errorMessage()}</span>
-        }
-    </div>
     );
 }
 export default Add;

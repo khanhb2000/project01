@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { selectToken } from '../../login/loginSlice';
 import { useSelector } from 'react-redux';
-import { LoginState } from '../../../app/type.d';
+import { LoginState, RoleListState } from '../../../app/type.d';
 import { UserListState } from '../../../app/type.d';
 import Cookies from 'universal-cookie';
 
@@ -18,6 +18,7 @@ import {
     Row,
     Select,
     Space,
+    message,
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -68,16 +69,18 @@ const tailFormItemLayout = {
 
 
 function Add() {
+    /*
+        const [fullName, setUserName] = useState("");
+        const [password, setPassword] = useState("");
+        const [confirmPassword, setConfirmPassword] = useState("");
+        const [email, setEmail] = useState("");
+        const [phone, setPhone] = useState("");
+        const [citizenID, setcitizenID] = useState("");
+    */
     const [form] = Form.useForm();
     const [nhan_vien, setNV] = useState<UserListState>();
     const [filter_nhan_vien, setFilterNV] = useState<UserListState>();
-
-    const [fullName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [citizenID, setcitizenID] = useState("");
+    const [chuc_vu, setCV] = useState<RoleListState>();
 
     const [jsonData, setjsonData] = useState<LoginState>();
     const cookies = new Cookies()
@@ -99,7 +102,23 @@ function Add() {
     }
 
     useEffect(() => {
-        const response = fetch(
+        const responseCV = fetch(
+            'http://bevm.e-biz.com.vn/api/Roles',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Authorization': 'Bearer ' + token,
+                },
+            }
+        ).then(response => {
+            return response.json();
+        })
+            .then(data => {
+                setCV(data);
+            });
+
+        const responseNV = fetch(
             'http://bevm.e-biz.com.vn/api/Users/All-Users',
             {
                 method: 'GET',
@@ -109,7 +128,7 @@ function Add() {
                 },
             }
         ).then(response => {
-            return response.json()
+            return response.json();
         })
             .then(data => {
                 setNV(data);
@@ -160,8 +179,10 @@ function Add() {
                 ),
             }
         ).then(response => {
-            if (response.ok) form.resetFields();
-            return response.json()
+            if (response.ok) {
+                form.resetFields();
+                message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
+            } return response.json()
         })
             .then(data => {
                 setjsonData(data);
@@ -297,18 +318,15 @@ function Add() {
                                                     {...field}
                                                     name={[field.name, 'employeefilter']}
                                                 >
-                                                    <Select style={{ width: 150 }} defaultValue={"all"}
+                                                    <Select style={{ width: 150 }}
                                                         onChange={(e) => {
                                                             if (e == "all") setFilterNV(nhan_vien);
                                                             else
                                                                 setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
                                                         }}
-                                                    >
-                                                        <Option value="all">Tất cả</Option>
-                                                        <Option value="SALES">Sales</Option>
-                                                        <Option value="SALES ADMIN">Sales Admin</Option>
-                                                        <Option value="SUPER ADMIN">Super Admin</Option>
-                                                    </Select>
+                                                    > {chuc_vu?.map((d) =>
+                                                        <Option value={d.normalizedName}>{d.normalizedName}</Option>
+                                                    )} </Select>
                                                 </Form.Item>
                                             )}
                                         </Form.Item>
@@ -359,21 +377,23 @@ function Add() {
                         fontSize: "13px"
                     }}> {errorMessage()}<br /></span>}
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
-                        Tạo mới
-                    </Button>
-                    <Button type="default" htmlType="reset"
-                        onClick={() => setjsonData({
-                            "message": null,
-                            "isSuccess": false,
-                            "errors": null,
-                            "token": null,
-                            "userInformation": null,
-                            "customerInformation": null,
-                            "role": null,
-                        })}>
-                        Làm lại
-                    </Button>
+                    <Space size={'large'}>
+                        <Button type="primary" htmlType="submit">
+                            Tạo mới
+                        </Button>
+                        <Button type="default" htmlType="reset"
+                            onClick={() => setjsonData({
+                                "message": null,
+                                "isSuccess": false,
+                                "errors": null,
+                                "token": null,
+                                "userInformation": null,
+                                "customerInformation": null,
+                                "role": null,
+                            })}>
+                            Làm mới
+                        </Button>
+                    </Space>
                 </Form.Item>
             </Form>
         </div>
