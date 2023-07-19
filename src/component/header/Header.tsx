@@ -126,7 +126,7 @@ src='https://reqres.in/img/faces/9-image.jpg' />*/}
                             <PersonIcon fontSize='medium'/>
                         </ListItemIcon>
                         <ListItemText style={{textAlign:"center"}}>
-                            {userRole.normalizedName}
+                            {cookies.get("token")?.role.normalizedName}
                         </ListItemText>
 
                     </MenuItem>

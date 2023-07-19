@@ -3,7 +3,7 @@ import './stylesVouchers.css';
 //import Add from './addNew';
 import { VoucherTypeListState } from '../../../app/type.d';
 import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, Table, Space, Select, Tag,Card, Col, Row } from 'antd';
+import { Button, Table, Space, Select, Tag, Card, Col, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -268,32 +268,33 @@ export default function Vouchers() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-{0&&
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-               }               <Row gutter={16}>
-    
-    {dataListShow.map((d) => { 
-    return(
-               <Col span={8}> <Card
-    style={{ width: 300 }}
-    cover={
-      <img
-        alt="example"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-      />
-    }
-    actions={[
-      <SettingOutlined key="setting" />,
-      <EditOutlined key="edit" />,
-      <EllipsisOutlined key="ellipsis" />,
-    ]}
-  >
-    <Meta
-      title={d.content.name}
-      description="This is the description"
-    />
-  </Card></Col>)})} 
-  </Row>
+                {0 &&
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                }               <Row gutter={16}>
+
+                    {dataListShow.map((d) => {
+                        return (
+                            <Col span={8}> <Card
+                                style={{ width: 300 }}
+                                cover={
+                                    <img
+                                        alt="example"
+                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                    />
+                                }
+                                actions={[
+                                    <SettingOutlined key="setting" />,
+                                    <EditOutlined key="edit" />,
+                                    <EllipsisOutlined key="ellipsis" />,
+                                ]}
+                            >
+                                <Meta
+                                    title={d.content.name}
+                                    description="This is the description"
+                                />
+                            </Card></Col>)
+                    })}
+                </Row>
 
             </>}
         </div>

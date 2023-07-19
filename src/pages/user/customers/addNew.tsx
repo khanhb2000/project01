@@ -31,10 +31,10 @@ interface DataNodeType {
     "CitizenId": string,
     "Email": string,
     "PhoneNumber": string,
-    "EmailConfirmed": boolean|null,
-    "PhoneNumberConfirmed": boolean|null,
-    "TwoFactorEnabled": boolean|null,
-    "LockoutEnabled": boolean|null,
+    "EmailConfirmed": boolean | null,
+    "PhoneNumberConfirmed": boolean | null,
+    "TwoFactorEnabled": boolean | null,
+    "LockoutEnabled": boolean | null,
     "LockoutEnd": string,
     "Password": string,
     "ConfirmPassword": string,
@@ -81,7 +81,7 @@ function Add() {
     const [jsonData, setjsonData] = useState<LoginState>();
     const token = useSelector(selectToken);
 
-    var register:DataNodeType={
+    var register: DataNodeType = {
         Name: '',
         CitizenId: '',
         Email: '',
@@ -195,21 +195,21 @@ function Add() {
     };
 
     const onFinish = (values: any) => {
-                console.log('Received values of form: ', values);
-let date = new Date();
+        console.log('Received values of form: ', values);
+        let date = new Date();
         date.setFullYear(date.getFullYear() + 3);
-        register.CitizenId=values.citizenId;
-        register.ConfirmPassword=values.confirm;
-        register.Email=values.email;
-        register.Name=values.username;
-        register.Password=values.password;
-        register.PhoneNumber=values.phone;
-        register.LockoutEnabled=null;
-        register.PhoneNumberConfirmed=null;
-        register.EmailConfirmed=null;
-        register.TwoFactorEnabled=null;
-        register.LockoutEnd=date.toJSON();
-        values.employeeList.map((d: { employeename: string; })=>register.SalesEmployeeIds.push(d.employeename));
+        register.CitizenId = values.citizenId;
+        register.ConfirmPassword = values.confirm;
+        register.Email = values.email;
+        register.Name = values.username;
+        register.Password = values.password;
+        register.PhoneNumber = values.phone;
+        register.LockoutEnabled = null;
+        register.PhoneNumberConfirmed = null;
+        register.EmailConfirmed = null;
+        register.TwoFactorEnabled = null;
+        register.LockoutEnd = date.toJSON();
+        values.employeeList.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
         console.log('Received register: ', register);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Register/Customer',
@@ -245,7 +245,7 @@ let date = new Date();
 
     return (
         <div>
-           
+
             <Form
                 {...formItemLayout}
                 form={form}
@@ -267,17 +267,17 @@ let date = new Date();
                 <Form.Item
                     name="email"
                     label="E-mail"
-                    /*rules={[
-                        {
-                            type: 'email',
-                            message: 'The input is not valid E-mail!',
-                            whitespace: false,
-                        },
-                        {
-                            required: true,
-                            message: 'Please input your E-mail!',
-                        },
-                    ]}*/
+                /*rules={[
+                    {
+                        type: 'email',
+                        message: 'The input is not valid E-mail!',
+                        whitespace: false,
+                    },
+                    {
+                        required: true,
+                        message: 'Please input your E-mail!',
+                    },
+                ]}*/
                 >
                     <Input />
                 </Form.Item>
@@ -285,12 +285,12 @@ let date = new Date();
                 <Form.Item
                     name="phone"
                     label="Số điện thoại"
-                    /*rules={[
-                        {
-                            pattern: /^((\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4}))||)$/,
-                            message: 'The input is not valid phone number!'
-                        }
-                    ]}*/
+                /*rules={[
+                    {
+                        pattern: /^((\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4}))||)$/,
+                        message: 'The input is not valid phone number!'
+                    }
+                ]}*/
                 >
                     <Input />
                 </Form.Item>

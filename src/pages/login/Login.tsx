@@ -3,6 +3,8 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import './login.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {
   login,
   selectSuccess,
@@ -26,6 +28,7 @@ export default function Login() {
   const errorMessage2 = useAppSelector(selectError);
   const token = useAppSelector(selectToken);
   const information = useSelector(selectInformation);
+  const role = useSelector(selectRole);
 
   //useState
   const [email, setEmail] = useState('');
@@ -38,7 +41,8 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const storeCookieData = {
     token: token,
-    information: information
+    information: information,
+    role:role
   }
 
   //api_link
@@ -59,9 +63,10 @@ export default function Login() {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }));
-    //dispatch(login({ "Tocken": "C29B402A-7E06-4CDB-9BA6-DCFB4205AD3C", "Member_Code": email }));
-    setIsLoading(false);
+    setTimeout(() => {
+      dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }));
+      setIsLoading(false);
+    }, 1000)
 
   };
 
@@ -85,6 +90,7 @@ export default function Login() {
   if (cookies.get("token")?.token != undefined) {
     return <Navigate to='/dashboard' />;
   }
+
 
   return (
     <div className="login">
@@ -121,9 +127,12 @@ export default function Login() {
         />
         <br />
 
-        <button onClick={handleLogin} disabled={isLoading}>
-          Login
-        </button>
+        <div className='submitBtn'>
+          <button onClick={handleLogin}>
+            Login
+          </button>
+          {isLoading && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
+        </div>
         {(errorMessage()) &&
           <span style={{
             color: "red",
