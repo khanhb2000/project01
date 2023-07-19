@@ -10,7 +10,7 @@ export type LoginState = {
   "token": string | null,
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
-  "role": RoleState,
+  "role": RoleState|null,
 };
 
 export type RoleState = {

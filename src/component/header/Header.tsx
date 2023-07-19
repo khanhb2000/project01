@@ -63,9 +63,8 @@ export default function Header() {
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
+        
     };
-
-
     return (
         <div className='dashbord-header-container'>
             <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>

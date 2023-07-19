@@ -3,6 +3,7 @@ import { selectToken } from '../../login/loginSlice';
 import { useSelector } from 'react-redux';
 import { LoginState } from '../../../app/type.d';
 import { UserListState } from '../../../app/type.d';
+import Cookies from 'universal-cookie';
 
 import type { CascaderProps } from 'antd';
 import {
@@ -79,7 +80,8 @@ function Add() {
     const [citizenID, setcitizenID] = useState("");
 
     const [jsonData, setjsonData] = useState<LoginState>();
-    const token = useSelector(selectToken);
+    const cookies = new Cookies()
+    const token = cookies.get("token")?.token;
 
     var register: DataNodeType = {
         Name: '',
@@ -115,74 +117,6 @@ function Add() {
             });
     }, []);
 
-    const newCustomer = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Register/Customer',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-                body: JSON.stringify(
-                    {
-                        "Name": fullName,
-                        "CitizenId": citizenID,
-                        "Email": email,
-                        "PhoneNumber": phone,
-                        "EmailConfirmed": true,
-                        "PhoneNumberConfirmed": true,
-                        "TwoFactorEnabled": true,
-                        "LockoutEnabled": true,
-                        "LockoutEnd": "2023-07-07T01:59:03.598Z",
-                        "Password": password,
-                        "ConfirmPassword": confirmPassword,
-                        "SalesEmployeeIds": [
-                            "5ca87050-7758-49cd-7932-08db791a0b05"
-                        ]
-                    }
-
-                ),
-            }
-        ).then(response => {
-            return response.json()
-        })
-            .then(data => {
-                setjsonData(data);
-            }).catch(error => {
-                setjsonData({
-                    "message": `Unknown server error occured: ${error.status}`,
-                    "isSuccess": false,
-                    "errors": [],
-                    "token": "",
-                    "customerInformation": null,
-                    "userInformation": null,
-                    "role": {
-                        "id": "0",
-                        "normalizedName": "Customer",
-                        "isManager": false,
-                        "users": [],
-                    },
-                });
-                //console.log(jsonData);
-                //throw new Error(`Something went wrong: ${error.message || error}`);
-            })
-
-
-        /*
-            if (response.status < 200 || response.status >= 300) {
-              return rejectWithValue(jsonData);
-            }*/
-
-        return jsonData;
-
-    };
-
-    /*const handleChange = (value: string[]) => {
-        console.log(`selected ${value}`);
-    };*/
-
     const errorMessage = () => {
         if (jsonData?.errors != null) {
             if (typeof Object.values(jsonData?.errors)[0] == "string") {
@@ -192,6 +126,7 @@ function Add() {
         }
         if (jsonData?.message)
             return jsonData?.message;
+        return "";
     };
 
     const onFinish = (values: any) => {
@@ -209,7 +144,7 @@ function Add() {
         register.EmailConfirmed = null;
         register.TwoFactorEnabled = null;
         register.LockoutEnd = date.toJSON();
-        values.employeeList.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
+        values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
         console.log('Received register: ', register);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Register/Customer',
@@ -225,11 +160,13 @@ function Add() {
                 ),
             }
         ).then(response => {
+            if (response.ok) form.resetFields();
             return response.json()
         })
             .then(data => {
                 setjsonData(data);
             })
+
     };
 
     const prefixSelector = (
@@ -415,20 +352,29 @@ function Add() {
                         )}
                     </Form.List>
                 </Form.Item>
-
-                <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
-                        Tạo mới
-                    </Button>
-                </Form.Item>
-
                 {(errorMessage()) &&
                     <span style={{
                         color: "red",
                         textAlign: "center",
                         fontSize: "13px"
-                    }}><br /> {errorMessage()}</span>
-                }
+                    }}> {errorMessage()}<br /></span>}
+                <Form.Item {...tailFormItemLayout}>
+                    <Button type="primary" htmlType="submit">
+                        Tạo mới
+                    </Button>
+                    <Button type="default" htmlType="reset"
+                        onClick={() => setjsonData({
+                            "message": null,
+                            "isSuccess": false,
+                            "errors": null,
+                            "token": null,
+                            "userInformation": null,
+                            "customerInformation": null,
+                            "role": null,
+                        })}>
+                        Làm lại
+                    </Button>
+                </Form.Item>
             </Form>
         </div>
     );
