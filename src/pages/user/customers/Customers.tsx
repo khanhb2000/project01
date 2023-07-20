@@ -7,6 +7,12 @@ import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
+
+import Cookies from 'universal-cookie';
+const cookies = new Cookies()
+const token = cookies.get("token")?.token;
+
+
 interface DataType {
     key: React.Key;
     id:string;
@@ -76,7 +82,7 @@ export default function Customers() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             }
         ).then(response => {
