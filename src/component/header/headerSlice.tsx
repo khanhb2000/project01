@@ -8,7 +8,7 @@ const initialState: MenuState  = {
     "id": "",
     "normalizedName": "",
     "isManager": true,
-    "users": [],
+    "roleClaims": [],
   },
 };
 

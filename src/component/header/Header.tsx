@@ -64,9 +64,9 @@ export default function Header() {
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
+        
     };
-
-
+    
     return (
         <React.Fragment>
             <PopupScreen isPopup={popup} setPopup={setPopup}/>

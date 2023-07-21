@@ -29,7 +29,9 @@ export default function Dashboard() {
   const cookies = new Cookies();
   // 
   const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
+  console.log("login",cookies.get("token")?.role.normalizedName);
 
+  
   if (cookies.get("token")?.token == undefined ){
     return (<Navigate replace to ="/login"/>)
   }

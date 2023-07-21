@@ -10,15 +10,17 @@ export type LoginState = {
   "token": string | null,
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
-  "role": RoleState,
+  "role": RoleState|null,
 };
 
 export type RoleState = {
   "id": string,
   "normalizedName": string,
   "isManager": boolean,
-  "users": [],
+  "roleClaims": [],
 };
+
+export type RoleListState = RoleState[];
 
 export type UserInformationLoginState = {
   "id": string,

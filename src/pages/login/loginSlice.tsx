@@ -19,7 +19,7 @@ const initialState: LoginState = {
     "id": "",
     "normalizedName": "",
     "isManager": true,
-    "users": [],
+    "roleClaims": [],
   },
 };
 // Fetch API
