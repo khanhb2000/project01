@@ -82,8 +82,6 @@ function Add() {
     const [chuc_vu, setCV] = useState<RoleListState>();
 
     const [jsonData, setjsonData] = useState<LoginState>();
-    const cookies = new Cookies()
-    const token = cookies.get("token")?.token;
 
     var register: DataNodeType = {
         Name: '',
@@ -98,8 +96,13 @@ function Add() {
         ConfirmPassword: '',
         SalesEmployeeIds: []
     }
+    
+    var cookies = new Cookies()
+    var token = cookies.get("token")?.token;
 
     useEffect(() => {
+        cookies = new Cookies()
+        token = cookies.get("token")?.token;
         const responseCV = fetch(
             'http://bevm.e-biz.com.vn/api/Roles',
             {

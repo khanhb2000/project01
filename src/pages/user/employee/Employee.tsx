@@ -91,11 +91,12 @@ export default function Employees() {
     const [filterType, setFilterType] = useState(0);
 
     const dataListShow: DataType[] = [];
-
+    var cookies = new Cookies()
+    var token = cookies.get("token")?.token;
 
     useEffect(() => {
-        const cookies = new Cookies()
-        const token = cookies.get("token")?.token;
+        cookies = new Cookies()
+        token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Users/All-Users',
