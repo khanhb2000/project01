@@ -88,7 +88,7 @@ export default function Login() {
 
   //check token existed 
   if (token != "") {
-    cookies.set("token", storeCookieData, { path: '/', maxAge: 1800 })  // set cookies for 30 minutes
+    cookies.set("token", storeCookieData, { path: '/', maxAge: 4000 })  // set cookies for 30 minutes
   }
 
   // Navigate to dashboard page if login successful

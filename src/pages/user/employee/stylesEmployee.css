@@ -19,3 +19,6 @@
 .col-form-label{
     text-align: left;
 }
+.ant-space{
+    display: flex;
+}

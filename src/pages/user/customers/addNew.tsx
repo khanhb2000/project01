@@ -36,8 +36,7 @@ interface DataNodeType {
     "EmailConfirmed": boolean | null,
     "PhoneNumberConfirmed": boolean | null,
     "TwoFactorEnabled": boolean | null,
-    "LockoutEnabled": boolean | null,
-    "LockoutEnd": string,
+    "IsBlocked": boolean | null,
     "Password": string,
     "ConfirmPassword": string,
     "SalesEmployeeIds": string[],
@@ -94,8 +93,7 @@ function Add() {
         EmailConfirmed: null,
         PhoneNumberConfirmed: null,
         TwoFactorEnabled: null,
-        LockoutEnabled: null,
-        LockoutEnd: '',
+        IsBlocked: null,
         Password: '',
         ConfirmPassword: '',
         SalesEmployeeIds: []
@@ -108,7 +106,7 @@ function Add() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             }
         ).then(response => {
@@ -124,7 +122,7 @@ function Add() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             }
         ).then(response => {
@@ -150,19 +148,16 @@ function Add() {
 
     const onFinish = (values: any) => {
         console.log('Received values of form: ', values);
-        let date = new Date();
-        date.setFullYear(date.getFullYear() + 3);
         register.CitizenId = values.citizenId;
         register.ConfirmPassword = values.confirm;
         register.Email = values.email;
         register.Name = values.username;
         register.Password = values.password;
         register.PhoneNumber = values.phone;
-        register.LockoutEnabled = null;
         register.PhoneNumberConfirmed = null;
         register.EmailConfirmed = null;
         register.TwoFactorEnabled = null;
-        register.LockoutEnd = date.toJSON();
+        register.IsBlocked = null;
         values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
         console.log('Received register: ', register);
         const response = fetch(
@@ -319,9 +314,8 @@ function Add() {
                                                     name={[field.name, 'employeefilter']}
                                                 >
                                                     <Select style={{ width: 150 }}
+                                                        defaultValue=""
                                                         onChange={(e) => {
-                                                            if (e == "all") setFilterNV(nhan_vien);
-                                                            else
                                                                 setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
                                                         }}
                                                     > {chuc_vu?.map((d) =>
@@ -333,12 +327,12 @@ function Add() {
                                         <Form.Item
                                             {...field}
                                             name={[field.name, 'employeename']}
-                                            rules={[{ required: true, message: 'Missing price' }]}
+                                            rules={[{ required: true, message: 'Missing value' }]}
                                         >
                                             <Select
                                                 showSearch
                                                 style={{ width: 200 }}
-                                                placeholder=""
+                                                //placeholder=""
                                                 //onChange={handleChange}
                                                 optionFilterProp="children"
                                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}

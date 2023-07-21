@@ -37,11 +37,10 @@ interface DataNodeType {
     "EmailConfirmed": boolean | null,
     "PhoneNumberConfirmed": boolean | null,
     "TwoFactorEnabled": boolean | null,
-    "LockoutEnabled": boolean | null,
-    "LockoutEnd": string,
+    "IsBlocked": boolean | null,
     "Password": string,
     "ConfirmPassword": string,
-    "ManagerId": string,
+    "ManagerId": string | null,
     "RoleIds": string[],
 }
 
@@ -81,10 +80,11 @@ function Add() {
     */
     const [form] = Form.useForm();
     const [chuc_vu, setCV] = useState<RoleListState>();
-    const [nhan_vien, setNV] = useState<UserListState>();
+    const [nhan_vien, setNV] = useState<UserListState | null>();
     const [filter_nhan_vien, setFilterNV] = useState<UserListState>();
 
     const [jsonData, setjsonData] = useState<LoginState>();
+
     const cookies = new Cookies()
     const token = cookies.get("token")?.token;
 
@@ -97,8 +97,7 @@ function Add() {
         EmailConfirmed: null,
         PhoneNumberConfirmed: null,
         TwoFactorEnabled: null,
-        LockoutEnabled: null,
-        LockoutEnd: '',
+        IsBlocked: null,
         Password: '',
         ConfirmPassword: '',
         ManagerId: '',
@@ -112,7 +111,7 @@ function Add() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             }
         ).then(response => {
@@ -129,7 +128,7 @@ function Add() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             }
         ).then(response => {
@@ -137,7 +136,7 @@ function Add() {
         })
             .then(data => {
                 setNV(data);
-                setFilterNV(data);
+
             });
     }, []);
 
@@ -155,8 +154,6 @@ function Add() {
 
     const onFinish = (values: any) => {
         console.log('Received values of form: ', values);
-        let date = new Date();
-        date.setFullYear(date.getFullYear() + 3);
         register.CitizenId = values.citizenId;
         register.ConfirmPassword = values.confirm;
         register.Email = values.email;
@@ -164,12 +161,13 @@ function Add() {
         register.UserName = values.username;
         register.Password = values.password;
         register.PhoneNumber = values.phone;
-        register.LockoutEnabled = null;
+        register.ManagerId = values.managername;
+        if (values.managerfilter == null) register.ManagerId = null;
         register.PhoneNumberConfirmed = null;
         register.EmailConfirmed = null;
         register.TwoFactorEnabled = null;
-        register.LockoutEnd = date.toJSON();
-        values.employeeList?.map((d: { employeename: string; }) => register.RoleIds.push(d.employeename));
+        register.IsBlocked = null;
+        values.roleList?.map((d: { roleid: string; }) => register.RoleIds.push(d.roleid));
         console.log('Received register: ', register);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Register/User',
@@ -195,17 +193,6 @@ function Add() {
             })
 
     };
-
-    const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
-            <Select style={{ width: 150 }} defaultValue={"all"}>
-                <Option value="all">Tất cả</Option>
-                <Option value="SALES">Sales</Option>
-                <Option value="SALES ADMIN">Sales Admin</Option>
-                <Option value="SUPER ADMIN">Super Admin</Option>
-            </Select>
-        </Form.Item>
-    );
 
     return (
         <div>
@@ -268,7 +255,16 @@ function Add() {
                 <Form.Item
                     name="citizenId"
                     label="CCCD/CMND"
-                //rules={[{ whitespace: false }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                        {
+                            pattern: /^[0-9A-z]*[0-9]{4}$/,
+                            message: 'The input is not valid!'
+                        }
+                    ]}
                 >
                     <Input />
                 </Form.Item>
@@ -312,70 +308,26 @@ function Add() {
 
                 <Form.Item
                     //name="employee"
-                    label="Nhân viên quản lý"
+                    label="Chức vụ"
+                    rules={[{ required: true, message: 'Please input role!', }]}
                 >
+                    <Form.List name="roleList"
+                        rules={[
+                            {
+                                validator: async (_, names) => {
+                                    if (!names || names.length < 1) {
+                                        return Promise.reject(new Error('At least 1 role'));
+                                    }
+                                },
+                            },
+                        ]}
+                    >
 
-                    <Space  align="baseline">
-                        <Form.Item
-                            noStyle
-                            shouldUpdate={(prevValues, curValues) =>
-                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                            }
-                        > 
-                                <Form.Item
-                                    name='employeefilter'
-                                >
-                                    <Select style={{ width: 150 }}
-                                        onChange={(e) => {
-                                            if (e == "all") setFilterNV(nhan_vien);
-                                            else
-                                                setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
-                                        }}
-                                    > {chuc_vu?.map((d) =>{
-                                        if (d.isManager)
-                                        return(
-                                        <Option value={d.normalizedName}>{d.normalizedName}</Option>
-                                    )})} </Select>
-                                </Form.Item>
-                           
-                        </Form.Item>
-                        <Form.Item
-                            name='employeename'
-                            rules={[{ required: true, message: 'Missing price' }]}
-                        >
-                            <Select
-                                showSearch
-                                style={{ width: 200 }}
-                                placeholder=""
-                                //onChange={handleChange}
-                                optionFilterProp="children"
-                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                filterSort={(optionA, optionB) =>
-                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                }
-
-                                options={
-                                    filter_nhan_vien?.map((d) => {
-                                        return ({
-                                            label: d.name + " - " + (d.citizenId ? d.citizenId?.slice(-4) : ""),
-                                            value: d.id,
-                                        })
-                                    })
-                                }
-                            />
-                        </Form.Item>
-                    </Space>
-                </Form.Item>
-
-                <Form.Item
-                    //name="employee"
-                    label="Vị trí"
-                >
-                    <Form.List name="roleList">
-                        {(fields, { add, remove }) => (
+                        {(fields, { add, remove }, { errors }) => (
                             <>
+                                                
                                 {fields.map((field) => (
-                                    <Space key={field.key} align="baseline">
+                                    <Space key={field.key} align="start">
                                         <Form.Item
                                             noStyle
                                             shouldUpdate={(prevValues, curValues) =>
@@ -385,7 +337,7 @@ function Add() {
                                             {() => (
                                                 <Form.Item
                                                     {...field}
-                                                    name={[field.name, 'employeefilter']}
+                                                    name={[field.name, 'roleid']}
                                                     rules={[{ required: true, message: 'Please input role!', whitespace: true }]}
                                                 >
                                                     <Select style={{ width: 150 }} >
@@ -398,21 +350,93 @@ function Add() {
                                                 </Form.Item>
                                             )}
                                         </Form.Item>
-
-
                                         <MinusCircleOutlined onClick={() => remove(field.name)} />
                                     </Space>
                                 ))}
 
                                 <Form.Item>
                                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Thêm vị trí
+                                        Thêm
                                     </Button>
+                                    <Form.ErrorList errors={errors} />
                                 </Form.Item>
+                            
                             </>
                         )}
                     </Form.List>
                 </Form.Item>
+
+                <Form.Item
+                    //name="employee"
+                    label="Nhân viên quản lý"
+                >
+
+                    <Space align="baseline">
+                        <Form.Item
+                            noStyle
+                            shouldUpdate={(prevValues, curValues) =>
+                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                            }
+                        >
+                            <Form.Item
+                                name='managerfilter'
+                            >
+                                <Select style={{ width: 150 }}
+                                    defaultValue=""
+                                    onChange={(e) => {
+                                        if (e != "")
+                                            setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
+                                    }}
+                                >
+                                    <Option>Không có</Option>
+                                    {chuc_vu?.map((d) => {
+                                        if (d.isManager)
+                                            return (
+                                                <Option value={d.normalizedName}>{d.normalizedName}</Option>
+                                            )
+                                    })} </Select>
+                            </Form.Item>
+
+                        </Form.Item>
+                        <Form.Item
+                            name='managername'
+                            rules={[{ 
+                                required: form.getFieldValue('managerfilter'), 
+                                message: 'Please input manager or choose "Không có"!', 
+                            }]}
+                        >
+                            <Select
+                                showSearch
+                                disabled={!form.getFieldValue('managerfilter')}
+                                style={{ width: 200 }}
+                                placeholder=""
+                                //onChange={handleChange}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+
+                                options={
+                                    filter_nhan_vien?.map((d) => {
+                                        /* if (d.name == undefined)
+                                         return ({
+                                             label: "",
+                                             //value: ,
+                                         })
+                                         else*/
+                                        return ({
+                                            label: d.name + " - " + (d.citizenId ? d.citizenId?.slice(-4) : ""),
+                                            value: d.id,
+                                        })
+                                    })
+                                }
+                            />
+                        </Form.Item>
+                    </Space>
+                </Form.Item>
+
+
                 {(errorMessage()) &&
                     <span style={{
                         color: "red",

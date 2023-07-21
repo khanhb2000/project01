@@ -5,15 +5,12 @@ import { ServicePackageListState } from '../../../app/type.d';
 import { calculateRange, sliceData } from '../../table-pagination';
 import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, List, Select, Space } from 'antd';
-import { Button, Table, Divider,Card, Col, Row } from 'antd';
+import { Button, Table, Divider, Card, Col, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 import Cookies from 'universal-cookie';
-const cookies = new Cookies()
-const token = cookies.get("token")?.token;
-
 
 interface DataType {
     key: React.Key;
@@ -27,7 +24,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: '',
         dataIndex: 'image',
-        width:'300px',
+        width: '300px',
         render: (text) => <a>
             <img
                 width={272}
@@ -39,17 +36,17 @@ const columns: ColumnsType<DataType> = [
         title: '',
         dataIndex: 'name',
         render: (item) => <>
-        <div className='item-content'>
-            <a>{item}</a>
-            <span>Nội dung </span></div>
+            <div className='item-content'>
+                <a>{item}</a>
+                <span>Nội dung </span></div>
             <div className='bonus-content'>
-            <div>Đã bán: </div>
-        </div></>,
+                <div>Đã bán: </div>
+            </div></>,
     },
     {
         title: 'Action',
         key: 'action',
-        width:'112px',
+        width: '112px',
         render: (_, record) => (
             <Space size="small">
                 <Button size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
@@ -87,6 +84,8 @@ export default function Services() {
 
 
     useEffect(() => {
+        const cookies = new Cookies()
+        const token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/ServicePackages',
@@ -236,33 +235,34 @@ export default function Services() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-{0&&
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            } 
-             <Row gutter={16}>
-    
-    {dataListShow.map((d) => { 
-    return(
-               <Col span={8}> <Card
-    style={{ width: 300 }}
-    cover={
-      <img
-        alt="example"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-      />
-    }
-    actions={[
-      <SettingOutlined key="setting" />,
-      <EditOutlined key="edit" />,
-      <EllipsisOutlined key="ellipsis" />,
-    ]}
-  >
-    <Meta
-      title={d.name}
-      description="This is the description"
-    />
-  </Card></Col>)})} 
-  </Row>
+                {0 &&
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                }
+                <Row gutter={16}>
+
+                    {dataListShow.map((d) => {
+                        return (
+                            <Col span={8}> <Card
+                                style={{ width: 300 }}
+                                cover={
+                                    <img
+                                        alt="example"
+                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                    />
+                                }
+                                actions={[
+                                    <SettingOutlined key="setting" />,
+                                    <EditOutlined key="edit" />,
+                                    <EllipsisOutlined key="ellipsis" />,
+                                ]}
+                            >
+                                <Meta
+                                    title={d.name}
+                                    description="This is the description"
+                                />
+                            </Card></Col>)
+                    })}
+                </Row>
                 {/*<table>
                 <thead>
                     <th>ID</th>
