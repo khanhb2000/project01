@@ -18,6 +18,7 @@ import Employees from './pages/user/employee/Employee';
 //Importing Bootstrap 5
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
+import PopupScreen from './component/popupscreen/PopupScreen';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="dashboard/*" element={<Dashboard />} />
           <Route path="*" element={<div></div>} />
-          <Route path="profile" element={< Profile />} />
+          {/* <Route path="profile" element={< Profile />} /> */}
           <Route path="myservice" element={<MyService />} />
           <Route path="myvoucher" element={<MyVoucher />} />
           <Route path="history" element={< History />} />
@@ -36,7 +37,7 @@ function App() {
           <Route path="services" element={<Services />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
-
+          <Route path="profile" element={<PopupScreen />} />
         </Routes>
       </div>
     </BrowserRouter>

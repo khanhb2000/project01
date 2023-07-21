@@ -15,6 +15,7 @@ import { ListItemIcon, ListItemText } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Cookies from 'universal-cookie';
+import PopupScreen from '../popupscreen/PopupScreen';
 
 export default function Header() {
     // Select data from store
@@ -27,6 +28,7 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
+    const [popup, setPopup] = useState(false)
 
     // use to display userRole
     dispatch(setMenuRole(userRole));
@@ -37,15 +39,14 @@ export default function Header() {
         dispatch(logout())
         cookies.remove("token");
         navigate("/login")
-        console.log(cookies.get("token")?.token);
-        
     };
 
 
 
     // show up the information of user on the screen
     const handlePopUpInformation = () => {
-
+        setPopup(true);
+        setAnchorEl(null);
     }
 
     // show settings
@@ -67,23 +68,25 @@ export default function Header() {
 
 
     return (
-        <div className='dashbord-header-container'>
-            <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
+        <React.Fragment>
+            <PopupScreen isPopup={popup} setPopup={setPopup}/>
+            <div className='dashbord-header-container'>
+                <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
 
-            <div className='dashbord-header-right'>
-                <h4>
-                    Welcome {cookies.get("token")?.information.name}
-                </h4>
-                <img
-                    src={SettingsIcon}
-                    alt='settings-icon'
-                    className='dashbord-header-icon'
-                    onClick={handleClickAccount}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                />
-                {/*<img 
+                <div className='dashbord-header-right'>
+                    <h4>
+                        Welcome {cookies.get("token")?.information.name}
+                    </h4>
+                    <img
+                        src={SettingsIcon}
+                        alt='settings-icon'
+                        className='dashbord-header-icon'
+                        onClick={handleClickAccount}
+                        aria-controls={open ? 'account-menu' : undefined}
+                        // aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                    />
+                    {/*<img 
                 src={NotificationIcon}
                 alt='notification-icon'
                 className='dashbord-header-icon' />
@@ -91,62 +94,63 @@ export default function Header() {
                 className='dashbord-header-avatar'
 src='https://reqres.in/img/faces/9-image.jpg' />*/}
 
-                <Menu
-                    anchorEl={anchorEl}
-                    id="account-menu"
-                    open={open}
-                    onClose={handleClose}
-                    // onClick={handleClose}
-                    PaperProps={{
-                        elevation: 0,
-                        sx: {
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                            mt: 1.5,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="account-menu"
+                        open={open}
+                        onClose={handleClose}
+                        // onClick={handleClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                mt: 1.5,
+                                '& .MuiAvatar-root': {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                '&:before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 14,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
                             },
-                            '&:before': {
-                                content: '""',
-                                display: 'block',
-                                position: 'absolute',
-                                top: 0,
-                                right: 14,
-                                width: 10,
-                                height: 10,
-                                bgcolor: 'background.paper',
-                                transform: 'translateY(-50%) rotate(45deg)',
-                                zIndex: 0,
-                            },
-                        },
-                    }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                >
-                    <MenuItem onClick={handlePopUpInformation}>
-                        <ListItemIcon>
-                            <PersonIcon fontSize='medium' />
-                        </ListItemIcon>
-                        <ListItemText style={{ textAlign: "center" }}>
-                            {cookies.get("token")?.role.normalizedName}
-                        </ListItemText>
+                        }}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    >
+                        <MenuItem onClick={handlePopUpInformation}>
+                            <ListItemIcon>
+                                <PersonIcon fontSize='medium' />
+                            </ListItemIcon>
+                            <ListItemText style={{ textAlign: "center" }}>
+                                {cookies.get("token")?.role.normalizedName}
+                            </ListItemText>
 
-                    </MenuItem>
-                    <Divider style={{ margin: "13px 0px" }} />
-                    <MenuItem onClick={handleLogout}>
-                        <ListItemIcon>
-                            <LogoutIcon fontSize='medium' />
-                        </ListItemIcon>
-                        <ListItemText style={{ textAlign: "center" }}>
-                            Log Out
-                        </ListItemText>
-                    </MenuItem>
-                </Menu>
+                        </MenuItem>
+                        <Divider style={{ margin: "13px 0px" }} />
+                        <MenuItem onClick={handleLogout}>
+                            <ListItemIcon>
+                                <LogoutIcon fontSize='medium' />
+                            </ListItemIcon>
+                            <ListItemText style={{ textAlign: "center" }}>
+                                Log Out
+                            </ListItemText>
+                        </MenuItem>
+                    </Menu>
 
+                </div>
             </div>
-        </div>
+        </React.Fragment>
     )
 }
