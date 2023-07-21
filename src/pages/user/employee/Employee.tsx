@@ -8,12 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 import Cookies from 'universal-cookie';
-const cookies = new Cookies()
-const token = cookies.get("token")?.token;
+
 
 interface DataType {
     key: React.Key;
-    id:string;
+    id: string;
     name: string;
     contact: string;
     status: string;
@@ -52,7 +51,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Tình trạng',
         dataIndex: 'status',
-        width:'150px',
+        width: '150px',
         filters: [
             {
                 text: 'Đang hoạt động',
@@ -69,7 +68,7 @@ const columns: ColumnsType<DataType> = [
     {
         title: 'Action',
         key: 'action',
-        width:'112px',
+        width: '112px',
         render: (_, record) => (
             <Space size="small">
                 <Button size={"middle"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
@@ -91,8 +90,12 @@ export default function Employees() {
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
 
+    const dataListShow: DataType[] = [];
+
 
     useEffect(() => {
+        const cookies = new Cookies()
+        const token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Users/All-Users',
@@ -116,14 +119,13 @@ export default function Employees() {
         }, 1000);
     }, []);
 
-    const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id:dataTemp.id,
+        id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
-        status: dataTemp.lockoutEnabled ? "Đang hoạt động" : "Đã khóa",
-        level: dataTemp.roles.map((d)=>d.normalizedName).join(" / "),
+        status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",
+        level: dataTemp.roles.map((d) => d.normalizedName).join(" / "),
     }));
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,20 +167,20 @@ export default function Employees() {
     }
 
     function filterList(filtype: number) {
-            switch (filtype) {
-                case 0:
-                    setData(all_data);
-                    sortList(ascending, sortType);
-                    break;
-                case 1:
-                    setData(data?.filter((a)=>(a.lockoutEnabled==true)));
-                    break;
-                case 2:
-                    setData(data?.filter((a)=>(a.lockoutEnabled==false)));
-                    break;
-                default:
-                    break;
-            }
+        switch (filtype) {
+            case 0:
+                setData(all_data);
+                sortList(ascending, sortType);
+                break;
+            case 1:
+                setData(data?.filter((a) => (a.lockoutEnabled == true)));
+                break;
+            case 2:
+                setData(data?.filter((a) => (a.lockoutEnabled == false)));
+                break;
+            default:
+                break;
+        }
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -260,7 +262,7 @@ export default function Employees() {
                 <h2>Thông tin nhân viên</h2>
                 <button type="submit" className="btn btn-primary"
                     onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                    <Add />        
+                <Add />
             </>}
         </div>
     )

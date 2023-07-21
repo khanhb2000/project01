@@ -36,6 +36,7 @@ export type UserInformationLoginState = {
   "twoFactorEnabled": boolean,
   "lockoutEnd": string | null,
   "lockoutEnabled": boolean,
+  "isBlocked": boolean,
   "salesManager": {} | null,
   "customers": [],
   "roles": RoleState[],
@@ -50,8 +51,9 @@ export type CustomerInformationLoginState = {
   "phoneNumber": string | null,
   "phoneNumberConfirmed": boolean,
   "twoFactorEnabled": boolean,
-  "lockoutEnd": Date,
+  "lockoutEnd": string | null,
   "lockoutEnabled": boolean,
+  "isBlocked": boolean,
   "bookings": [],
   "vouchers": []
 };
@@ -109,6 +111,7 @@ export type CustomerState = {
   "lockoutEnd": Date | null,
   "lockoutEnabled": boolean,
   "citizenId": string | null,
+  "isBlocked": boolean,
   "bookings"?: [],
   "vouchers"?: []
 };
@@ -131,6 +134,7 @@ export type UserState = {
   "vouchers"?: [],
   "userName": string,
   "normalizedUserName": string,
+  "isBlocked": boolean,
   "salesManager": {
     /* "id": string,
      "name": string,*/

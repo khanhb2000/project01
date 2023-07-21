@@ -10,8 +10,6 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 
 import Cookies from 'universal-cookie';
-const cookies = new Cookies()
-const token = cookies.get("token")?.token;
 
 interface DataType {
     key: React.Key;
@@ -95,6 +93,8 @@ export default function Vouchers() {
     const [filterType, setFilterType] = useState(0);
 
     useEffect(() => {
+        const cookies = new Cookies()
+        const token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/VoucherTypes',
