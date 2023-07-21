@@ -70,10 +70,12 @@ export default function Customers() {
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
 
+    var cookies = new Cookies()
+    var token = cookies.get("token")?.token;
 
     useEffect(() => {
-        const cookies = new Cookies()
-        const token = cookies.get("token")?.token;
+        cookies = new Cookies()
+        token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
             'http://bevm.e-biz.com.vn/api/Customers/All-Customers',
