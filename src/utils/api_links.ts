@@ -10,7 +10,13 @@ const api_links = {
             registerNewCustomer: `${authUrl}api/Register/Customer`,
             blockUser: `${authUrl}api/Users`,
             blockCustomer: `${authUrl}api/Customers`,
-            updateInformationForUser: `${authUrl}api/Users`,
+            updateInformationForUser:
+            {
+                url: `${authUrl}api/Users`,
+                method: "PUT",
+                data: {},
+                token: ""
+            },
             resetPasswordForUser: `${authUrl}api/Users/Reset-Password`,
             updateInformationForCus: `${authUrl}api/Customers`,
             resetPasswordForCus: `${authUrl}api/Customers/Reset-Password`,
@@ -28,7 +34,12 @@ const api_links = {
 
         },
         customer: {
-            updateInformation: `${authUrl}api/Customers`,
+            updateInformation: {
+                url: `${authUrl}api/Customers`,
+                method: "PUT",
+                data: {},
+                token: ""
+            },
             resetPassword: `${authUrl}api/Customers/Reset-Password`,
             login: `${authUrl}api/Login/Customer`
         }

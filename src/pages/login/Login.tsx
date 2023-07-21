@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -32,12 +32,13 @@ export default function Login() {
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
 
-  //useState
+  //useState, useNavigate
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  
+  
   //variable
   const cookies = new Cookies();
   const dispatch = useAppDispatch();
@@ -58,13 +59,12 @@ export default function Login() {
     if (errorMessage2) {
       if (typeof Object.values(errorMessage2)[0] == "string") {
         return Object.values(errorMessage2)[0];
-    }
+      }
       return Object.values(errorMessage2)[0][0];
     }
     if (errorMessage1)
       return errorMessage1;
   };
-
 
   const handleLogin = async () => {
     setIsLoading(true);
