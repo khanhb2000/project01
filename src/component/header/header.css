@@ -1,11 +1,11 @@
 .header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    background-color: rgb(173, 186, 198);
-    color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background-color: rgb(173, 186, 198);
+  color: white;
 }
 
 .dashbord-header-container {
@@ -16,6 +16,7 @@
   justify-content: space-between;
   height: 20px;
 }
+
 .dashbord-header-btn {
   padding: 0.8em;
   padding-left: 2em;
@@ -29,31 +30,43 @@
   border: 1px solid #015C92;
   background-color: #015C92;
 }
+
 .dashbord-header-btn:hover {
   color: #015C92;
   border: 1px solid #015C92;
   background-color: #F0F2F5;
 }
+
 .dashbord-header-right {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
+
 .dashbord-header-icon {
   width: 50px;
   margin-right: 10px;
   cursor: pointer;
   padding: 10px;
 }
+
 .dashbord-header-avatar {
   width: 40px;
   height: 40px;
   cursor: pointer;
   border-radius: 20px;
 }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-      animation: App-logo-float infinite 3s ease-in-out;
-    }
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-float infinite 3s ease-in-out;
   }
+}
+
+.ant-dropdown-menu-item:hover{
+  background-color: #a3d1ec !important;
+}
+
+.ant-dropdown-menu-item{
+  padding: 15px !important;
+}

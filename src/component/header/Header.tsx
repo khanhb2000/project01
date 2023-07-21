@@ -16,6 +16,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Cookies from 'universal-cookie';
 import PopupScreen from '../popupscreen/PopupScreen';
+import type { MenuProps } from 'antd';
+import { Dropdown } from 'antd'
+import { UserOutlined, LogoutOutlined, SettingTwoTone, SettingOutlined } from '@ant-design/icons'
 
 export default function Header() {
     // Select data from store
@@ -46,7 +49,7 @@ export default function Header() {
     // show up the information of user on the screen
     const handlePopUpInformation = () => {
         setPopup(true);
-        setAnchorEl(null);
+        // setAnchorEl(null);
     }
 
     // show settings
@@ -64,12 +67,40 @@ export default function Header() {
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
-        
+
     };
-    
+
+
+    const items: MenuProps['items'] = [
+        {
+            label: (
+                <p onClick={handlePopUpInformation} style={{ fontSize: "15px", marginBottom: "0" }}>
+                    {cookies.get("token")?.role.normalizedName}
+                </p>
+            ),
+            key: '0',
+            icon: <UserOutlined />
+        },
+        {
+            label: (
+                <p style={{ fontSize: "15px", marginBottom: "0" }}>Cài đặt</p>
+            ),
+            key: "1",
+            icon: <SettingOutlined />
+        }
+        ,
+        {
+            label: (
+                <p onClick={handleLogout} style={{ fontSize: "15px", marginBottom: "0" }}>Đăng xuất</p>
+            ),
+            key: '2',
+            icon: <LogoutOutlined />
+        }
+    ]
+
     return (
         <React.Fragment>
-            <PopupScreen isPopup={popup} setPopup={setPopup}/>
+            <PopupScreen isPopup={popup} setPopup={setPopup} />
             <div className='dashbord-header-container'>
                 <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
 
@@ -77,15 +108,10 @@ export default function Header() {
                     <h4>
                         Welcome {cookies.get("token")?.information.name}
                     </h4>
-                    <img
-                        src={SettingsIcon}
-                        alt='settings-icon'
-                        className='dashbord-header-icon'
-                        onClick={handleClickAccount}
-                        aria-controls={open ? 'account-menu' : undefined}
-                        // aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                    />
+                    <Dropdown menu={{ items }} overlayStyle={{ padding: "20px 0px 20px 20px" }}>
+                        <SettingTwoTone style={{ cursor: "pointer", marginLeft: "15px", marginBottom: "5px" }} />
+                    </Dropdown>
+
                     {/*<img 
                 src={NotificationIcon}
                 alt='notification-icon'
@@ -94,7 +120,7 @@ export default function Header() {
                 className='dashbord-header-avatar'
 src='https://reqres.in/img/faces/9-image.jpg' />*/}
 
-                    <Menu
+                    {/* <Menu
                         anchorEl={anchorEl}
                         id="account-menu"
                         open={open}
@@ -144,10 +170,10 @@ src='https://reqres.in/img/faces/9-image.jpg' />*/}
                                 <LogoutIcon fontSize='medium' />
                             </ListItemIcon>
                             <ListItemText style={{ textAlign: "center" }}>
-                                Log Out
+                                Đăng xuất
                             </ListItemText>
                         </MenuItem>
-                    </Menu>
+                    </Menu> */}
 
                 </div>
             </div>
