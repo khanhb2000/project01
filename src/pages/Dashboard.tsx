@@ -18,6 +18,7 @@ import Customers from './user/customers/Customers';
 import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
+import BookDetail from './Productdetail/product-detail';
 
 export default function Dashboard() {
 
@@ -49,6 +50,7 @@ export default function Dashboard() {
           <Route path="services" element={<Services />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
+          <Route path="/detail/:id" element={<BookDetail />} />
         </Routes>
       </div>
     </div>
