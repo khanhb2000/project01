@@ -9,6 +9,7 @@ import { MenuProps, Menu } from 'antd';
 import { Dropdown } from 'antd'
 import { UserOutlined, LogoutOutlined, SettingTwoTone, SettingOutlined, SettingFilled } from '@ant-design/icons'
 import PopupScreenInformation from '../popupscreeninformation/PopupScreen';
+import PopupScreenPassword from '../popupscreenchangepassword/PopupScreenPassword';
 
 export default function Header() {
     // Select data from store
@@ -21,7 +22,9 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const [popup, setPopup] = useState(false)
+    const [popupInformation, setPopupInformation] = useState(false) // popup for information
+    const [popupPassword, setPopupPassword] = useState(false) // popup for chaging password
+
 
     // use to display userRole
     dispatch(setMenuRole(userRole));
@@ -37,8 +40,12 @@ export default function Header() {
 
     // show up the information of user on the screen
     const handlePopUpInformation = () => {
-        setPopup(true);
+        setPopupInformation(true);
         // setAnchorEl(null);
+    }
+
+    const handlePopUpChangingPassword = () => {
+        setPopupPassword(true);
     }
 
     // show settings
@@ -59,7 +66,9 @@ export default function Header() {
 
     };
 
-    // Display Menu Component on the screen
+
+
+    // Display menu component on the screen
     type MenuItem = Required<MenuProps>['items'][number];
     function getItem(
         label: React.ReactNode,
@@ -80,18 +89,18 @@ export default function Header() {
         getItem("Cài đặt", 'menu', <SettingFilled />, [
             getItem(<span>{cookies.get("token").role?.normalizedName}</span>, '1', <UserOutlined />),
             getItem(<span>Thay đổi mật khẩu</span>, '2', <SettingOutlined />),
-            getItem(<span onClick={handleLogout}>Đăng xuất</span>, '3', <LogoutOutlined />),
+            getItem(<span>Đăng xuất</span>, '3', <LogoutOutlined />),
         ]),
     ]
 
+    // to do the action on the menu component
     const onClick: MenuProps['onClick'] = (e) => {
         switch (e.key) {
             case "1":
                 handlePopUpInformation()
                 break;
             case "2":
-                console.log('hahaha');
-
+                handlePopUpChangingPassword()
                 break;
 
             case "3":
@@ -103,7 +112,8 @@ export default function Header() {
 
     return (
         <React.Fragment>
-            <PopupScreenInformation isPopup={popup} setPopup={setPopup} />
+            <PopupScreenInformation isPopup={popupInformation} setPopup={setPopupInformation} />
+            <PopupScreenPassword  isPopup = {popupPassword} setPopup={setPopupPassword}/>
             <div className='dashbord-header-container'>
                 <div className='dashbord-header-right'>
                     <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
@@ -117,7 +127,7 @@ export default function Header() {
                     <Menu
                         onClick={onClick}
                         className='dashboard-header-setting--menu'
-                        style={{ width: 256}}
+                        style={{ width: 256 }}
                         mode="inline"
                         items={items}
 
