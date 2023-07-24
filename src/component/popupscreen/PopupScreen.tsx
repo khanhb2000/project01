@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectInformation } from "../../pages/login/loginSlice";
 import './popupscreen.css'
 import { Button, Col, Form, Input, Modal, Row, message } from "antd";
@@ -6,22 +6,19 @@ import Cookies from "universal-cookie";
 import React, { FormEvent, useEffect, useState } from "react";
 import api_links from "../../utils/api_links";
 import fetch_Api from "../../utils/api_function";
+import { Rule } from 'antd/lib/form';
 
 
 export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
 
-    //useState
-    const [loading, setLoading] = useState(false)
+    //useState, useDispatch, useEffect
     const [form] = Form.useForm()
-
 
     //get data
     const cookies = new Cookies()
     const data = cookies.get("token")?.information
     const role = cookies.get("token")?.role
 
-    console.log(role.normalizedName);
-    
     const handleCancel = () => {
         setPopup(false);
     }
@@ -33,10 +30,14 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
                 const updateInformationUser = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
                 updateInformationUser.data = values
                 updateInformationUser.token = cookies.get("token").token
+
                 fetch_Api(updateInformationUser)
                     .then((res) => {
-                        message.success(res.data.message)
-                        setPopup(false);
+                        if (res.status == 200) {
+                            cookies.set("token", { ...cookies.get("token"), information: updateInformationUser.data }, { path: "/", maxAge: 3600 })
+                            message.success(res.data.message)
+                            setPopup(false);
+                        }
                     })
                     .catch((reason) => {
                         message.error("Dữ liệu không đổi")
@@ -51,7 +52,7 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
 
     return (
         <Modal
-            title="Information"
+            title="Thông tin"
             open={isPopup}
             onCancel={handleCancel}
             footer={[
@@ -69,8 +70,8 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
                 <Row>
                     <Col span={24}>
                         <Form.Item
-                            label="Name"
-                            name="Name"
+                            label="Tên"
+                            name="name"
                             rules={[{ required: true, message: 'Please input your name!' }]}
                             initialValue={data?.name}
                         >
@@ -80,8 +81,8 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
 
                     <Col span={24}>
                         <Form.Item
-                            label="Citizen Id"
-                            name="CitizenId"
+                            label="CMND"
+                            name="citizenId"
                             rules={[{ required: true, message: 'Please input your citizen id!' }]}
                             initialValue={data?.citizenId}
                         >
@@ -93,7 +94,7 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
                     <Col span={24}>
                         <Form.Item
                             label="Email"
-                            name="Email"
+                            name="email"
                             rules={[{ required: true, message: 'Please input your email!' }]}
                             initialValue={data?.email}
                         >
@@ -102,8 +103,8 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
                     </Col>
                     <Col span={24}>
                         <Form.Item
-                            label="Phone Number"
-                            name="PhoneNumber"
+                            label="Số Điện thoại"
+                            name="phoneNumber"
                             rules={[{ required: true, message: 'Please input your phone number!' }]}
                             initialValue={data?.phoneNumber}
                         >

@@ -14,6 +14,7 @@ import {
   selectRole,
   selectInformation
 
+
 } from './loginSlice';
 import api_links from '../../utils/api_links';
 import Cookies from 'universal-cookie';
@@ -24,8 +25,8 @@ import { unescapeLeadingUnderscores } from 'typescript';
 export default function Login() {
 
   // Select data from store
-  //not using const isLoading = useAppSelector(selectLoading);  
   //not using const errorMessage = useAppSelector(selectErrorMessage);  const isSuccess = useAppSelector(selectSuccess);
+  const isSuccess = useAppSelector(selectSuccess);
   const errorMessage1 = useAppSelector(selectMessage);
   const errorMessage2 = useAppSelector(selectError);
   const token = useAppSelector(selectToken);
@@ -37,8 +38,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  
+
+
   //variable
   const cookies = new Cookies();
   const dispatch = useAppDispatch();
@@ -68,11 +69,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }));
-      setIsLoading(false);
-    }, 1000)
-
+    dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }))
   };
 
   const checkKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +133,7 @@ export default function Login() {
           <button onClick={handleLogin}>
             Login
           </button>
-          {isLoading && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
+          {isSuccess && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
         </div>
         {(errorMessage()) &&
           <span style={{

@@ -7,7 +7,7 @@ export type LoginState = {
           AccountInformation: string[]|null;
           ConfirmPassword:string[]|null;*/
   } | string[] | null,
-  "token": string | null,
+  "token": string | undefined,
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
   "role": RoleState|null,
@@ -17,6 +17,7 @@ export type RoleState = {
   "id": string,
   "normalizedName": string,
   "isManager": boolean,
+  "isDeleted"?: boolean
   "roleClaims": [],
 };
 

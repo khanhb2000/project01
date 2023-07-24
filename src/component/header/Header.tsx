@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import "./header.css"
-import { logout, selectInformation, selectRole } from '../../pages/login/loginSlice';
+import { logout, selectInformation, selectRole, selectSuccess } from '../../pages/login/loginSlice';
 import { setOpenMenu, setMenuRole } from './headerSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -70,12 +70,12 @@ export default function Header() {
 
     };
 
-
+    //Display Menu Component on the screen
     const items: MenuProps['items'] = [
         {
             label: (
                 <p onClick={handlePopUpInformation} style={{ fontSize: "15px", marginBottom: "0" }}>
-                    {cookies.get("token")?.role.normalizedName}
+                    {cookies.get("token").role?.normalizedName}
                 </p>
             ),
             key: '0',
@@ -106,7 +106,7 @@ export default function Header() {
 
                 <div className='dashbord-header-right'>
                     <h4>
-                        Welcome {cookies.get("token")?.information.name}
+                        Welcome {cookies.get("token").information?.name}
                     </h4>
                     <Dropdown menu={{ items }} overlayStyle={{ padding: "20px 0px 20px 20px" }}>
                         <SettingTwoTone style={{ cursor: "pointer", marginLeft: "15px", marginBottom: "5px" }} />
