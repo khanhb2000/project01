@@ -9,7 +9,7 @@ import fetch_Api from "../../utils/api_function";
 import { Rule } from 'antd/lib/form';
 
 
-export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
+export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
 
     //useState, useDispatch, useEffect
     const [form] = Form.useForm()
