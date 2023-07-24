@@ -18,6 +18,7 @@ import Customers from './user/customers/Customers';
 import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
+import BookDetail from './Productdetail/product-detail';
 
 export default function Dashboard() {
 
@@ -29,31 +30,32 @@ export default function Dashboard() {
   const cookies = new Cookies();
   // 
   const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
-  console.log("login",cookies.get("token")?.role.normalizedName);
+  console.log("login", cookies.get("token")?.role.normalizedName);
 
-  
-  if (cookies.get("token")?.token == undefined ){
-    return (<Navigate replace to ="/login"/>)
+
+  if (cookies.get("token")?.token == undefined) {
+    return (<Navigate replace to="/login" />)
   }
-    return (
-      <div className='dashboard-container'>
-        <Header />
-        <div className='dashboard-body'>
-          {isMenu && <SideBar menu={sidebar_menu} /> // theem user role}
-          }
-          <Routes>
-            <Route path="*" element={<div></div>} />
-            <Route path="profile" element={< Profile />} />
-            <Route path="myservice" element={<MyService />} />
-            <Route path="myvoucher" element={<MyVoucher />} />
-            <Route path="history" element={< History />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="services" element={<Services />} />
-            <Route path="vouchers" element={<Vouchers />} />
-            <Route path="employee" element={<Employees />} />
-          </Routes>
-        </div>
+  return (
+    <div className='dashboard-container'>
+      <Header />
+      <div className='dashboard-body'>
+        {isMenu && <SideBar menu={sidebar_menu} /> // theem user role}
+        }
+        <Routes>
+          <Route path="*" element={<div></div>} />
+          <Route path="profile" element={< Profile />} />
+          <Route path="myservice" element={<MyService />} />
+          <Route path="myvoucher" element={<MyVoucher />} />
+          <Route path="history" element={< History />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="services" element={<Services />} />
+          <Route path="vouchers" element={<Vouchers />} />
+          <Route path="employee" element={<Employees />} />
+          <Route path="/detail/:id" element={<BookDetail />} />
+        </Routes>
       </div>
-    );
+    </div>
+  );
 
 }

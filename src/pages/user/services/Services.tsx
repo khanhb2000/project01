@@ -237,9 +237,9 @@ export default function Services() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-                {0 &&
+                
                     <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-                }
+                {false &&
                 <Row gutter={16}>
 
                     {dataListShow.map((d) => {
@@ -264,7 +264,7 @@ export default function Services() {
                                 />
                             </Card></Col>)
                     })}
-                </Row>
+                </Row>}
                 {/*<table>
                 <thead>
                     <th>ID</th>

@@ -14,6 +14,7 @@ import Customers from './pages/user/customers/Customers';
 import Services from './pages/user/services/Services';
 import Vouchers from './pages/user/vouchers/Vouchers';
 import Employees from './pages/user/employee/Employee';
+import BookDetail from './pages/Productdetail/product-detail';
 
 //Importing Bootstrap 5
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -36,7 +37,7 @@ function App() {
           <Route path="services" element={<Services />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
-
+          <Route path="/detail/:id" element={<BookDetail />} />
         </Routes>
       </div>
     </BrowserRouter>
