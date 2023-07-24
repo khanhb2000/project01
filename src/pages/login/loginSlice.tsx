@@ -12,7 +12,7 @@ const initialState: LoginState = {
   "message": "",
   "isSuccess": false,
   "errors": null,
-  "token": "",
+  "token": undefined,
   "customerInformation": null,
   "userInformation": null,
   "role": {
@@ -54,22 +54,19 @@ export const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: () => initialState,
-    /*    setOpenMenu: (state) => {
-          //state.isOpenMenu = !state.isOpenMenu;
-        },*/
+
   },
   extraReducers: (builder) => {
     // Start login request
     builder.addCase(login.pending, (state) => {
-      //state.isLoading = true;
-
+      state.isSuccess = true;
     });
 
     // Request successful
     builder.addCase(login.fulfilled, (state, action) => {
       state.token = action.payload.token;
       state.errors = action.payload.errors;
-      state.isSuccess = action.payload.isSuccess;
+      state.isSuccess = false;
       state.message = action.payload.message;
       state.customerInformation = action.payload.customerInformation;
       state.userInformation = action.payload.userInformation;
@@ -104,8 +101,9 @@ export const selectSuccess = (state: RootState) => state.login.isSuccess;
 export const selectMessage = (state: RootState) => state.login.message;
 export const selectToken = (state: RootState) => state.login.token;
 export const selectError = (state: RootState) => state.login.errors;
-export const selectInformation = (state: RootState) => state.login.userInformation ? state.login.userInformation : state.login.customerInformation;
+export const selectInformation = (state: RootState) => state.login.userInformation != null ? state.login.userInformation : state.login.customerInformation;
 export const selectRole = (state: RootState) => state.login.role;
+export const selectLogin = (state: RootState) => state.login
 
 // Export reducer
 export default loginSlice.reducer;

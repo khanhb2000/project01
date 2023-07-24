@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -14,6 +14,7 @@ import {
   selectRole,
   selectInformation
 
+
 } from './loginSlice';
 import api_links from '../../utils/api_links';
 import Cookies from 'universal-cookie';
@@ -24,19 +25,20 @@ import { unescapeLeadingUnderscores } from 'typescript';
 export default function Login() {
 
   // Select data from store
-  //not using const isLoading = useAppSelector(selectLoading);  
   //not using const errorMessage = useAppSelector(selectErrorMessage);  const isSuccess = useAppSelector(selectSuccess);
+  const isSuccess = useAppSelector(selectSuccess);
   const errorMessage1 = useAppSelector(selectMessage);
   const errorMessage2 = useAppSelector(selectError);
   const token = useAppSelector(selectToken);
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
 
-  //useState
+  //useState, useNavigate
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
 
   //variable
   const cookies = new Cookies();
@@ -58,21 +60,16 @@ export default function Login() {
     if (errorMessage2) {
       if (typeof Object.values(errorMessage2)[0] == "string") {
         return Object.values(errorMessage2)[0];
-    }
+      }
       return Object.values(errorMessage2)[0][0];
     }
     if (errorMessage1)
       return errorMessage1;
   };
 
-
   const handleLogin = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }));
-      setIsLoading(false);
-    }, 1000)
-
+    dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }))
   };
 
   const checkKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +133,7 @@ export default function Login() {
           <button onClick={handleLogin}>
             Login
           </button>
-          {isLoading && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
+          {isSuccess && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
         </div>
         {(errorMessage()) &&
           <span style={{

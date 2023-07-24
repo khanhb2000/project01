@@ -5,18 +5,18 @@ import { store } from './app/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-import { BrowserRouter as BrowserRouter, Router, Route, Link, NavLink,Routes } from "react-router-dom";
+import { BrowserRouter as BrowserRouter, Router, Route, Link, NavLink, Routes } from "react-router-dom";
 
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
+
+  <Provider store={store}>
+    <App />
+  </Provider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

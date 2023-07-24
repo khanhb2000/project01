@@ -383,7 +383,7 @@ function Add() {
                                 "message": null,
                                 "isSuccess": false,
                                 "errors": null,
-                                "token": null,
+                                "token": undefined,
                                 "userInformation": null,
                                 "customerInformation": null,
                                 "role": null,
