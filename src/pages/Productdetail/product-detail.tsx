@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Row, Col, Button, Rate, Carousel, Descriptions } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
 import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons';
 import { CustomerState } from '../../app/type.d';
 import Cookies from 'universal-cookie';

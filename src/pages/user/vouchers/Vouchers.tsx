@@ -276,9 +276,9 @@ export default function Vouchers() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-                {0 &&
+                
                     <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-                }               <Row gutter={16}>
+                {false &&              <Row gutter={16}>
 
                     {dataListShow.map((d) => {
                         return (
@@ -302,7 +302,7 @@ export default function Vouchers() {
                                 />
                             </Card></Col>)
                     })}
-                </Row>
+                </Row> }
 
             </>}
         </div>
