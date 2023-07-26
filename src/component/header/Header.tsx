@@ -4,21 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import "./header.css"
 import { logout, selectInformation, selectRole, selectSuccess } from '../../pages/login/loginSlice';
 import { setOpenMenu, setMenuRole } from './headerSlice';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-regular-svg-icons';
-import NotificationIcon from '../../app/assets/icons/notification.svg';
-import SettingsIcon from '../../app/assets/icons/settings.svg';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { Divider } from 'antd'
-import { ListItemIcon, ListItemText } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import LogoutIcon from '@mui/icons-material/Logout';
 import Cookies from 'universal-cookie';
-import PopupScreen from '../popupscreen/PopupScreen';
-import type { MenuProps } from 'antd';
+import { MenuProps, Menu } from 'antd';
 import { Dropdown } from 'antd'
-import { UserOutlined, LogoutOutlined, SettingTwoTone, SettingOutlined } from '@ant-design/icons'
+import { UserOutlined, LogoutOutlined, SettingTwoTone, SettingOutlined, SettingFilled } from '@ant-design/icons'
+import PopupScreenInformation from '../popupscreeninformation/PopupScreen';
+import PopupScreenPassword from '../popupscreenchangepassword/PopupScreenPassword';
 
 export default function Header() {
     // Select data from store
@@ -31,14 +22,15 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const [popup, setPopup] = useState(false)
+    const [popupInformation, setPopupInformation] = useState(false) // popup for information
+    const [popupPassword, setPopupPassword] = useState(false) // popup for chaging password
+
 
     // use to display userRole
     dispatch(setMenuRole(userRole));
 
     //log out
-    const handleLogout = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
+    const handleLogout = () => {
         dispatch(logout())
         cookies.remove("token");
         navigate("/login")
@@ -48,8 +40,12 @@ export default function Header() {
 
     // show up the information of user on the screen
     const handlePopUpInformation = () => {
-        setPopup(true);
+        setPopupInformation(true);
         // setAnchorEl(null);
+    }
+
+    const handlePopUpChangingPassword = () => {
+        setPopupPassword(true);
     }
 
     // show settings
@@ -70,47 +66,72 @@ export default function Header() {
 
     };
 
-    //Display Menu Component on the screen
+
+
+    // Display menu component on the screen
+    type MenuItem = Required<MenuProps>['items'][number];
+    function getItem(
+        label: React.ReactNode,
+        key: React.Key,
+        icon?: React.ReactNode,
+        children?: MenuItem[],
+        type?: 'group',
+    ): MenuItem {
+        return {
+            key,
+            icon,
+            children,
+            label,
+            type,
+        } as MenuItem;
+    }
     const items: MenuProps['items'] = [
-        {
-            label: (
-                <p onClick={handlePopUpInformation} style={{ fontSize: "15px", marginBottom: "0" }}>
-                    {cookies.get("token").role?.normalizedName}
-                </p>
-            ),
-            key: '0',
-            icon: <UserOutlined />
-        },
-        {
-            label: (
-                <p style={{ fontSize: "15px", marginBottom: "0" }}>Cài đặt</p>
-            ),
-            key: "1",
-            icon: <SettingOutlined />
-        }
-        ,
-        {
-            label: (
-                <p onClick={handleLogout} style={{ fontSize: "15px", marginBottom: "0" }}>Đăng xuất</p>
-            ),
-            key: '2',
-            icon: <LogoutOutlined />
-        }
+        getItem("Cài đặt", 'menu', <SettingFilled />, [
+            getItem(<span>{cookies.get("token").role?.normalizedName}</span>, '1', <UserOutlined />),
+            getItem(<span>Thay đổi mật khẩu</span>, '2', <SettingOutlined />),
+            getItem(<span>Đăng xuất</span>, '3', <LogoutOutlined />),
+        ]),
     ]
+
+    // to do the action on the menu component
+    const onClick: MenuProps['onClick'] = (e) => {
+        switch (e.key) {
+            case "1":
+                handlePopUpInformation()
+                break;
+            case "2":
+                handlePopUpChangingPassword()
+                break;
+
+            case "3":
+                handleLogout();
+                break;
+        }
+    };
+
 
     return (
         <React.Fragment>
-            <PopupScreen isPopup={popup} setPopup={setPopup} />
+            <PopupScreenInformation isPopup={popupInformation} setPopup={setPopupInformation} />
+            <PopupScreenPassword  isPopup = {popupPassword} setPopup={setPopupPassword}/>
             <div className='dashbord-header-container'>
-                <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
-
                 <div className='dashbord-header-right'>
+                    <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
                     <h4>
                         Welcome {cookies.get("token").information?.name}
                     </h4>
-                    <Dropdown menu={{ items }} overlayStyle={{ padding: "20px 0px 20px 20px" }}>
-                        <SettingTwoTone style={{ cursor: "pointer", marginLeft: "15px", marginBottom: "5px" }} />
-                    </Dropdown>
+                </div>
+
+                <div className='dashboard-header-setting'>
+                    .
+                    <Menu
+                        onClick={onClick}
+                        className='dashboard-header-setting--menu'
+                        style={{ width: 256 }}
+                        mode="inline"
+                        items={items}
+
+                    />
 
                     {/*<img 
                 src={NotificationIcon}

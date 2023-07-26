@@ -17,9 +17,24 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            resetPasswordForUser: `${authUrl}api/Users/Reset-Password`,
-            updateInformationForCus: `${authUrl}api/Customers`,
-            resetPasswordForCus: `${authUrl}api/Customers/Reset-Password`,
+            resetPasswordForUser: {
+                url: `${authUrl}api/Users/Reset-Password`,
+                method: "POST",
+                data: {},
+                token: ""
+            },
+            updateInformationForCus: {
+                url: `${authUrl}api/Customers`,
+                method: "PUT",
+                data: {},
+                token: ""
+            },
+            resetPasswordForCus: {
+                url: `${authUrl}api/Customers/Reset-Password`,
+                method: "POST",
+                data: {},
+                token: ""
+            },
             login: `${authUrl}api/Login/User`
         },
         saleAdmin: {
@@ -40,7 +55,12 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            resetPassword: `${authUrl}api/Customers/Reset-Password`,
+            resetPassword: {
+                url: `${authUrl}api/Customers/Reset-Password`,
+                method: "POST",
+                data: {},
+                token: ""
+            },
             login: `${authUrl}api/Login/Customer`
         }
     }

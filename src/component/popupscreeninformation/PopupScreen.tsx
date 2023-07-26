@@ -9,9 +9,9 @@ import fetch_Api from "../../utils/api_function";
 import { Rule } from 'antd/lib/form';
 
 
-export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
+export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
 
-    //useState, useDispatch, useEffect
+    // watch value in form
     const [form] = Form.useForm()
 
     //get data
@@ -27,14 +27,14 @@ export default function PopupScreen({ isPopup, setPopup }: { isPopup?: boolean, 
         form
             .validateFields()
             .then((values) => {
-                const updateInformationUser = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
-                updateInformationUser.data = values
-                updateInformationUser.token = cookies.get("token").token
+                const api_link = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
+                api_link.data = values
+                api_link.token = cookies.get("token").token
 
-                fetch_Api(updateInformationUser)
+                fetch_Api(api_link)
                     .then((res) => {
                         if (res.status == 200) {
-                            cookies.set("token", { ...cookies.get("token"), information: updateInformationUser.data }, { path: "/", maxAge: 3600 })
+                            cookies.set("token", { ...cookies.get("token"), information: api_link.data }, { path: "/", maxAge: 3600 })
                             message.success(res.data.message)
                             setPopup(false);
                         }

@@ -19,7 +19,7 @@ import BookDetail from './pages/Productdetail/product-detail';
 //Importing Bootstrap 5
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import PopupScreen from './component/popupscreen/PopupScreen';
+import PopupScreen from './component/popupscreeninformation/PopupScreen';
 
 function App() {
   return (
