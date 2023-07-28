@@ -5,10 +5,7 @@ import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons';
 import { CustomerState } from '../../app/type.d';
 import Cookies from 'universal-cookie';
 
-import PersonalInformation from './personalInformation';
-//import './productdetail.scss';
-
-function BookDetail() {
+export default function PersonalInformation() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [book, setBook] = useState<CustomerState>();
@@ -51,10 +48,15 @@ function BookDetail() {
     };
 
     return (
-        <div className='user-customerdetail'>
-       <PersonalInformation/>
-        </div>
+        <div className="personal-information">
+            <Descriptions title={book?.name}
+            column={1}>
+                <Descriptions.Item label="ID">{book?.id}</Descriptions.Item>
+                <Descriptions.Item label="CitizenId">{book?.citizenId}</Descriptions.Item>
+                <Descriptions.Item label="Telephone">{book?.phoneNumber}</Descriptions.Item>
+                <Descriptions.Item label="Email">{book?.email}</Descriptions.Item>
+            </Descriptions>
+            </div>
     );
-}
+};
 
-export default BookDetail;

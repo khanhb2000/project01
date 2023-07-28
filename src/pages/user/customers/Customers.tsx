@@ -6,7 +6,7 @@ import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
-
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Cookies from 'universal-cookie';
 
@@ -18,45 +18,6 @@ interface DataType {
     status: string;
 }
 
-const columns: ColumnsType<DataType> = [
-    {
-        title: 'Tên khách hàng',
-        dataIndex: 'name',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Thông tin liên hệ',
-        dataIndex: 'contact',
-    },
-    {
-        title: 'Tình trạng',
-        dataIndex: 'status',
-        width: '150px',
-        filters: [
-            {
-                text: 'Đang hoạt động',
-                value: 'Đang hoạt động',
-            },
-            {
-                text: 'Đã khóa',
-                value: 'Đã khóa',
-            },
-        ],
-        onFilter: (value: any, record) => record.status.indexOf(value) === 0,
-
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        width: '112px',
-        render: (_, record) => (
-            <Space size="small">
-                <Button size={"middle"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-            </Space>
-        ),
-    },
-];
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
@@ -72,6 +33,47 @@ export default function Customers() {
 
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
+    const navigate = useNavigate();
+
+    const columns: ColumnsType<DataType> = [
+        {
+            title: 'Tên khách hàng',
+            dataIndex: 'name',
+            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+        },
+        {
+            title: 'Thông tin liên hệ',
+            dataIndex: 'contact',
+        },
+        {
+            title: 'Tình trạng',
+            dataIndex: 'status',
+            width: '150px',
+            filters: [
+                {
+                    text: 'Đang hoạt động',
+                    value: 'Đang hoạt động',
+                },
+                {
+                    text: 'Đã khóa',
+                    value: 'Đã khóa',
+                },
+            ],
+            onFilter: (value: any, record) => record.status.indexOf(value) === 0,
+
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            width: '112px',
+            render: (_, record) => (
+                <Space size="small">
+                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                </Space>
+            ),
+        },
+    ];
 
     useEffect(() => {
         cookies = new Cookies()

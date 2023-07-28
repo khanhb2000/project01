@@ -35,7 +35,7 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Login/User`
+            login: `${authUrl}api/Auth/Login/User`
         },
         saleAdmin: {
             updateInformation: `${authUrl}api/Users`,
@@ -61,7 +61,7 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Login/Customer`
+            login: `${authUrl}api/Auth/Login/Customer`
         }
     }
 }

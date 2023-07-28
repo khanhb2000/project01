@@ -18,7 +18,11 @@ import Customers from './user/customers/Customers';
 import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
+import CustomerDetail from './user/customers/detail/customer-detail';
 import BookDetail from './Productdetail/product-detail';
+import UMenuNew from '../component/newsider/indexUMenu';
+import CMenuNew from '../component/newsider/indexCMenu';
+import Role from './user/employee/Role';
 
 export default function Dashboard() {
 
@@ -28,7 +32,7 @@ export default function Dashboard() {
   const token = useSelector(selectToken)
   const r = useSelector(selectRole);
   const cookies = new Cookies();
-  const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
+  //const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
 
   if (cookies.get("token")?.token == undefined) {
     return (<Navigate replace to="/login" />)
@@ -38,8 +42,8 @@ export default function Dashboard() {
     <div className='dashboard-container'>
       <Header />
       <div className='dashboard-body'>
-        {isMenu && <SideBar menu={sidebar_menu} /> // theem user role}
-        }
+        {isMenu &&
+          ((cookies.get("token")?.role.id == "0") ? <CMenuNew /> : <UMenuNew />)}
         <Routes>
           <Route path="*" element={<div></div>} />
           <Route path="profile" element={< Profile />} />
@@ -47,10 +51,13 @@ export default function Dashboard() {
           <Route path="myvoucher" element={<MyVoucher />} />
           <Route path="history" element={< History />} />
           <Route path="customers" element={<Customers />} />
+          <Route path="customers/detail/:id" element={<CustomerDetail />} />
           <Route path="services" element={<Services />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
-          <Route path="/detail/:id" element={<BookDetail />} />
+          <Route path="employee/role" element={<Role />} />
+          <Route path="detail/:id" element={<BookDetail />} />
+
         </Routes>
       </div>
     </div>

@@ -35,7 +35,6 @@
     text-align: left;
     justify-content: center;
     max-width: 500px;
-
 }
 
 @media (max-width: 480px) {
@@ -47,7 +46,7 @@
         align-items: center;
     }
 }
-
+/*
 .box-form input {
     margin-top: 5px !important;
 
@@ -56,7 +55,7 @@
     border: none;
     outline: none;
     border-bottom: 2px solid #B0B3B9;
-}
+}*/
 
 .box-form .remember-me--forget-password {
     display: flex;
@@ -196,4 +195,37 @@ label input[type="checkbox"] {
             left: 50%;
         }
     }
+}
+.prelogin{
+    background: #FFFFFF;
+    margin-top: 50px;
+    padding: 40px;
+    text-align: center;
+    justify-content: center;
+    padding-top: 50px;
+    width: 100vw;
+}
+.prelogin-box{
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+}
+.prelogin-button{
+    width: 250px;
+    height: 200px;
+    color: #FFFFFF;
+    margin: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 3px #090b6f85;
+    padding: 10px;
+    text-align: center;
+    justify-content: center;
+    font-weight: bold;
+    background: linear-gradient(#b0bdc3, #487f9e, #91d5ff);
+}
+.prelogin-button:hover{
+    box-shadow: 0 0 10px 6px #090b6f85;
+    background:  linear-gradient(to left,#608094, #7792a3, #12608f);
 }
