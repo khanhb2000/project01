@@ -10,7 +10,7 @@ export type LoginState = {
   "token": string | undefined,
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
-  "role": RoleState|null,
+  "role": RoleState | null,
 };
 
 export type RoleState = {
@@ -81,6 +81,18 @@ export type ServicePackageState = {
 };
 
 export type ServicePackageListState = ServicePackageState[];
+
+export type ServiceState = {
+  href: string | undefined;
+  image: string;
+
+  "id": number,
+  "serviceName": string,
+  "description": string,
+  "servicePackages": [],
+};
+
+export type ServiceListState = ServiceState[];
 
 export type VoucherTypeState = {
   href: string | undefined;

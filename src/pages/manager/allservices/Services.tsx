@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './stylesServices.css';
 //import Add from './addNew';
-import { ServicePackageListState } from '../../../app/type.d';
+import { ServiceListState } from '../../../app/type.d';
 import { calculateRange, sliceData } from '../../table-pagination';
 import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, List, Select, Space } from 'antd';
@@ -72,7 +72,7 @@ const { Meta } = Card;
 
 export default function Services() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<ServicePackageListState>();
+    const [all_data, setAllData] = useState<ServiceListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
 
@@ -90,7 +90,7 @@ export default function Services() {
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/ServicePackages/all',
+            'http://bevm.e-biz.com.vn/api/Services/all',
             {
                 method: 'GET',
                 headers: {
@@ -115,7 +115,7 @@ export default function Services() {
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
         id: String(dataTemp.id),
-        name: dataTemp.servicePackageName,
+        name: dataTemp.serviceName,
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
 
@@ -126,7 +126,7 @@ export default function Services() {
         if (event.target.value !== '') {
             let search_results = all_data?.filter((item) =>
                 String(item.id).toLowerCase().includes(search.toLowerCase()) ||
-                item.servicePackageName.toLowerCase().includes(search.toLowerCase())
+                item.serviceName.toLowerCase().includes(search.toLowerCase())
             );
             setData(search_results);
         }
@@ -139,7 +139,7 @@ export default function Services() {
         if (tang_dan) {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.servicePackageName > b.servicePackageName) ? 1 : -1);
+                    data?.sort((a, b) => (a.serviceName > b.serviceName) ? 1 : -1);
                     break;
                 default:
                     break;
@@ -148,7 +148,7 @@ export default function Services() {
         else {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.servicePackageName < b.servicePackageName) ? 1 : -1);
+                    data?.sort((a, b) => (a.serviceName < b.serviceName) ? 1 : -1);
                     break;
                 default:
                     break;

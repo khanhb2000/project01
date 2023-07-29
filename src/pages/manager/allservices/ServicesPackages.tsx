@@ -70,7 +70,7 @@ const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
 const { Meta } = Card;
 
 
-export default function Services() {
+export default function ServicePackages() {
     const [addForm, setAddForm] = useState(false);
     const [all_data, setAllData] = useState<ServicePackageListState>();
     const [search, setSearch] = useState('');

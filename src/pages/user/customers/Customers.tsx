@@ -80,7 +80,7 @@ export default function Customers() {
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Customers/All-Customers',
+            'http://bevm.e-biz.com.vn/api/Customers/All-Supported-Customers',
             {
                 method: 'GET',
                 headers: {
@@ -194,9 +194,6 @@ export default function Customers() {
                     <div className='dashboard-content-header2-left'>
                         <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
                         </button></div>
 
                     <div className='dashboard-content-header2-right'>

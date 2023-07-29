@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
 import Add from './addNew';
 import { UserListState } from '../../../app/type.d';
@@ -10,19 +9,20 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 import Cookies from 'universal-cookie';
 
+type DataType={
+    "id": string,
+    "normalizedName": string,
+    "isManager": boolean,
+    "roleClaims": 
+      {
+        "id": 1,
+        "claimValue": string,
+      }[]
+}[]
 
-interface DataType {
-    key: React.Key;
-    id: string;
-    name: string;
-    contact: string;
-    status: string;
-    level: string
-}
-
-export default function Employees() {
+export default function Role() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<UserListState>();
+    const [all_data, setAllData] = useState<DataType>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
 
@@ -32,76 +32,16 @@ export default function Employees() {
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
 
-    const dataListShow: DataType[] = [];
-    var cookies = new Cookies();
-    const navigate = useNavigate();
+
+    var cookies = new Cookies()
     var token = cookies.get("token")?.token;
-
-    const columns: ColumnsType<DataType> = [
-        {
-            title: 'Tên Nhân Viên',
-            dataIndex: 'name',
-            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
-        },
-        {
-            title: 'Thông tin liên hệ',
-            dataIndex: 'contact',
-        },
-        {
-            title: 'Chức vụ',
-            dataIndex: 'level',
-            filters: [
-                {
-                    text: 'Super Admin',
-                    value: 'SUPER ADMIN',
-                },
-                {
-                    text: 'Sales Admin',
-                    value: 'SALES ADMIN',
-                },
-                {
-                    text: 'Sales',
-                    value: 'SALES',
-                },
-            ],
-            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
-        },
-        {
-            title: 'Tình trạng',
-            dataIndex: 'status',
-            width: '150px',
-            filters: [
-                {
-                    text: 'Đang hoạt động',
-                    value: 'Đang hoạt động',
-                },
-                {
-                    text: 'Đã khóa',
-                    value: 'Đã khóa',
-                },
-            ],
-            onFilter: (value: any, record) => record.status.indexOf(value) === 0,
-
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            width: '112px',
-            render: (_, record) => (
-                <Space size="small">
-                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                </Space>
-            ),
-        },
-    ];
 
     useEffect(() => {
         cookies = new Cookies()
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Managed-Users',
+            'http://bevm.e-biz.com.vn/api/Roles/All',
             {
                 method: 'GET',
                 headers: {
@@ -122,25 +62,13 @@ export default function Employees() {
         }, 1000);
     }, []);
 
-    data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
-        id: dataTemp.id,
-        name: dataTemp.name,
-        contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
-        status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",
-        level: dataTemp.roles.map((d) => d.normalizedName).join(" / "),
-    }));
-
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
         if (event.target.value !== '') {
             let search_results = all_data?.filter((item) =>
                 String(item.id).toLowerCase().includes(search.toLowerCase()) ||
-                item.name.toLowerCase().includes(search.toLowerCase()) ||
-                item.email?.toLowerCase().includes(search.toLowerCase()) ||
-                item.phoneNumber?.toLowerCase().includes(search.toLowerCase()) ||
-                item.citizenId?.toLowerCase().includes(search.toLowerCase())
-            );
+                item.normalizedName.toLowerCase().includes(search.toLowerCase())
+                );
             setData(search_results);
         }
         else {
@@ -152,7 +80,7 @@ export default function Employees() {
         if (tang_dan) {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.name > b.name) ? 1 : -1);
+                    data?.sort((a, b) => (a.normalizedName > b.normalizedName) ? 1 : -1);
                     break;
                 default:
                     break;
@@ -161,7 +89,7 @@ export default function Employees() {
         else {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.name < b.name) ? 1 : -1);
+                    data?.sort((a, b) => (a.normalizedName < b.normalizedName) ? 1 : -1);
                     break;
                 default:
                     break;
@@ -176,10 +104,10 @@ export default function Employees() {
                 sortList(ascending, sortType);
                 break;
             case 1:
-                setData(data?.filter((a) => (a.lockoutEnabled == true)));
+                setData(data?.filter((a) => (a.isManager == true)));
                 break;
             case 2:
-                setData(data?.filter((a) => (a.lockoutEnabled == false)));
+                setData(data?.filter((a) => (a.isManager == false)));
                 break;
             default:
                 break;
@@ -201,7 +129,7 @@ export default function Employees() {
 
             {!addForm && <>
                 <div className='dashboard-content-header1'>
-                    <h2>Danh sách nhân viên</h2>
+                    <h2>Quyền hạn tài khoản</h2>
 
                     <hr
                         style={{
@@ -213,8 +141,9 @@ export default function Employees() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        
-                    </div>
+                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
+                            Thêm
+                        </button></div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>
@@ -252,8 +181,6 @@ export default function Employees() {
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
                 </span>
-
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
             </>
             }
 

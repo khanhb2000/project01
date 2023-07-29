@@ -101,7 +101,7 @@ export default function Employees() {
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Managed-Users',
+            'http://bevm.e-biz.com.vn/api/Users/All-Users',
             {
                 method: 'GET',
                 headers: {
@@ -213,8 +213,15 @@ export default function Employees() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        
-                    </div>
+                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
+                            Thêm
+                        </button>
+                        <button type="button" className="btn btn-danger" >
+                            Xóa
+                        </button>
+                        <button type="button" className="btn btn-warning" onClick={() => navigate('role')}>
+                            Phân quyền
+                        </button></div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>

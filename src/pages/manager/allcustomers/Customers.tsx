@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './stylesEmployee.css';
+import './stylesCustomers.css';
 import Add from './addNew';
-import { UserListState } from '../../../app/type.d';
+import { CustomerListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Cookies from 'universal-cookie';
-
 
 interface DataType {
     key: React.Key;
@@ -17,12 +16,12 @@ interface DataType {
     name: string;
     contact: string;
     status: string;
-    level: string
 }
 
-export default function Employees() {
+
+export default function Customers() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<UserListState>();
+    const [all_data, setAllData] = useState<CustomerListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
 
@@ -32,39 +31,19 @@ export default function Employees() {
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
 
-    const dataListShow: DataType[] = [];
-    var cookies = new Cookies();
-    const navigate = useNavigate();
+    var cookies = new Cookies()
     var token = cookies.get("token")?.token;
+    const navigate = useNavigate();
 
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Tên Nhân Viên',
+            title: 'Tên khách hàng',
             dataIndex: 'name',
             render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
         },
         {
             title: 'Thông tin liên hệ',
             dataIndex: 'contact',
-        },
-        {
-            title: 'Chức vụ',
-            dataIndex: 'level',
-            filters: [
-                {
-                    text: 'Super Admin',
-                    value: 'SUPER ADMIN',
-                },
-                {
-                    text: 'Sales Admin',
-                    value: 'SALES ADMIN',
-                },
-                {
-                    text: 'Sales',
-                    value: 'SALES',
-                },
-            ],
-            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
         },
         {
             title: 'Tình trạng',
@@ -101,7 +80,7 @@ export default function Employees() {
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Managed-Users',
+            'http://bevm.e-biz.com.vn/api/Customers/All-Customers',
             {
                 method: 'GET',
                 headers: {
@@ -122,13 +101,13 @@ export default function Employees() {
         }, 1000);
     }, []);
 
+    const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
         id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",
-        level: dataTemp.roles.map((d) => d.normalizedName).join(" / "),
     }));
 
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,11 +176,11 @@ export default function Employees() {
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
-        <div className='user-employlist'>
+        <div className='user-customerlist'>
 
             {!addForm && <>
                 <div className='dashboard-content-header1'>
-                    <h2>Danh sách nhân viên</h2>
+                    <h2>Danh sách khách hàng</h2>
 
                     <hr
                         style={{
@@ -213,8 +192,12 @@ export default function Employees() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        
-                    </div>
+                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
+                            Thêm
+                        </button>
+                        <button type="button" className="btn btn-danger" >
+                            Xóa
+                        </button></div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>
@@ -258,10 +241,11 @@ export default function Employees() {
             }
 
             {addForm && <><div className='dashboard-content-header2'>
-                <h2>Thông tin nhân viên</h2>
+                <h2>Thông tin khách hàng</h2>
                 <button type="submit" className="btn btn-primary"
                     onClick={() => setAddForm(!addForm)}>Cancel</button></div>
                 <Add />
+
             </>}
         </div>
     )

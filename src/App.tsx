@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
+import ManagerDashboard from "./pages/ManagerDashboard";
 import Login from "./pages/login/Login";
 import PreLogin from "./pages/login/preLogin";
 //import Orders from './pages/Orders';
@@ -46,6 +47,7 @@ function App() {
             <Route path="employee" element={<Employees />} />
           </Route >
           <Route path="profile" element={<PopupScreen />} />
+          <Route path="managerdashboard/*" element={<ManagerDashboard />} />
         </Routes>
       </div>
     </BrowserRouter >
