@@ -32,7 +32,7 @@ function CMenuNew() {
       mode="inline"
       openKeys={['service']}
       style={{
-        width: '300px',
+        width: '250px',
         minWidth: '215px',
         height: '100vh',
         position: 'sticky',

@@ -52,7 +52,8 @@ export default function Dashboard() {
           <Route path="history" element={< History />} />
           <Route path="customers" element={<Customers />} />
           <Route path="customers/detail/:id" element={<CustomerDetail />} />
-          <Route path="services" element={<Services />} />
+          <Route path="goidichvu" element={<Services />} />
+          <Route path="loaidichvu" element={<Services />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />

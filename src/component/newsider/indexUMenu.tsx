@@ -32,7 +32,7 @@ function UMenuNew() {
       mode="inline"
       openKeys={['service']}
       style={{
-        width: '300px',
+        width: '250px',
         minWidth: '215px',
         height: '100vh',
         position: 'sticky',
@@ -60,12 +60,12 @@ function UMenuNew() {
         icon={<FontAwesomeIcon style={{marginRight:'10px'}} icon={faTags} />}
         {...subMenuProps("service", "Dịch vụ", handleTitleClick)}>
         <Menu.Item
-          key="services"
+          key="goidichvu"
           style={{
             padding: '2em',
           }}>Các gói dịch vụ</Menu.Item>
         <Menu.Item
-          key="services"
+          key="loaidichvu"
           style={{
             padding: '2em',
           }}>Các loại dịch vụ</Menu.Item>

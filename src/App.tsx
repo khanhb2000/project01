@@ -29,9 +29,9 @@ function App() {
       <div className="App">
         <Routes >
           <Route path="/" element={<PreLogin />} />
-          <Route path="login" element={<PreLogin />} />
           <Route path="login/nhanvien" element={<Login />} />
           <Route path="login/khachhang" element={<Login />} />
+          <Route path="login/*" element={<PreLogin />} />
           <Route path="dashboard/*" element={<Dashboard />} >
             <Route path="*" element={<div></div>} />
             {/*<Route path="profile" element={< Profile />} />*/}
