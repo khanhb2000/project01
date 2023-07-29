@@ -23,7 +23,7 @@ import EmployeeDetail from './user/employee/detail/employee-detail';
 import BookDetail from './Productdetail/product-detail';
 import UMenuNew from '../component/newsider/indexUMenu';
 import CMenuNew from '../component/newsider/indexCMenu';
-import Role from './user/employee/Role';
+import Role from './manager/allemployee/Role';
 
 export default function Dashboard() {
 

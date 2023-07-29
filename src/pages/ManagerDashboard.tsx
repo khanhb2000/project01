@@ -16,7 +16,7 @@ import CustomerDetail from './user/customers/detail/customer-detail';
 import EmployeeDetail from './user/employee/detail/employee-detail';
 import BookDetail from './Productdetail/product-detail';
 import UMenuNew from '../component/newsider/indexUMenu';
-import Role from './user/employee/Role';
+import Role from './manager/allemployee/Role';
 
 export default function ManagerDashboard() {
 
