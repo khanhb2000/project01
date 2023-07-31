@@ -17,9 +17,9 @@ import Employees from './pages/user/employee/Employee';
 import BookDetail from './pages/Productdetail/product-detail';
 
 //Importing Bootstrap 5
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
 import PopupScreen from './component/popupscreeninformation/PopupScreen';
+import NewService from './pages/user/services/NewService';
+import UpdateService from './pages/user/services/UpdateService';
 
 function App() {
   return (
@@ -39,6 +39,7 @@ function App() {
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
           <Route path="profile" element={<PopupScreen />} />
+          {/* <Route path="testing" element={<UpdateService />} /> */}
           <Route path="/detail/:id" element={<BookDetail />} />
         </Routes>
       </div>

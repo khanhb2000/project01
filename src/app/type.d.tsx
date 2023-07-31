@@ -10,7 +10,7 @@ export type LoginState = {
   "token": string | undefined,
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
-  "role": RoleState|null,
+  "role": RoleState | null,
 };
 
 export type RoleState = {
@@ -60,14 +60,14 @@ export type CustomerInformationLoginState = {
 };
 
 export type MenuState = {
-  isOpen: boolean,
-  userRole: RoleState,
+  "isOpen": boolean,
+  "userRole": RoleState,
 };
 
 export type ServicePackageState = {
-  href: string | undefined;
-  image: string;
-
+  "href": string | undefined;
+  "image": string;
+  "description": string,
   "id": number,
   "servicePackageName": string,
   "services":
@@ -83,8 +83,8 @@ export type ServicePackageState = {
 export type ServicePackageListState = ServicePackageState[];
 
 export type VoucherTypeState = {
-  href: string | undefined;
-  image: string;
+  "href": string | undefined;
+  "image": string;
 
   "id": number,
   "typeName": string,

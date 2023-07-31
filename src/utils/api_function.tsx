@@ -4,7 +4,7 @@ interface Api {
     url: string,
     method: string,
     token: string,
-    data: any
+    data?: any
 }
 
 const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
@@ -20,8 +20,13 @@ const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
     try {
         const response: AxiosResponse = await axios(config);
         return response
-    } catch (error) {
-        throw new Error(`Error fetching data: ${error}`)
+    } catch (error: any) {
+        if (error.response) {
+            const errorMessage = error.response.data;
+            throw errorMessage
+        } else {
+            throw new Error(`Lỗi khi đưa yêu cầu: ${error}`)
+        }
     }
 }
 

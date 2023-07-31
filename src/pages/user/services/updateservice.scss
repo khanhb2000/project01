@@ -1,0 +1,105 @@
+.updateservice {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 100000;
+
+    .updateservice-form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 50px;
+        border-radius: 5px;
+
+        .updateservice-form--exitIcon {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 17px;
+            cursor: pointer;
+            color: rgba(0, 0, 0, 0.45);
+            padding: 0px 5px;
+
+            &:hover {
+                color: black;
+                background-color: rgba(0, 0, 0, 0.05);
+                transition: background-color ease-in-out 0.3s;
+            }
+        }
+
+        form {
+            width: auto;
+        }
+
+        .updateservice-form--title {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgb(84, 84, 84);
+        }
+
+        .updateservice-form--item {
+            display: flex;
+            width: 100%;
+            margin: 25px 0px;
+            // justify-content: space-between;
+
+            label {
+                font-size: 14px;
+                font-weight: 400;
+                display: inline-block;
+                position: relative;
+                width: auto;
+
+                &::before {
+                    content: "*";
+                    display: inline-block;
+                    margin-inline-end: 4px;
+                    color: rgb(231, 87, 87);
+                    font-size: 20px;
+                    position: relative;
+                    top: 5px;
+                }
+
+                &::after {
+                    content: ":";
+                    display: inline-block;
+                    margin-inline-end: 8px;
+                    font-size: 15px;
+                    position: relative;
+                }
+
+            }
+
+            input {
+                border-radius: 5px;
+                box-sizing: border-box;
+                border: 0.5px solid rgba(0, 0, 0, 0.25);
+                outline: none;
+                padding: 6px;
+                width: auto;
+                flex-grow: 1;
+
+                &:hover {
+                    border-color: #4189e1;
+                    border-inline-end-width: 1px;
+                }
+
+                &:focus {
+                    border-color: #4096ff;
+                    border-inline-end-width: 1px;
+                }
+            }
+        }
+
+        .updateservice-form--btn {
+            text-align: right;
+
+            button {
+                margin-left: 10px;
+            }
+        }
+    }
+}

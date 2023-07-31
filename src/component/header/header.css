@@ -1,11 +1,6 @@
-.header {
-  top: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  background-color: rgb(173, 186, 198);
-  color: white;
-}
+/* .header {
+  position: fixed;
+} */
 
 .dashbord-header-container {
   padding: 0.5em;
@@ -13,7 +8,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  z-index: 100;
+  background: white;
+  z-index: 1000;
+  position: relative;
 }
 
 .dashbord-header-btn {
@@ -67,6 +64,7 @@
   background:  linear-gradient(to left,#608094, #7792a3, #12608f);
   color: white;
   border-radius: 10px;
+  text-align: center;
 }
 
 .dashboard-header-setting > .dashboard-header-setting--menu .ant-menu-item{

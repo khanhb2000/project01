@@ -19,6 +19,7 @@ import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
 import BookDetail from './Productdetail/product-detail';
+import NewService from './user/services/NewService';
 
 export default function Dashboard() {
 
@@ -30,9 +31,9 @@ export default function Dashboard() {
   const cookies = new Cookies();
   const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
 
-  if (cookies.get("token")?.token == undefined) {
-    return (<Navigate replace to="/login" />)
-  }
+  // if (cookies.get("token")?.token == undefined) {
+  //   return (<Navigate replace to="/login" />)
+  // }
 
   return (
     <div className='dashboard-container'>
@@ -48,6 +49,7 @@ export default function Dashboard() {
           <Route path="history" element={< History />} />
           <Route path="customers" element={<Customers />} />
           <Route path="services" element={<Services />} />
+          <Route path="services/createservice" element={<NewService />} />
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="employee" element={<Employees />} />
           <Route path="/detail/:id" element={<BookDetail />} />

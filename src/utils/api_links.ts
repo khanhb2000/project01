@@ -10,6 +10,28 @@ const api_links = {
             registerNewCustomer: `${authUrl}api/Register/Customer`,
             blockUser: `${authUrl}api/Users`,
             blockCustomer: `${authUrl}api/Customers`,
+            getAllServicePackages: {
+                url: `${authUrl}api/ServicePackages/all`,
+                method: "GET",
+                token: ""
+            },
+            createServicePackage: {
+                url: `${authUrl}api/ServicePackages`,
+                method: "POST",
+                token: "",
+                data: {}
+            },
+            deleteServicePackage: {
+                url: `${authUrl}api/ServicePackages/`,
+                method: "DELETE",
+                token: "",
+            },
+            updateServicePackage: {
+                url: `${authUrl}api/ServicePackages/`,
+                method: "PUT",
+                token: "",
+                data: {}
+            },
             updateInformationForUser:
             {
                 url: `${authUrl}api/Users`,
@@ -35,7 +57,12 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Login/User`
+            login: `${authUrl}api/auth/Login/User`,
+            getAllServices: {
+                url: `${authUrl}api/Services/all`,
+                method: "GET",
+                token: ""
+            }
         },
         saleAdmin: {
             updateInformation: `${authUrl}api/Users`,
@@ -61,7 +88,7 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Login/Customer`
+            login: `${authUrl}api/auth/Login/Customer`
         }
     }
 }

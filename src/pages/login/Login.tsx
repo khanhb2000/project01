@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import './login.css'
+import './login.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -33,12 +33,11 @@ export default function Login() {
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
 
-  //useState, useNavigate
+  //useState, useNavigate, useRef
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
 
   //variable
   const cookies = new Cookies();
@@ -85,7 +84,7 @@ export default function Login() {
 
   //check token existed 
   if (token != "") {
-    cookies.set("token", storeCookieData, { path: '/', maxAge: 4000 })  // set cookies for 30 minutes
+    cookies.set("token", storeCookieData, { path: '/', maxAge: 7200 })  // set cookies for 30 minutes
   }
 
   // Navigate to dashboard page if login successful
@@ -93,13 +92,13 @@ export default function Login() {
     return <Navigate to='/dashboard' />;
   }
 
-
   return (
     <div className="login">
       <div className="box-form">
-        <h1>Đăng nhập</h1>      <br />
+        <h1>Đăng nhập</h1>
         <label style={{ display: "inline-block" }} className={checked ? 'switch2 checked' : 'switch2'}>
           <input
+
             type="checkbox"
             checked={checked}
             onChange={handleChange}
@@ -112,6 +111,7 @@ export default function Login() {
         {//errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         }
         <input
+
           type="text"
           placeholder="Tên đăng nhập"
           value={email}
@@ -121,6 +121,7 @@ export default function Login() {
         <br />
 
         <input
+
           type="password"
           placeholder="Mật khẩu"
           value={password}

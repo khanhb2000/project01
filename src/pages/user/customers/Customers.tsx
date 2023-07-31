@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './stylesCustomers.css';
+import './stylesCustomers.scss';
 import Add from './addNew';
 import { CustomerListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select } from 'antd';
@@ -9,6 +9,7 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 
 import Cookies from 'universal-cookie';
+import Notification from '../../../component/notification/Notification';
 
 interface DataType {
     key: React.Key;
@@ -190,12 +191,17 @@ export default function Customers() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
+                        <Button type="primary" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
-                        </button></div>
+                        </Button>
+                        <Notification
+                            isDisable={!hasSelected}
+                            description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
+                            placement='top'
+                            buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} khách hàng`}
+                        >
+                        </Notification>
+                    </div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>
@@ -210,16 +216,20 @@ export default function Customers() {
                 </div>
 
                 <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
+                        size='large'
                         defaultValue="name"
-                        style={{ width: 120 }}
                         onChange={(e) => {
                             sortList(ascending, e);
                             setSortType(e)
