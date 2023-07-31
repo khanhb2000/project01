@@ -104,7 +104,7 @@ function Add() {
         cookies = new Cookies()
         token = cookies.get("token")?.token;
         const responseCV = fetch(
-            'http://bevm.e-biz.com.vn/api/Roles',
+            'http://bevm.e-biz.com.vn/api/Roles/All',
             {
                 method: 'GET',
                 headers: {

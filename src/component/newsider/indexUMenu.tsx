@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import { Menu, SubMenuProps } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faMoneyBills, faIdCard, faTags } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faMoneyBills, faIdCard, faTags, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { useSubMenu } from "./useSubMenu";
 const { SubMenu } = Menu;
@@ -84,6 +84,13 @@ function UMenuNew() {
           padding: '2em',
           textAlign:'left',
         }}>Nhân viên</Menu.Item>
+        <Menu.Item
+        key="booking"
+        icon={<FontAwesomeIcon style={{marginRight:'10px'}} icon={faCalendarCheck} />}
+        style={{
+          padding: '2em',
+          textAlign:'left',
+        }}>Giao dịch</Menu.Item>
     </Menu >
     </div>
   );

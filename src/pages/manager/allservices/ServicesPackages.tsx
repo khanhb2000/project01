@@ -10,7 +10,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-import Cookies from 'universal-cookie';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
 
 interface DataType {
     key: React.Key;
@@ -82,28 +83,15 @@ export default function ServicePackages() {
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
 
-    var cookies = new Cookies()
-    var token = cookies.get("token")?.token;
-
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
         setLoading(true);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/ServicePackages/all',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
-        })
-            .then(data => {
-                setAllData(data);
-                setData(data);
+        fetch_Api({
+            url: api_links.user.superAdmin.getAllServicePackage,
+            method: 'GET',
+            data: undefined
+        }).then(data => {
+                setAllData(data.data);
+                setData(data.data);
             })
         setTimeout(() => {
             setSelectedRowKeys([]);

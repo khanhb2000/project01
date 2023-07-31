@@ -1,13 +1,18 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies()
+const token = cookies.get("token")?.token;
 
 interface Api {
     url: string,
     method: string,
-    token: string,
+    token?: string,
     data: any
 }
 
 const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
+    params.token=token;
     const config: AxiosRequestConfig = {
         headers: {
             "Authorization": `Bearer  ${params.token}`,
