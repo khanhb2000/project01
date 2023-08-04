@@ -83,6 +83,8 @@ function Add() {
 
     const [jsonData, setjsonData] = useState<LoginState>();
 
+    const notManager = useState();
+
     var register: DataNodeType = {
         Name: '',
         CitizenId: '',
@@ -215,7 +217,7 @@ function Add() {
                 <Form.Item
                     name="username"
                     label="Tên khách hàng"
-                    rules={[{ required: true, message: 'Please input name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Thông tin này là bắt buộc!', whitespace: true }]}
                 >
                     <Input />
                 </Form.Item>
@@ -265,7 +267,7 @@ function Add() {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your password!',
+                            message: 'Thông tin này là bắt buộc!',
                         },
                     ]}
                     hasFeedback
@@ -281,16 +283,16 @@ function Add() {
                     rules={[
                         {
                             required: true,
-                            message: 'Please confirm your password!',
+                            message: 'Thông tin này là bắt buộc!',
                         },
-                        ({ getFieldValue }) => ({
+                        /*({ getFieldValue }) => ({
                             validator(_, value) {
                                 if (!value || getFieldValue('password') === value) {
                                     return Promise.resolve();
                                 }
                                 return Promise.reject(new Error('The new password that you entered do not match!'));
                             },
-                        }),
+                        }),*/
                     ]}
                 >
                     <Input.Password />
@@ -305,12 +307,7 @@ function Add() {
                             <>
                                 {fields.map((field) => (
                                     <Space key={field.key} align="baseline">
-                                        <Form.Item
-                                            noStyle
-                                            shouldUpdate={(prevValues, curValues) =>
-                                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                                            }
-                                        >
+                                        <Form.Item>
                                             {() => (
                                                 <Form.Item
                                                     {...field}
@@ -330,7 +327,7 @@ function Add() {
                                         <Form.Item
                                             {...field}
                                             name={[field.name, 'employeename']}
-                                            rules={[{ required: true, message: 'Missing value' }]}
+                                            rules={[{ required: true, message: 'Thông tin này là bắt buộc!' }]}
                                         >
                                             <Select
                                                 showSearch

@@ -56,6 +56,7 @@ export default function PersonalInformation() {
                 <Descriptions.Item label="Telephone">{book?.phoneNumber}</Descriptions.Item>
                 <Descriptions.Item label="Email">{book?.email}</Descriptions.Item>
             </Descriptions>
+            <img src={book?.filePath}/>
             </div>
     );
 };

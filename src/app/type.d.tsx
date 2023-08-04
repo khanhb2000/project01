@@ -145,7 +145,8 @@ export type CustomerState = {
   "citizenId": string | null,
   "isBlocked": boolean,
   "bookings"?: [],
-  "vouchers"?: []
+  "vouchers"?: [],
+  "filePath": string,
 };
 
 export type CustomerListState = CustomerState[];

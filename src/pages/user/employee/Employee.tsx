@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
-import Add from './addNew';
+import Add from '../addNew/newEmployee';
 import { UserListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -122,8 +122,8 @@ export default function Employees() {
         }, 1000);
     }, []);
 
-    data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
+    data?.map((dataTemp) => dataListShow.push({
+        key: dataTemp.id,//index
         id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),

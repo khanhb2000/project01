@@ -107,7 +107,7 @@ export default function Employees() {
     }, []);
 
     data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
+        key: dataTemp.id,//index
         id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),

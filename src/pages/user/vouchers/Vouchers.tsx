@@ -122,8 +122,8 @@ export default function Vouchers() {
     }, []);
 
     const dataListShow: DataType[] = [];
-    data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
+    data?.map((dataTemp) => dataListShow.push({
+        key: dataTemp.id,//index
         id: String(dataTemp.id),
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",

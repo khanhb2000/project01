@@ -42,9 +42,7 @@ export default function Booking() {
     const [filterType, setFilterType] = useState(0);
 
     const dataListShow: DataType[] = [];
-    var cookies = new Cookies();
     const navigate = useNavigate();
-    var token = cookies.get("token")?.token;
 
     const columns: ColumnsType<DataType> = [
         {
@@ -114,17 +112,11 @@ export default function Booking() {
         },
     ];
 
-    var api_link = api_links.user.superAdmin.getAllBooking;
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        api_link = api_links.user.superAdmin.getAllBooking;
         setLoading(true);
         fetch_Api({
-            url: api_link,
+            url: api_links.user.saleAdmin.getUserBooking,
             method: 'GET',
-            token: token,
-            data: undefined
         }).then(data => {
             setAllData(data.data);
             setData(data.data);
@@ -137,7 +129,7 @@ export default function Booking() {
         }, 1000);
     }, []);
 
-    data?.map((dataTemp, index) => {
+    data?.map((dataTemp) => {
         const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
             key: dataTemp.id,//index

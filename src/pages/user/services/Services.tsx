@@ -112,8 +112,8 @@ export default function Services() {
     }, []);
 
     const dataListShow: DataType[] = [];
-    data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
+    data?.map((dataTemp) => dataListShow.push({
+        key: dataTemp.id,//index
         id: String(dataTemp.id),
         name: dataTemp.servicePackageName,
         href: 'https://ant.design',
