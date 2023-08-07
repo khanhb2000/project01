@@ -6,12 +6,12 @@ import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
-
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Cookies from 'universal-cookie';
 import Notification from '../../../component/notification/Notification';
 
-interface DataType {
+interface DataType_Customer {
     key: React.Key;
     id: string;
     name: string;
@@ -19,67 +19,70 @@ interface DataType {
     status: string;
 }
 
-const columns: ColumnsType<DataType> = [
-    {
-        title: 'Tên khách hàng',
-        dataIndex: 'name',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Thông tin liên hệ',
-        dataIndex: 'contact',
-    },
-    {
-        title: 'Tình trạng',
-        dataIndex: 'status',
-        width: '150px',
-        filters: [
-            {
-                text: 'Đang hoạt động',
-                value: 'Đang hoạt động',
-            },
-            {
-                text: 'Đã khóa',
-                value: 'Đã khóa',
-            },
-        ],
-        onFilter: (value: any, record) => record.status.indexOf(value) === 0,
-
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        width: '112px',
-        render: (_, record) => (
-            <Space size="small">
-                <Button size={"middle"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-            </Space>
-        ),
-    },
-];
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<CustomerListState>();
+    const [all_data, setAllData] = useState<CustomerListState>([]);
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
-
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType_Customer[]>([])
     const [filterType, setFilterType] = useState(0);
+
 
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
+    const navigate = useNavigate();
+
+    const columns: ColumnsType<DataType_Customer> = [
+        {
+            title: 'Tên khách hàng',
+            dataIndex: 'name',
+            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+        },
+        {
+            title: 'Thông tin liên hệ',
+            dataIndex: 'contact',
+        },
+        {
+            title: 'Tình trạng',
+            dataIndex: 'status',
+            width: '150px',
+            filters: [
+                {
+                    text: 'Đang hoạt động',
+                    value: 'Đang hoạt động',
+                },
+                {
+                    text: 'Đã khóa',
+                    value: 'Đã khóa',
+                },
+            ],
+            onFilter: (value: any, record) => record.status.indexOf(value) === 0,
+
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            width: '112px',
+            render: (_, record) => (
+                <Space size="small">
+                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                </Space>
+            ),
+        },
+    ];
 
     useEffect(() => {
         cookies = new Cookies()
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Customers/All-Customers',
+            'http://bevm.e-biz.com.vn/api/Customers/All-Supported-Customers',
             {
                 method: 'GET',
                 headers: {
@@ -100,10 +103,10 @@ export default function Customers() {
         }, 1000);
     }, []);
 
-    const dataListShow: DataType[] = [];
+    const dataListShow: DataType_Customer[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id: dataTemp.id,
+        id: dataTemp.id.toString(),
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",
@@ -173,6 +176,8 @@ export default function Customers() {
         onChange: onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
+    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
+
 
     return (
         <div className='user-customerlist'>
@@ -195,6 +200,11 @@ export default function Customers() {
                             Thêm
                         </Button>
                         <Notification
+                            type='customer'
+                            setSelectedRowKeys={setSelectedRowKeys}
+                            setDataRecover={setDataRecover}
+                            setData={setData}
+                            selectedRowData={selectedRowData}
                             isDisable={!hasSelected}
                             description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
                             placement='top'

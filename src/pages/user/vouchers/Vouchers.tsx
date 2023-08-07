@@ -1,149 +1,250 @@
 import React, { useState, useEffect } from 'react';
-import './stylesVouchers.css';
-//import Add from './addNew';
-import { VoucherTypeListState } from '../../../app/type.d';
-import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, Table, Space, Select, Tag, Card, Col, Row } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { VoucherTypeListState, VoucherTypeState } from '../../../app/type.d';
+import { ColumnsType } from 'antd/es/table';
+import Cookies from 'universal-cookie';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
+import { Button, Col, Modal, Row, Space, Tag, message, Table, Popconfirm, Divider, Select } from 'antd';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import Notification from '../../../component/notification/Notification';
+import './stylesVouchers.scss'
 
-
-import Cookies from 'universal-cookie';
 
 interface DataType {
-    key: React.Key;
-    id: string;
+    "key": React.Key;
+    "href"?: string | undefined;
+    "image"?: string;
+    "id": number,
+    "typeName": string,
+    "isAvailable": boolean,
+    "commonPrice": number,
+    "valueDiscount": number,
+    "availableNumberOfVouchers": number,
+    "percentageDiscount": number,
+    "maximumValueDiscount": number,
+    "conditionsAndPolicies": string,
+    "vouchers": [],
+    "usableServicePackages": []
 
-    image: string;
-    href: string;
-    content: {
-        name: string;
-        isAvailable: boolean,
-        commonPrice: number,
-        availableNumberOfVouchers: number,
-        percentageDiscount: number,
-        maximumValueDiscount: number,
-        conditionsAndPolicies: string,
-    }
 }
 
-const columns: ColumnsType<DataType> = [
-    {
-        title: '',
-        dataIndex: 'image',
-        width: '300px',
-        render: (text) => <a>
-            <img
-                width={272}
-                alt="logo"
-                src={text}
-            /></a>,
-    },
-    {
-        title: '',
-        dataIndex: 'content',
-        render: (item) => <>
-            <div className='item-content'>
-                <div><a>{item.name} </a>
-                    {item.isAvailable ? null : <Tag color="red">Hết hiệu lực</Tag>}</div>
-                <span>{/*item.conditionsAndPolicies*/}</span>
-                <div>Giá trị: {
-                    item.percentageDiscount ?
-                        <>{item.percentageDiscount}% {item.maximumValueDiscount ? <> &#40;tối đa: {item.maximumValueDiscount?.toLocaleString('en-US')}&#41; </> : ""}</>
-                        : <>{item.maximumValueDiscount?.toLocaleString('en-US')}</>
-                }</div></div>
-            <div className='bonus-content'>
-                <div>Giá bán: {item.commonPrice?.toLocaleString('en-US')} </div>
-                <div>Còn: {item.availableNumberOfVouchers}</div>
-            </div></>,
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        width: '112px',
-        render: (_, record) => (
-            <Space size="small">
-                <Button size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-            </Space>
-        ),
-    },
-];
 
-const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
-    <Space>
-        {React.createElement(icon)}
-        {text}
-    </Space>
-);
-const { Meta } = Card;
+export default function Services() {
 
-
-export default function Vouchers() {
-    const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<VoucherTypeListState>();
-    const [search, setSearch] = useState('');
-    const [data, setData] = useState(all_data);
-
+    //useState
+    const [all_data, setAllData] = useState<VoucherTypeListState>([]);
+    const [data, setData] = useState<VoucherTypeListState>(all_data);
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [filterType, setFilterType] = useState(0);
+    const [addForm, setAddForm] = useState(false);
+    const [addFormRecover, setAddFormRecover] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType[]>([])
+    const [addFormInformationService, setAddFormInformationService] = useState(false)
+    const [record, setRecord] = useState<DataType>(undefined!)
 
+    //get data from cookie
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
 
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        setLoading(true);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/VoucherTypes',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
-        })
-            .then(data => {
-                setAllData(data);
-                setData(data);
-            })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
+        getAllVoucherTypes()
+            .then((res) => {
+                if (res.status === 200) {
+                    setAllData(res.data);
+                    setData(res.data);
 
+                }
+            })
+            .catch((reason) => {
+                console.log(reason);
+            })
+        getAllDeleteVoucherType()
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log(res);
+                    setDataRecover(res.data)
+                }
+            })
+            .catch((reason) => {
+                console.log(reason);
+            })
+    }, [])
+
+
+    // call api to get data
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id: String(dataTemp.id),
+        id: dataTemp.id,
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
-        content: {
-            name: dataTemp.typeName,
-            isAvailable: dataTemp.isAvailable,
-            commonPrice: dataTemp.commonPrice,
-            availableNumberOfVouchers: dataTemp.availableNumberOfVouchers,
-            percentageDiscount: dataTemp.percentageDiscount,
-            maximumValueDiscount: dataTemp.maximumValueDiscount,
-            conditionsAndPolicies: dataTemp.conditionsAndPolicies,
-        }
+        typeName: dataTemp.typeName,
+        isAvailable: dataTemp.isAvailable,
+        commonPrice: dataTemp.commonPrice,
+        availableNumberOfVouchers: dataTemp.availableNumberOfVouchers,
+        percentageDiscount: dataTemp.percentageDiscount,
+        maximumValueDiscount: dataTemp.maximumValueDiscount,
+        conditionsAndPolicies: dataTemp.conditionsAndPolicies,
+        valueDiscount: dataTemp.valueDiscount,
+        vouchers: dataTemp.vouchers,
+        usableServicePackages: dataTemp.usableServicePackages
     }));
 
+
+    // ======================================= use to render the format of the table ===============================================
+    // quantity of column, title of column...
+
+    const handleDelete = (e: number) => {
+        deleteVoucherType(e)
+            .then((res) => {
+                if (res.status === 200) {
+                    message.success(res.data.message)
+                    getAllVoucherTypes()
+                        .then((res) => {
+                            setAllData(res.data);
+                            setData(res.data);
+                        })
+                        .catch((reason) => {
+                            console.log(reason);
+                        })
+                }
+            })
+            .catch((reason) => {
+                message.error(reason.message)
+            })
+    }
+
+
+    // not yet
+    const handleRecover = (recordId: number) => {
+        const recoverData = dataRecover.filter((data) => data.id !== recordId)
+        recoverVoucherType(recordId)
+            .then((res_re) => {
+                if (res_re.status === 200) {
+                    setDataRecover(recoverData)
+                    message.success(res_re.data.message)
+                    getAllVoucherTypes()
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setAllData(res.data)
+                            }
+                        })
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+    }
+
+
+    const columns: ColumnsType<DataType> = [
+        {
+            title: 'Lựa chọn',
+            dataIndex: 'image',
+            width: '300px',
+            render: (img) =>
+                <a>
+                    <img
+                        width={300}
+                        alt="logo"
+                        src={img}
+                    />
+                </a>,
+        },
+        {
+            title: 'Dịch vụ',
+            dataIndex: 'service',
+            render: (text, record, index) => <>
+                <div className="item-content">
+                    <a style={{ fontWeight: "bold" }}>{record?.typeName}</a>
+                    <span>
+                        Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount}đ`}
+                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('en-US')}đ )`) : ""}
+
+                    </span>
+                </div>
+                <div className="bonus-content">
+                    <div>Số lượng còn lại: {record?.availableNumberOfVouchers}</div>
+                </div></>,
+        },
+        {
+            title: 'Thao tác',
+            key: 'id',
+            width: '112px',
+            render: (text, record, index) => (
+                <Space size="small">
+                    <Link to={"updatevoucher"} state={record}>
+                        <Button
+                            title='Sửa đổi'
+                            size={"large"} >
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                        </Button>
+                    </Link>
+                </Space>
+
+            )
+        },
+    ];
+
+    const columnsRecover: ColumnsType<DataType> = [
+        {
+            title: 'Gói khuyến mãi',
+            dataIndex: 'typeName',
+            render: (text, record, index) =>
+                <div className="item-content-recover">
+                    <a style={{ fontWeight: "bold" }}>{record.typeName}</a>
+                </div>
+
+        },
+        {
+            title: 'Điều kiện',
+            dataIndex: 'conditionsAndPolicies',
+            render: (text, record, index) =>
+                <div className="item-content-recover">
+
+                    <p>Nội dung: {record.conditionsAndPolicies}</p>
+                </div>
+        },
+        {
+            title: 'Thao tác',
+            dataIndex: 'action',
+            render: (text, record) =>
+                <div className="item-content-recover">
+                    <Button type='primary' onClick={() => handleRecover(record.id)} style={{ backgroundColor: "#465d65" }}>Khôi phục</Button>
+                </div>
+        },
+    ]
+
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+
+    const hasSelected = selectedRowKeys.length > 0;
+    //===================================================================================================================================
+
+
+    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
+
+
+
+
+    // search data
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(event.target.value);
         if (event.target.value !== '') {
-            let search_results = all_data?.filter((item) =>
-                String(item.id).toLowerCase().includes(search.toLowerCase()) ||
-                item.typeName.toLowerCase().includes(search.toLowerCase())
+            let search_results = all_data?.filter((item) => {
+                return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
+                    item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
+            }
             );
             setData(search_results);
         }
@@ -152,6 +253,7 @@ export default function Vouchers() {
         }
     };
 
+    // sort data by descending or increment
     function sortList(tang_dan: boolean, sorttype: string) {
         if (tang_dan) {
             switch (sorttype) {
@@ -191,32 +293,174 @@ export default function Vouchers() {
         }
     }
 
-    function filterList(filtype: number) {
-        switch (filtype) {
-            case 0:
-                setData(all_data);
-                sortList(ascending, sortType);
-                break;
-            default:
-                break;
+    //=========================== GET API ====================================
+    const getAllVoucherTypes = () => {
+        const api_link = api_links.user.superAdmin.getAllVoucherType
+        api_link.token = token
+        return fetch_Api(api_link)
+    }
+    const deleteVoucherType = (e: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.deleteVoucherType.url}${e}`,
+            method: "DELETE",
+            token: token
         }
+        return fetch_Api(api_link)
     }
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
+    const getAllDeleteVoucherType = () => {
+        const api_link = api_links.user.superAdmin.getAllDeleteVoucherType
+        api_link.token = token
+        return fetch_Api(api_link)
+    }
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
+    const recoverVoucherType = (recordId: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.recoverVoucherType.url}${recordId}`,
+            method: "PATCH",
+            token: token
+        }
+        return fetch_Api(api_link)
+    }
+
+
+
+    // ====================================================================
+
+    // not yet
+    const handleTableRowClick = (record: DataType) => {
+        setAddFormInformationService(!addFormInformationService)
+        setRecord(record)
+    }
+
+
 
     return (
-        <div className='user-vouchers'>
-            {!addForm && <>
-                <div className='dashboard-content-header1'>
-                    <h2>Danh sách voucher</h2>
+        <React.Fragment>
+            <Modal
+                open={addForm}
+                footer={[]}
+                onCancel={() => setAddForm(false)}
+                style={{ top: "25vh", width: " 500px" }}
+            >
+                <Row>
+                    <Col span={24}>
+                        <Link to={"createvoucher"}>
+                            <Button style={{ width: "100%" }} type='default' size='large'>
+                                Thêm mã khuyến mãi
+                            </Button>
+                        </Link>
+                    </Col>
+                    {/* <Col span={12}>
+                        <Link to={"createvoucerservice"}>
+                            <Button type='default' size='large'>
+                                Thêm voucher cho dịch vụ
+                            </Button>
+                        </Link>
+                    </Col> */}
+                </Row>
+            </Modal>
+
+            <Modal
+                width="40vw"
+                style={{ top: "5vh" }}
+                open={addFormRecover}
+                title="Khôi phục"
+                onCancel={() => {
+                    setAddFormRecover(!addFormRecover)
+                    getAllVoucherTypes()
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setAllData(res.data);
+                                setData(res.data);
+                            }
+                        })
+                        .catch((reason) => {
+                            console.log(reason);
+                        })
+
+                }}
+                footer={[]}
+
+
+
+            >
+                <Table className='recover-table' columns={columnsRecover} dataSource={dataRecover} />
+
+            </Modal>
+
+
+            <Modal
+                open={addFormInformationService}
+                onCancel={() => setAddFormInformationService(!addFormInformationService)}
+                footer={[]}
+                width="65vw"
+            >
+                <Space size={[25, 0]} direction='horizontal' className='uservoucher-record' align='center'>
+                    <Space.Compact className='coupon-left' direction='vertical'>
+                        <div>
+                            <img src={record?.image} alt="image" width="250px" />
+                        </div>
+                        <Popconfirm
+                            className="ant-popconfirm"
+                            title="Xoá dịch vụ"
+                            description="Bạn có chắc chắn xoá không ?"
+                            onConfirm={() => {
+                                handleDelete(record.id)
+                                setAddFormInformationService(!addFormInformationService)
+                            }}
+                            okText="Xoá"
+                            cancelText="Huỷ"
+                            placement='bottomLeft'
+                        >
+                            <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                        </Popconfirm>
+                    </Space.Compact>
+                    <Space.Compact className='coupon-con' direction='vertical'>
+                        <Divider orientation='left'>Thông tin</Divider>
+                        <Space direction='vertical' className='uservoucher-record--information'>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Tên gói khuyến mãi: </span>
+                                <span>{record?.typeName}</span>
+                            </Space>
+                            <Space>
+                                <span style={{ color: "#0958d9", display: "inline-block", width: "4vw" }}>Điều kiện: </span>
+                                <span>{record?.conditionsAndPolicies}</span>
+                            </Space>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Giá trị: </span>
+                                <span>{record?.commonPrice.toLocaleString("en")}đ</span>
+                            </Space>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Số lượng khuyến mãi còn lại: </span>
+                                <span>{record?.availableNumberOfVouchers}</span>
+                            </Space>
+                            <Space>
+                                {record?.percentageDiscount ?
+                                    <>
+                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
+                                        <span>{record?.percentageDiscount}%</span>
+                                    </>
+                                    :
+                                    <>
+                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
+                                        <span>{record?.valueDiscount.toLocaleString("en")}</span>
+                                    </>
+
+                                }
+                            </Space>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Giảm giá tối đa: </span>
+                                <span>{record?.maximumValueDiscount ? record?.maximumValueDiscount.toLocaleString("en") : "0"}đ</span>
+                            </Space>
+                        </Space>
+                    </Space.Compact>
+                </Space>
+            </Modal>
+
+            <div className="user-vouchers">
+                <div className="dashboard-content-header1">
+                    <h2>Danh sách mã khuyến mãi</h2>
 
                     <hr
                         style={{
@@ -226,37 +470,54 @@ export default function Vouchers() {
                         }}
                     />
                 </div>
-                <div className='dashboard-content-header2'>
-                    <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" >
+                <div className="dashboard-content-header2">
+                    <div className="dashboard-content-header2-left">
+                        <Button type="primary" onClick={() => setAddForm(true)}>
                             Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
-                        </button></div>
+                        </Button>
+                        <Notification
+                            type='voucher'
+                            setSelectedRowKeys={setSelectedRowKeys}
+                            setDataRecover={setDataRecover}
+                            setData={setData}
+                            isDisable={!hasSelected}
+                            selectedRowData={selectedRowData}
+                            description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
+                            placement='top'
+                            buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
+                        >
+                        </Notification>
+                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                    </div>
 
-                    <div className='dashboard-content-header2-right'>
-                        <div className='dashboard-content-search'>
+                    <div className="dashboard-content-header2-right">
+                        <div className="dashboard-content-search">
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
                                 placeholder='Search..'
-                                className='dashboard-content-input'
+                                className="dashboard-content-input"
                             />
                         </div>
 
                     </div>
 
                 </div>
-                <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                <div className="dashboard-content-header3">
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
+                        className="text-bold"
+                        size='large'
                         defaultValue="name"
                         style={{ width: 120 }}
                         onChange={(e) => {
@@ -273,38 +534,14 @@ export default function Vouchers() {
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
-                {0 &&
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-                }               <Row gutter={16}>
+                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} onRow={(record) => ({
+                    onClick: () => handleTableRowClick(record),
+                })} />
 
-                    {dataListShow.map((d) => {
-                        return (
-                            <Col span={8}> <Card
-                                style={{ width: 300 }}
-                                cover={
-                                    <img
-                                        alt="example"
-                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-                                    />
-                                }
-                                actions={[
-                                    <SettingOutlined key="setting" />,
-                                    <EditOutlined key="edit" />,
-                                    <EllipsisOutlined key="ellipsis" />,
-                                ]}
-                            >
-                                <Meta
-                                    title={d.content.name}
-                                    description="This is the description"
-                                />
-                            </Card></Col>)
-                    })}
-                </Row>
+            </div>
+        </React.Fragment>
 
-            </>}
-        </div>
     )
+
 };
+

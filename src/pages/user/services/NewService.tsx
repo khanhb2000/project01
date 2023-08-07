@@ -90,68 +90,70 @@ export default function NewService() {
 
     return (
         <div className="user-services">
-            <Row>
-                <Col span={24}>
-                    <h1>Thêm dịch vụ</h1>
-                </Col>
-            </Row>
-            <Form
-                className="newservice-form"
-                form={form}
-                onFinish={handleFinish}
-            >
-                <Row >
-                    <Col span={10}>
-                        <Form.Item
-                            rules={[
-                                { required: true, message: "Vui lòng nhập tên gói dịch vụ" },
-                                { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" }
-                            ]}
-                            label="Tên gói dịch vụ"
-                            name="ServicePackageName"
-                        >
-                            <Input placeholder="Tên gói dịch vú"/>
-                        </Form.Item>
+            <div className="user-services--form">
+                <Row>
+                    <Col span={24}>
+                        <h1>Thêm dịch vụ</h1>
                     </Col>
                 </Row>
-                <Row>
-                    <Col span={10}>
-                        <Form.Item
-                            rules={[
-                                { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" },
-                                { max: 50, required: true, message: "Vui lòng nhập miêu tả dịch vụ" }]}
-                            label="Miêu tả"
-                            name="Description"
-                        >
-                            <Input placeholder="Miêu tả"/>
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={10}>
-                        <Form.Item
-                            label="Các dịch vụ"
-                            name="ServicesIds"
-                            rules={[{ required: true, message: "Vui lòng lựa chọn dịch vụ" }]}
+                <Form
+                    className="newservice-form"
+                    form={form}
+                    onFinish={handleFinish}
+                >
+                    <Row >
+                        <Col span={10}>
+                            <Form.Item
+                                rules={[
+                                    { required: true, message: "Vui lòng nhập tên gói dịch vụ" },
+                                    { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" }
+                                ]}
+                                label="Tên gói dịch vụ"
+                                name="ServicePackageName"
+                            >
+                                <Input placeholder="Tên gói dịch vú" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={10}>
+                            <Form.Item
+                                rules={[
+                                    { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" },
+                                    { max: 50, required: true, message: "Vui lòng nhập miêu tả dịch vụ" }]}
+                                label="Miêu tả"
+                                name="Description"
+                            >
+                                <Input placeholder="Miêu tả" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={10}>
+                            <Form.Item
+                                label="Các dịch vụ"
+                                name="ServicesIds"
+                                rules={[{ required: true, message: "Vui lòng lựa chọn dịch vụ" }]}
 
-                        >
-                            <Select
-                                mode="multiple"
-                                allowClear
-                                placeholder="Lựa chọn dịch vụ"
-                                options={options}
-                            />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={10}>
-                        <Form.Item>
-                            <Button htmlType="submit" type="primary">Tạo dịch vụ</Button>
-                        </Form.Item>
-                    </Col>
-                </Row>
-            </Form>
+                            >
+                                <Select
+                                    mode="multiple"
+                                    allowClear
+                                    placeholder="Lựa chọn dịch vụ"
+                                    options={options}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={10}>
+                            <Form.Item>
+                                <Button htmlType="submit" type="primary">Tạo dịch vụ</Button>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </div>
         </div>
     )
 }

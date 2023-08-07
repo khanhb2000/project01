@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
 import Add from './addNew';
 import { UserListState } from '../../../app/type.d';
@@ -19,65 +20,6 @@ interface DataType {
     level: string
 }
 
-const columns: ColumnsType<DataType> = [
-    {
-        title: 'Tên Nhân Viên',
-        dataIndex: 'name',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Thông tin liên hệ',
-        dataIndex: 'contact',
-    },
-    {
-        title: 'Chức vụ',
-        dataIndex: 'level',
-        filters: [
-            {
-                text: 'Super Admin',
-                value: 'SUPER ADMIN',
-            },
-            {
-                text: 'Sales Admin',
-                value: 'SALES ADMIN',
-            },
-            {
-                text: 'Sales',
-                value: 'SALES',
-            },
-        ],
-        onFilter: (value: any, record) => record.level.indexOf(value) === 0,
-    },
-    {
-        title: 'Tình trạng',
-        dataIndex: 'status',
-        width: '150px',
-        filters: [
-            {
-                text: 'Đang hoạt động',
-                value: 'Đang hoạt động',
-            },
-            {
-                text: 'Đã khóa',
-                value: 'Đã khóa',
-            },
-        ],
-        onFilter: (value: any, record) => record.status.indexOf(value) === 0,
-
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        width: '112px',
-        render: (_, record) => (
-            <Space size="small">
-                <Button size={"middle"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-            </Space>
-        ),
-    },
-];
-
 export default function Employees() {
     const [addForm, setAddForm] = useState(false);
     const [all_data, setAllData] = useState<UserListState>();
@@ -91,15 +33,75 @@ export default function Employees() {
     const [filterType, setFilterType] = useState(0);
 
     const dataListShow: DataType[] = [];
-    var cookies = new Cookies()
+    var cookies = new Cookies();
+    const navigate = useNavigate();
     var token = cookies.get("token")?.token;
+
+    const columns: ColumnsType<DataType> = [
+        {
+            title: 'Tên Nhân Viên',
+            dataIndex: 'name',
+            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+        },
+        {
+            title: 'Thông tin liên hệ',
+            dataIndex: 'contact',
+        },
+        {
+            title: 'Chức vụ',
+            dataIndex: 'level',
+            filters: [
+                {
+                    text: 'Super Admin',
+                    value: 'SUPER ADMIN',
+                },
+                {
+                    text: 'Sales Admin',
+                    value: 'SALES ADMIN',
+                },
+                {
+                    text: 'Sales',
+                    value: 'SALES',
+                },
+            ],
+            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
+        },
+        {
+            title: 'Tình trạng',
+            dataIndex: 'status',
+            width: '150px',
+            filters: [
+                {
+                    text: 'Đang hoạt động',
+                    value: 'Đang hoạt động',
+                },
+                {
+                    text: 'Đã khóa',
+                    value: 'Đã khóa',
+                },
+            ],
+            onFilter: (value: any, record) => record.status.indexOf(value) === 0,
+
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            width: '112px',
+            render: (_, record) => (
+                <Space size="small">
+                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                </Space>
+            ),
+        },
+    ];
 
     useEffect(() => {
         cookies = new Cookies()
         token = cookies.get("token")?.token;
         setLoading(true);
         const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Users',
+            'http://bevm.e-biz.com.vn/api/Users/All-Managed-Users',
             {
                 method: 'GET',
                 headers: {
@@ -211,12 +213,8 @@ export default function Employees() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
-                            Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
-                        </button></div>
+                        
+                    </div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>

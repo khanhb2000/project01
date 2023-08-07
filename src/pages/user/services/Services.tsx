@@ -1,31 +1,29 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode, useRef } from 'react';
 import './stylesServices.scss';
 //import Add from './addNew';D
-import { ServicePackageListState, ServicePackageState } from '../../../app/type.d';
-import { calculateRange, sliceData } from '../../table-pagination';
-import { LikeOutlined, MessageOutlined, StarOutlined, EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Form, Input, List, Modal, Popconfirm, Select, Space, message } from 'antd';
+import { ServiceListState, ServicePackageListState, ServicePackageState, VoucherTypeListState } from '../../../app/type.d';
+import { Avatar, Form, Input, List, Modal, Popconfirm, Select, Space, Tag, message } from 'antd';
 import { Button, Table, Divider, Card, Col, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
-import type { ModalProps } from "antd";
 import Cookies from 'universal-cookie';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
 import Notification from '../../../component/notification/Notification';
-import NewService from './NewService';
 import { Link } from 'react-router-dom';
-import { StyledEngineProvider } from '@mui/material';
+
 
 
 interface DataType {
     key?: React.Key;
     id: number;
-    service: string;
+    servicePackageName: string;
     image: string;
     href: string;
-    description: string
+    description: string,
+    services: ServiceListState,
+    valuableVoucherTypes: VoucherTypeListState
 }
 
 
@@ -38,8 +36,11 @@ export default function Services() {
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [addForm, setAddForm] = useState(false);
-    const [popUpUpdateForm, setPopUpUpdateForm] = useState(false);
-    const [record, setRecord] = useState<DataType>()
+    const [addFormRecover, setAddFormRecover] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType[]>([])
+    const [addFormInformationService, setAddFormInformationService] = useState(false)
+    const [record, setRecord] = useState<DataType>(undefined!)
+
 
     //get data from cookie
     var cookies = new Cookies()
@@ -57,9 +58,17 @@ export default function Services() {
             .catch((reason) => {
                 console.log(reason);
             })
-    }, []);
+        getAllDeleteServicePackages()
+            .then((res) => {
+                if (res.status === 200) {
+                    setDataRecover(res.data)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
 
-    const { Meta } = Card; // TESTING
+            })
+    }, []);
 
     // ======================================= use to render the format of the table ===============================================
     // quantity of column, title of column...
@@ -85,8 +94,25 @@ export default function Services() {
     }
 
 
-    const updatePopup = (record: DataType) => {
-
+    // not yet
+    const handleRecover = (recordId: number) => {
+        const recoverData = dataRecover.filter((data) => data.id !== recordId)
+        recoverServicePackage(recordId)
+            .then((res_re) => {
+                if (res_re.status === 200) {
+                    setDataRecover(recoverData)
+                    message.success(res_re.data.message)
+                    getAllServicePackages()
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setAllData(res.data)
+                            }
+                        })
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
     }
 
 
@@ -109,7 +135,7 @@ export default function Services() {
             dataIndex: 'service',
             render: (text, record, index) => <>
                 <div className="item-content">
-                    <a style={{ fontWeight: "bold" }}>{record.service}</a>
+                    <a style={{ fontWeight: "bold" }}>{record.servicePackageName}</a>
                     <span>Nội dung: {record.description}</span>
                 </div>
                 <div className="bonus-content">
@@ -122,35 +148,53 @@ export default function Services() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Button
-                        onClick={() => {
-                            setPopUpUpdateForm(!popUpUpdateForm)
-                            setRecord(record)
-                        }}
-                        size={"large"} >
-                        <FontAwesomeIcon icon={faPenToSquare} />
-                    </Button>
-
-                    <Popconfirm
-                        className="ant-popconfirm"
-                        title="Xoá dịch vụ"
-                        description="Bạn có chắc chắn xoá không ?"
-                        onConfirm={() => handleDelete(record.id)}
-                        okText="Xoá"
-                        cancelText="Huỷ"
-                    >
-                        <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                    </Popconfirm>
+                    <Link to={"updateservice"} state={record}>
+                        <Button
+                            title='Sửa đổi'
+                            size={"large"} >
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                        </Button>
+                    </Link>
                 </Space>
 
             )
         },
     ];
 
+    const columnsRecover: ColumnsType<DataType> = [
+        {
+            title: 'Lựa chọn',
+            dataIndex: 'id',
+            render: (text, record, index) =>
+                <div className="item-content-recover">
+                    <span>{record.id}</span>
+                </div>
+
+        },
+        {
+            title: 'Gói dịch vụ',
+            dataIndex: 'servicePackageName',
+            render: (text, record, index) =>
+                <div className="item-content-recover">
+                    <a style={{ fontWeight: "bold" }}>{record.servicePackageName}</a>
+                    <p>Nội dung: {record.description}</p>
+                </div>
+        },
+        {
+            title: 'Miêu tả',
+            dataIndex: 'description',
+            render: (text, record) =>
+                <div className="item-content-recover">
+                    <Button type='primary' onClick={() => handleRecover(record.id)} style={{ backgroundColor: "#465d65" }}>Khôi phục</Button>
+                </div>
+        },
+    ]
+
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
+
 
     const rowSelection = {
         selectedRowKeys,
@@ -161,16 +205,19 @@ export default function Services() {
     //===================================================================================================================================
 
 
+    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
 
     // put data into table to display
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
         id: dataTemp.id,
-        service: dataTemp.servicePackageName,
+        servicePackageName: dataTemp.servicePackageName,
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
-        description: dataTemp.description
+        description: dataTemp.description,
+        services: dataTemp.services,
+        valuableVoucherTypes: dataTemp.valuableVoucherTypes
     }));
 
 
@@ -219,17 +266,41 @@ export default function Services() {
 
     }
     const deleteServicePackages = (e: number) => {
-        const api_link = api_links.user.superAdmin.deleteServicePackage
-        api_link.url = api_link.url + e
+        const api_link = {
+            url: `${api_links.user.superAdmin.deleteServicePackage.url}${e}`,
+            method: "DELETE",
+            token: token
+        }
+        return fetch_Api(api_link)
+    }
+
+    const getAllDeleteServicePackages = () => {
+        const api_link = api_links.user.superAdmin.getAllDeleteServicePackages
         api_link.token = token
         return fetch_Api(api_link)
     }
 
+    const recoverServicePackage = (recordId: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.recoverServicePackage.url}${recordId}`,
+            method: "PATCH",
+            token: token
+        }
+        return fetch_Api(api_link)
+    }
+
+
+
     // ====================================================================
 
     // not yet
-    const handleTableRowClick = (record?: DataType) => {
+    const handleTableRowClick = (record: DataType) => {
+        setAddFormInformationService(!addFormInformationService)
+        setRecord(record)
     }
+
+
+
     return (
         <React.Fragment>
             <Modal
@@ -239,22 +310,111 @@ export default function Services() {
                 style={{ top: "25vh", width: " 500px" }}
             >
                 <Row>
-                    <Col span={12}>
+                    <Col span={24}>
                         <Link to={"createservice"}>
-                            <Button type='default' size='large'>
+                            <Button style={{width:"100%"}} type='default' size='large'>
                                 Thêm dịch vụ
-                            </Button>
-                        </Link>
-                    </Col>
-                    <Col span={12}>
-                        <Link to={"createvoucerservice"}>
-                            <Button type='default' size='large'>
-                                Thêm voucher cho dịch vụ
                             </Button>
                         </Link>
                     </Col>
                 </Row>
             </Modal>
+
+            <Modal
+                width="40vw"
+                style={{ top: "5vh" }}
+                open={addFormRecover}
+                title="Khôi phục"
+                onCancel={() => {
+                    setAddFormRecover(!addFormRecover)
+                    getAllServicePackages()
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setAllData(res.data);
+                                setData(res.data);
+                            }
+                        })
+                        .catch((reason) => {
+                            console.log(reason);
+                        })
+
+                }}
+                footer={[]}
+
+
+
+            >
+                <Table className='recover-table' columns={columnsRecover} dataSource={dataRecover} />
+
+            </Modal>
+
+
+            <Modal
+                open={addFormInformationService}
+                onCancel={() => setAddFormInformationService(!addFormInformationService)}
+                footer={[]}
+                width="65vw"
+            >
+                <Space className='userservice-record' direction='horizontal' align='start' size="large">
+                    <Space.Compact direction='vertical'>
+                        <div>
+                            <img src={record?.image} alt="image" width="300px" />
+                        </div>
+                        <Popconfirm
+                            className="ant-popconfirm"
+                            title="Xoá dịch vụ"
+                            description="Bạn có chắc chắn xoá không ?"
+                            onConfirm={() => {
+                                handleDelete(record.id)
+                                setAddFormInformationService(!addFormInformationService)
+                            }}
+                            okText="Xoá"
+                            cancelText="Huỷ"
+                            placement='bottomLeft'
+                        >
+                            <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                        </Popconfirm>
+                    </Space.Compact>
+                    <Space.Compact direction='vertical'>
+                        <Divider orientation='left'>Thông tin</Divider>
+                        <Space direction='vertical' className='userservice-record--information'>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Tên gói dịch vụ: </span>
+                                <span>{record?.servicePackageName}</span>
+                            </Space>
+                            <Space>
+                                <span style={{ color: "#0958d9" }}>Miêu tả: </span>
+                                <span>{record?.description}</span>
+                            </Space>
+                            <Divider orientation='left'>Dịch vụ</Divider>
+                            <Space wrap direction='horizontal'>
+                                {record?.services.map((service) => {
+                                    return (
+                                        <Tag color='blue'>{service.serviceName}:{service.description}</Tag>
+                                    )
+                                })}
+                            </Space>
+
+                        </Space>
+                    </Space.Compact>
+                </Space>
+                <Divider orientation='left'>Mã khuyến mãi</Divider>
+                <Space className='userservice-record--voucher' size={[10, 8]} style={{ width: "100%", alignItems:"start" }} direction='horizontal' wrap>
+                    {record?.valuableVoucherTypes.map((voucher) => {
+                        return (
+                            <Space align='baseline' className='userservice-record--information-voucher' direction='vertical'>
+                                <span style={{ color: "#0958d9" }}>{voucher?.typeName}</span>
+                                <span><b>Giá trị: </b>{voucher?.commonPrice}</span>
+                                <span><b>Điều kiện: </b>{voucher?.conditionsAndPolicies}</span>
+                            </Space>
+                        )
+                    })}
+                </Space>
+            </Modal>
+
+
+
+
 
             <div className="user-services">
                 <div className="dashboard-content-header1">
@@ -274,12 +434,18 @@ export default function Services() {
                             Thêm
                         </Button>
                         <Notification
+                            type='service'
+                            setSelectedRowKeys={setSelectedRowKeys}
+                            setDataRecover={setDataRecover}
+                            setData={setData}
                             isDisable={!hasSelected}
+                            selectedRowData={selectedRowData}
                             description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
                             placement='top'
                             buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
                         >
                         </Notification>
+                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
                     </div>
 
                     <div className="dashboard-content-header2-right">
@@ -324,135 +490,6 @@ export default function Services() {
                 <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} onRow={(record) => ({
                     onClick: () => handleTableRowClick(record),
                 })} />
-
-
-                {/* =================================================== TESTING ================================================================= */}
-                {/* {false &&
-                <Row gutter={16}>
-
-                    {dataListShow.map((d) => {
-                        return (
-                            <Col span={8}>
-                                <Card
-                                    style={{ width: 300 }}
-                                    cover={
-                                        <img
-                                            alt="example"
-                                            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-                                        />
-                                    }
-                                    actions={[
-                                        <SettingOutlined key="setting" />,
-                                        <EditOutlined key="edit" />,
-                                        <EllipsisOutlined key="ellipsis" />,
-                                    ]}
-                                >
-                                    <Meta
-                                        title={d.service}
-                                        description="This is the description"
-                                    />
-                                </Card>
-                            </Col>
-                        )
-                    })}
-                </Row>} */}
-                {/* ////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-                {/*<table>
-                <thead>
-                    <th>ID</th>
-                    <th>TÊN</th>
-                    <th>MÔ TẢ</th>
-                    <th>GÓI DỊCH VỤ</th>
-                </thead>
-
-
-                <List
-                    itemLayout="vertical"
-                    size="large"
-                    pagination={{
-                        onChange: (page) => {
-                            console.log(page);
-                        },
-                        pageSize: 3,
-                    }}
-                    dataSource={dataListShow}
-                    header={
-                        <div>
-                            <b>ant design</b> footer part
-                        </div>
-                    }
-                    renderItem={(item) => (
-                        <List.Item
-                            key={item.id}
-                            actions={[
-                                <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                                <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                                <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-                            ]}
-                            extra={
-                                <img
-                                    width={272}
-                                    alt="logo"
-                                    src={item.image}
-                                />
-                            }
-                        >
-                            <List.Item.Meta
-                                //avatar={<Avatar src={item.avatar} />}
-                                title={<a href={item.href}>{item.name}</a>}
-                            />
-                            Miêu tả tóm tắt
-                        </List.Item>
-                    )}
-                />
-
-                {/*orders.map((order, index) => (
-                            <tr key={index}>
-                                <td><span>{order.id}</span></td>
-                                <td><span>{order.serviceName}</span></td>
-                                {/*<td>
-                                    <div>
-                                        {order.status === 'Paid' ?
-                                            <img
-                                                src={DoneIcon}
-                                                alt='paid-icon'
-                                                className='dashboard-content-icon' />
-                                            : order.status === 'Canceled' ?
-                                                <img
-                                                    src={CancelIcon}
-                                                    alt='canceled-icon'
-                                                    className='dashboard-content-icon' />
-                                                : order.status === 'Refunded' ?
-                                                    <img
-                                                        src={RefundedIcon}
-                                                        alt='refunded-icon'
-                                                        className='dashboard-content-icon' />
-                                                    : null}
-                                        <span>{order.status}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <img
-                                            src={order.avatar}
-                                            className='dashboard-content-avatar'
-                                            alt={order.first_name + ' ' + order.last_name} />
-                                        <span>{order.first_name} {order.last_name}</span>
-                                    </div>
-                                </td>*}
-                                <td><span>{order.description}</span></td>
-                                <td><span>{order.servicePackages}</span></td>
-                            </tr>
-                        ))}
-                  </table>*/}
-
-
-
-
-                {/*addForm && <><Add />        
-            <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button>
-                            </>*/}
 
             </div>
         </React.Fragment>

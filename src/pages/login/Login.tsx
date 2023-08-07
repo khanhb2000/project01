@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import './login.scss'
@@ -13,9 +13,10 @@ import {
   selectToken,
   selectRole,
   selectInformation
-
-
 } from './loginSlice';
+import { Button, Checkbox, Form, Input } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+
 import api_links from '../../utils/api_links';
 import Cookies from 'universal-cookie';
 import { log } from 'console';
@@ -33,12 +34,6 @@ export default function Login() {
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
 
-  //useState, useNavigate, useRef
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [checked, setChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   //variable
   const cookies = new Cookies();
   const dispatch = useAppDispatch();
@@ -47,13 +42,12 @@ export default function Login() {
     information: information,
     role: role
   }
-
+  const location = useLocation();
+  const checked = location.pathname;
   //api_link
   const userLoginAPI = api_links.user.superAdmin.login;
   const customerLoginAPI = api_links.user.customer.login;
-  const loginLink = checked ? userLoginAPI : customerLoginAPI;
-
-
+  const loginLink = checked == "/login/nhanvien" ? userLoginAPI : customerLoginAPI;
 
   const errorMessage = () => {
     if (errorMessage2) {
@@ -66,20 +60,8 @@ export default function Login() {
       return errorMessage1;
   };
 
-  const handleLogin = async () => {
-    setIsLoading(true);
-    dispatch(login({ "AccountInformation": email, "UserName": email, "Password": password, "link": loginLink }))
-  };
-
-  const checkKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleLogin();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(e.target.checked);
+  const onFinish = (values: any) => {
+    dispatch(login({ "AccountInformation": values.username, "UserName": values.username, "Password": values.password, "link": loginLink }))
   };
 
   //check token existed 
@@ -95,54 +77,48 @@ export default function Login() {
   return (
     <div className="login">
       <div className="box-form">
-        <h1>Đăng nhập</h1>
-        <label style={{ display: "inline-block" }} className={checked ? 'switch2 checked' : 'switch2'}>
-          <input
+        <h2>Đăng nhập </h2>      <br />
+        <Form
+          name="normal_login"
+          className="login-form"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+        >
+          <Form.Item
+            name="username"
+          >
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Tên đăng nhập" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+          >
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Mật khẩu"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="login-form-button">
+              {isSuccess ? <FontAwesomeIcon className='circle-loading' icon={faSpinner} /> : "Đăng nhập"}
+            </Button>
+            {(errorMessage()) &&
+              <span style={{
+                color: "red",
+                textAlign: "center",
+                fontSize: "13px"
+              }}><br /> {errorMessage()}</span>
+            }
+          </Form.Item>
 
-            type="checkbox"
-            checked={checked}
-            onChange={handleChange}
-            hidden
-          />
-          <span className={checked ? '' : 'active'}>Khách hàng</span>
-          <span className={checked ? 'active' : ''}>Nhân viên</span>
-        </label>
-        <br />
-        {//errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-        }
-        <input
-
-          type="text"
-          placeholder="Tên đăng nhập"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          onKeyDown={(e) => checkKeyDown(e)}
-        />
-        <br />
-
-        <input
-
-          type="password"
-          placeholder="Mật khẩu"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          onKeyDown={(e) => checkKeyDown(e)}
-        />
-        <br />
-
-        <div className='submitBtn'>
-          <button onClick={handleLogin}>
-            Login
-          </button>
-          {isSuccess && <FontAwesomeIcon className='circle-loading' icon={faSpinner} />}
-        </div>
-        {(errorMessage()) &&
-          <span style={{
-            color: "red",
-            textAlign: "center",
-            fontSize: "13px"
-          }}><br /> {errorMessage()}</span>
-        }
+          <Form.Item>
+            <a className="login-form-forgot" href="">
+              Quên mật khẩu
+            </a>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );

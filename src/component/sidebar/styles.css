@@ -45,10 +45,6 @@
     cursor: pointer;
 }
 
-.ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title {
-    color: white;
-}
-
 .sidebar-item:hover img {
 
     filter: invert(1);

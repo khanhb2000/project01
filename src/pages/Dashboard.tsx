@@ -18,8 +18,16 @@ import Customers from './user/customers/Customers';
 import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
+import CustomerDetail from './user/customers/detail/customer-detail';
+import EmployeeDetail from './user/employee/detail/employee-detail';
 import BookDetail from './Productdetail/product-detail';
 import NewService from './user/services/NewService';
+import UMenuNew from '../component/newsider/indexUMenu';
+import CMenuNew from '../component/newsider/indexCMenu';
+import Role from './manager/allemployee/Role';
+import UpdateService from './user/services/UpdateService';
+import Newvoucher from './user/vouchers/NewVoucher';
+import UpdateVoucher from './user/vouchers/UpdateVoucher';
 
 export default function Dashboard() {
 
@@ -29,7 +37,7 @@ export default function Dashboard() {
   const token = useSelector(selectToken)
   const r = useSelector(selectRole);
   const cookies = new Cookies();
-  const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
+  //const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
 
   // if (cookies.get("token")?.token == undefined) {
   //   return (<Navigate replace to="/login" />)
@@ -39,8 +47,8 @@ export default function Dashboard() {
     <div className='dashboard-container'>
       <Header />
       <div className='dashboard-body'>
-        {isMenu && <SideBar menu={sidebar_menu} /> // theem user role}
-        }
+        {isMenu &&
+          ((cookies.get("token")?.role.id == "0") ? <CMenuNew /> : <UMenuNew />)}
         <Routes>
           <Route path="*" element={<div></div>} />
           <Route path="profile" element={< Profile />} />
@@ -50,9 +58,18 @@ export default function Dashboard() {
           <Route path="customers" element={<Customers />} />
           <Route path="services" element={<Services />} />
           <Route path="services/createservice" element={<NewService />} />
+          <Route path="services/updateservice" element={<UpdateService />} />
+          <Route path="customers/detail/:id" element={<CustomerDetail />} />
+          {/* <Route path="goidichvu" element={<Services />} /> */}
+          {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
+          <Route path="vouchers/createvoucher" element={<Newvoucher />} />
+          <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
           <Route path="employee" element={<Employees />} />
-          <Route path="/detail/:id" element={<BookDetail />} />
+          <Route path="employee/role" element={<Role />} />
+          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
+          <Route path="detail/:id" element={<BookDetail />} />
+
         </Routes>
       </div>
     </div>
