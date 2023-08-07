@@ -105,8 +105,11 @@ export default function UpdateService() {
         return fetch_Api(api_link)
     }
     const getAllVoucher = () => {
-        const api_link = api_links.user.superAdmin.getAllVoucherType
-        api_link.token = token
+        const api_link =
+        {
+            url: api_links.user.superAdmin.getAllVoucherType,
+            method: "GET"
+        }
         return fetch_Api(api_link)
     }
 

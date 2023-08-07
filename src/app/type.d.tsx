@@ -112,6 +112,25 @@ export type VoucherTypeState = {
 
 export type VoucherTypeListState = VoucherTypeState[];
 
+export type BookingState = {
+  "id": string,
+  "customer": null,
+  "salesEmployee": null,
+  "vouchers": [],
+  "servicePackage": null,
+  "bookingTitle": string,
+  "bookingDate": string,
+  "bookingStatus": string,
+  "totalPrice": 100,
+  "priceDetails":string,
+  "note": string,
+  "descriptions": string,
+  "startDateTime": string,
+  "endDateTime": string
+};
+
+export type BookingListState = BookingState[];
+
 export type CustomerState = {
   "id": number,
   "name": string,

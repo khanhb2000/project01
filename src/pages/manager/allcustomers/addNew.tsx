@@ -3,7 +3,8 @@ import { selectToken } from '../../login/loginSlice';
 import { useSelector } from 'react-redux';
 import { LoginState, RoleListState } from '../../../app/type.d';
 import { UserListState } from '../../../app/type.d';
-import Cookies from 'universal-cookie';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
 
 import type { CascaderProps } from 'antd';
 import {
@@ -92,45 +93,24 @@ function Add() {
         ConfirmPassword: '',
         SalesEmployeeIds: []
     }
-    
-    var cookies = new Cookies()
-    var token = cookies.get("token")?.token;
 
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        const responseCV = fetch(
-            'http://bevm.e-biz.com.vn/api/Roles',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json();
-        })
-            .then(data => {
-                setCV(data);
-            });
+        fetch_Api({
+            url: api_links.user.superAdmin.getAllRole,
+            method: 'GET',
+            data: undefined
+        }).then(data => {
+            setCV(data.data);
+        });
 
-        const responseNV = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Users',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json();
-        })
-            .then(data => {
-                setNV(data);
-                setFilterNV(data);
-            });
+        fetch_Api({
+            url: api_links.user.superAdmin.getAllUser,
+            method: 'GET',
+            data: undefined
+        }).then(data => {
+            setNV(data.data);
+            setFilterNV(data.data);
+        });
     }, []);
 
     const errorMessage = () => {
@@ -159,28 +139,17 @@ function Add() {
         register.IsBlocked = null;
         values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
         console.log('Received register: ', register);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Register/Customer',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-                body: JSON.stringify(
-                    register
-
-                ),
-            }
-        ).then(response => {
-            if (response.ok) {
+        fetch_Api({
+            url: api_links.user.superAdmin.createNewCustomer,
+            method: 'POST',
+            data: undefined
+        }).then(response => {
+            if (response.status == 200) {
                 form.resetFields();
                 message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
-            } return response.json()
+            }
+            setjsonData(response.data);
         })
-            .then(data => {
-                setjsonData(data);
-            })
 
     };
 
@@ -315,7 +284,7 @@ function Add() {
                                                     <Select style={{ width: 150 }}
                                                         defaultValue=""
                                                         onChange={(e) => {
-                                                                setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
+                                                            setFilterNV(nhan_vien?.filter((d) => d.roles.findIndex((r) => r.normalizedName == e) > -1))
                                                         }}
                                                     > {chuc_vu?.map((d) =>
                                                         <Option value={d.normalizedName}>{d.normalizedName}</Option>

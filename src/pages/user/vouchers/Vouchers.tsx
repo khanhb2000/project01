@@ -295,8 +295,11 @@ export default function Services() {
 
     //=========================== GET API ====================================
     const getAllVoucherTypes = () => {
-        const api_link = api_links.user.superAdmin.getAllVoucherType
-        api_link.token = token
+        const api_link = {
+            url: api_links.user.superAdmin.getAllVoucherType,
+            method:"GET",
+            token:token
+        }
         return fetch_Api(api_link)
     }
     const deleteVoucherType = (e: number) => {

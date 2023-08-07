@@ -171,8 +171,12 @@ const Notification: React.FC<NotificationProps> = ({ type, setSelectedRowKeys, s
     }
 
     const getAllVoucherType = () => {
-        const api_link = api_links.user.superAdmin.getAllVoucherType
-        api_link.token = token
+        const api_link =
+        {
+            url: api_links.user.superAdmin.getAllVoucherType,
+            method: "GET"
+        }
+
         return fetch_Api(api_link)
 
     }

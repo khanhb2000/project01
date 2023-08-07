@@ -12,6 +12,7 @@ import AllServices from './manager/allservices/Services';
 import AllServicePackages from './manager/allservices/ServicesPackages';
 import AllVouchers from './manager/allvouchers/Vouchers';
 import AllEmployees from './manager/allemployee/Employee';
+import AllBooking from './manager/allbookings/Booking';
 import CustomerDetail from './user/customers/detail/customer-detail';
 import EmployeeDetail from './user/employee/detail/employee-detail';
 import BookDetail from './Productdetail/product-detail';
@@ -48,6 +49,7 @@ export default function ManagerDashboard() {
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />
           <Route path="detail/:id" element={<BookDetail />} />
+          <Route path="booking" element={<AllBooking />} />
 
         </Routes>
       </div>

@@ -8,8 +8,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-import Cookies from 'universal-cookie';
-
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
 
 interface DataType {
     key: React.Key;
@@ -29,13 +29,10 @@ export default function Employees() {
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [filterType, setFilterType] = useState(0);
 
     const dataListShow: DataType[] = [];
-    var cookies = new Cookies();
     const navigate = useNavigate();
-    var token = cookies.get("token")?.token;
+
 
     const columns: ColumnsType<DataType> = [
         {
@@ -97,29 +94,16 @@ export default function Employees() {
     ];
 
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        setLoading(true);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Users',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
+        fetch_Api({
+            url: api_links.user.superAdmin.getAllUser,
+            method: 'GET',
+            data: undefined
         })
             .then(data => {
-                setAllData(data);
-                setData(data);
+                setAllData(data.data);
+                setData(data.data);
             })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
+
     }, []);
 
     data?.map((dataTemp, index) => dataListShow.push({

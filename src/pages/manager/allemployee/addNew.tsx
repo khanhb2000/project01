@@ -3,7 +3,8 @@ import { selectToken } from '../../login/loginSlice';
 import { useSelector } from 'react-redux';
 import { LoginState, UserListState } from '../../../app/type.d';
 import { RoleListState } from '../../../app/type.d';
-import Cookies from 'universal-cookie';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
 
 import type { CascaderProps } from 'antd';
 import {
@@ -97,43 +98,22 @@ function Add() {
         RoleIds: []
     }
 
-    var cookies = new Cookies()
-    var token = cookies.get("token")?.token;
-
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        const responseCV = fetch(
-            'http://bevm.e-biz.com.vn/api/Roles',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
-        })
-            .then(data => {
-                setCV(data);
-                setFilterNV(data);
+        fetch_Api({
+            url: api_links.user.superAdmin.getAllRole,
+            method: 'GET',
+            data: undefined
+        }).then(data => {
+                setCV(data.data);
+                setFilterNV(data.data);
             });
 
-        const responseNV = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Users',
-            {
+            fetch_Api({
+                url: api_links.user.superAdmin.getAllUser,
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json();
-        })
-            .then(data => {
-                setNV(data);
+                data: undefined
+            }).then(data => {
+                setNV(data.data);
 
             });
     }, []);
@@ -167,28 +147,17 @@ function Add() {
         register.IsBlocked = null;
         values.roleList?.map((d: { roleid: string; }) => register.RoleIds.push(d.roleid));
         console.log('Received register: ', register);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Register/User',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-                body: JSON.stringify(
-                    register
-
-                ),
-            }
-        ).then(response => {
-            if (response.ok) {
+        fetch_Api({
+            url: api_links.user.superAdmin.createNewUser,
+            method: 'POST',
+            data: undefined
+        }).then(response => {
+            if (response.status==200) {
                 form.resetFields();
-                message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
-            } return response.json()
+                message.success("Đã thêm nhân viên " + register.Name + ". Tiếp tục thêm nhân viên hoặc nhấn Cancel để trở về.");
+            } 
+            setjsonData(response.data);
         })
-            .then(data => {
-                setjsonData(data);
-            })
 
     };
 

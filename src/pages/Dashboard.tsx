@@ -18,6 +18,7 @@ import Customers from './user/customers/Customers';
 import Services from './user/services/Services';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
+import Booking from './user/bookings/Booking';
 import CustomerDetail from './user/customers/detail/customer-detail';
 import EmployeeDetail from './user/employee/detail/employee-detail';
 import BookDetail from './Productdetail/product-detail';
@@ -69,6 +70,7 @@ export default function Dashboard() {
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />
           <Route path="detail/:id" element={<BookDetail />} />
+          <Route path="booking" element={<Booking />} />
 
         </Routes>
       </div>

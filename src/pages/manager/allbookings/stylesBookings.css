@@ -1,0 +1,24 @@
+
+.user-bookinglist {
+    margin: 1em;
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+    overflow: auto;
+    width: 100%;
+}
+
+.modal-dialog{
+    max-width: 100%;
+}
+
+.col-form-label{
+    text-align: left;
+}
+.ant-space{
+    display: flex;
+}
