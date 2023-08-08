@@ -62,7 +62,7 @@ function UMenuNew() {
           {...subMenuProps("service", "Dịch vụ", handleTitleClick)}
         >
           <Menu.Item
-            key="services"
+            key="servicepackage"
             style={{
               padding: '2em',
             }}
@@ -70,7 +70,7 @@ function UMenuNew() {
             Các gói dịch vụ
           </Menu.Item>
           <Menu.Item
-            key="kindservices"
+            key="service"
             style={{
               padding: '2em',
             }}

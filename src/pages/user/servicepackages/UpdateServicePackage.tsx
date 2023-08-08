@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom"
 import api_links from "../../../utils/api_links"
 import Cookies from "universal-cookie"
 import fetch_Api from "../../../utils/api_function"
-import './updateservice.scss'
+import './updateservicepackage.scss'
 import { ServiceListState, ServicePackageState, ServiceState, VoucherTypeListState, VoucherTypeState } from "../../../app/type.d"
 import { useEffect, useState } from "react"
 
@@ -14,7 +14,7 @@ interface ServicePackageProps {
     "Description": string
 }
 
-export default function UpdateService() {
+export default function UpdateServicePackage() {
     const { Option } = Select
     const location = useLocation()
     const { description, href, id, image, key, servicePackageName, services, valuableVoucherTypes } = location.state

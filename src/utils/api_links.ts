@@ -21,7 +21,7 @@ const api_links = {
             createNewUser: `${authUrl}api/Register/User`,
             createNewVoucher: `${authUrl}api/Voucher`,
             createNewVoucherType: `${authUrl}api/VoucherTypes`,
-            
+
             /*createNewRole: `${authUrl}api/Roles`,
             createNewBooking: `${authUrl}api/Bookings`,
             registerNewUser: `${authUrl}api/Register/User`,
@@ -159,6 +159,29 @@ const api_links = {
                 method: "GET",
                 token: ""
             },
+
+            /////////////////////// SERVICE ////////////////////////////
+            getServiceById: {
+                url: `${authUrl}api/Services/`,
+                method: "GET",
+            },
+            recoverService: {
+                url: `${authUrl}api/Services/restore-service/`,
+                method: "PATCH",
+            },
+            getAllDeleteService: {
+                url: `${authUrl}api/Services/all-delete`,
+                method: "GET",
+            },
+            deleteService: {
+                url: `${authUrl}api/Services/`,
+                method: "DELETE",
+            },
+            updateService:{
+                url:`${authUrl}api/Services/`,
+                method:"PUT"
+            }
+
 
         },
         saleAdmin: {

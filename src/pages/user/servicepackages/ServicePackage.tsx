@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactNode, useRef } from 'react';
-import './stylesServices.scss';
+import './servicepackage.scss';
 //import Add from './addNew';D
 import { ServiceListState, ServicePackageListState, ServicePackageState, VoucherTypeListState } from '../../../app/type.d';
 import { Avatar, Form, Input, List, Modal, Popconfirm, Select, Space, Tag, message } from 'antd';
@@ -29,7 +29,7 @@ interface DataType {
 
 
 
-export default function Services() {
+export default function ServicePackage() {
     const [all_data, setAllData] = useState<ServicePackageListState>([]);
     const [data, setData] = useState<ServicePackageListState>(all_data);
     const [sortType, setSortType] = useState('name');
@@ -45,6 +45,7 @@ export default function Services() {
     //get data from cookie
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
+    
 
     // call api to get data
     useEffect(() => {
@@ -148,7 +149,7 @@ export default function Services() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Link to={"updateservice"} state={record}>
+                    <Link to={"updateservicepackage"} state={record}>
                         <Button
                             title='Sửa đổi'
                             size={"large"} >
@@ -311,7 +312,7 @@ export default function Services() {
             >
                 <Row>
                     <Col span={24}>
-                        <Link to={"createservice"}>
+                        <Link to={"createservicepackage"}>
                             <Button style={{width:"100%"}} type='default' size='large'>
                                 Thêm dịch vụ
                             </Button>
@@ -418,7 +419,7 @@ export default function Services() {
 
             <div className="user-services">
                 <div className="dashboard-content-header1">
-                    <h2>Danh sách dịch vụ</h2>
+                    <h2>Danh sách gói dịch vụ</h2>
 
                     <hr
                         style={{
