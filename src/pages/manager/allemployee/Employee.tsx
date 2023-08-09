@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
 import Add from './addNew';
 import { UserListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select,message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -81,13 +81,13 @@ export default function Employees() {
 
         },
         {
-            title: 'Action',
+            title: '',
             key: 'action',
             width: '112px',
             render: (_, record) => (
                 <Space size="small">
-                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                 <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                    <Button size={"middle"} onClick={() => handleDelete1(record.id,record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
                 </Space>
             ),
         },
@@ -104,7 +104,7 @@ export default function Employees() {
                 setData(data.data);
             })
 
-    }, []);
+    }, [data]);
 
     data?.map((dataTemp, index) => dataListShow.push({
         key: dataTemp.id,//index
@@ -180,6 +180,50 @@ export default function Employees() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+        function handleDelete1(itemId: string,itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.blockUser + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        console.log(itemId);
+        console.log(itemName);
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công nhân viên '+ itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa '+ String(selectedRowKeys.length) + ' nhân viên...',
+        }, 0);
+        selectedRowKeys.map((key)=>{
+        fetch_Api({
+            url: api_links.user.superAdmin.blockUser + '/' + key,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+    })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa '+ String(selectedRowKeys.length) + ' nhân viên!'
+        }, 1.5)
+    }
+
     return (
         <div className='user-employlist'>
 
@@ -200,7 +244,7 @@ export default function Employees() {
                         <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
                             Thêm
                         </button>
-                        <button type="button" className="btn btn-danger" >
+                        <button type="button" className="btn btn-danger" onClick={() => {hasSelected && handleDeleteMulti();setSelectedRowKeys([])}}>
                             Xóa
                         </button>
                         <button type="button" className="btn btn-warning" onClick={() => navigate('role')}>
@@ -240,8 +284,8 @@ export default function Employees() {
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+                <span style={{ textAlign: 'left', fontSize: 'initial', }}>
+                    {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
                 </span>
 
                 <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />

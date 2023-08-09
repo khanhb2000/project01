@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './stylesCustomers.css';
 import Add from './addNew';
 import { CustomerListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -22,6 +22,7 @@ interface DataType {
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
     const [all_data, setAllData] = useState<CustomerListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
@@ -60,13 +61,13 @@ export default function Customers() {
 
         },
         {
-            title: 'Action',
+            title: '',
             key: 'action',
             width: '112px',
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    <Button size={"middle"} onClick={() => handleDelete1(record.id,record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
                 </Space>
             ),
         },
@@ -83,7 +84,7 @@ export default function Customers() {
                 setData(data.data);
             })
 
-    }, []);
+    }, [data]);
 
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
@@ -159,6 +160,50 @@ export default function Customers() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    function handleDelete1(itemId: string,itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.blockCustomer + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        console.log(itemId);
+        console.log(itemName);
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công khách hàng '+ itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa '+ String(selectedRowKeys.length) + ' khách hàng...',
+        }, 0);
+        selectedRowKeys.map((key)=>{
+        fetch_Api({
+            url: api_links.user.superAdmin.blockCustomer + '/' + key,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+    })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa '+ String(selectedRowKeys.length) + ' khách hàng!'
+        }, 1.5)
+    }
+
     return (
         <div className='user-customerlist'>
 
@@ -179,7 +224,7 @@ export default function Customers() {
                         <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
                             Thêm
                         </button>
-                        <button type="button" className="btn btn-danger" >
+                        <button type="button" className="btn btn-danger" onClick={() => {hasSelected &&handleDeleteMulti();setSelectedRowKeys([])}}>
                             Xóa
                         </button></div>
 
@@ -216,8 +261,8 @@ export default function Customers() {
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+                <span style={{ textAlign: 'left', fontSize: 'initial', }}>
+                    {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
                 </span>
 
                 <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />

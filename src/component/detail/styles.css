@@ -1,4 +1,4 @@
-.user-customerdetail {
+.user-detail {
     margin: 1em;
     background-color: white;
     border: none;
@@ -9,9 +9,10 @@
     gap:15px;
     overflow: auto;
     width: 100%;
+   max-width: 100vw;
 }
 .personal-information{
-    background-color: rgb(223, 184, 184);
+    background-color: rgb(224 233 238);
     border: none;
     border-radius: 10px;
     padding: 1em;
@@ -20,5 +21,18 @@
     gap:15px;
     overflow: auto;
     width: 300px;
+    height: fit-content;
+    flex: 1 0 300px;
+}
+.business-information{
+    background-color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+    overflow: auto;
+    width: inherit;
     height: fit-content;
 }

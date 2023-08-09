@@ -13,10 +13,8 @@ import AllServicePackages from './manager/allservices/ServicesPackages';
 import AllVouchers from './manager/allvouchers/Vouchers';
 import AllEmployees from './manager/allemployee/Employee';
 import AllBooking from './manager/allbookings/Booking';
-//import CustomerDetail from './user/customers/detail/customer-detail';
-import CustomerDetail from './manager/allcustomers/detail/customer-detail';
-import EmployeeDetail from './user/employee/detail/employee-detail';
-import BookDetail from './Productdetail/product-detail';
+import CustomerDetail from './manager/allcustomers/customer-detail';
+import EmployeeDetail from './manager/allemployee/employee-detail';
 import UMenuNew from '../component/newsider/indexUMenu';
 import Role from './manager/allemployee/Role';
 
@@ -49,7 +47,6 @@ export default function ManagerDashboard() {
           <Route path="employee" element={<AllEmployees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />
-          <Route path="detail/:id" element={<BookDetail />} />
           <Route path="booking" element={<AllBooking />} />
 
         </Routes>

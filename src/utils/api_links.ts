@@ -63,7 +63,7 @@ const api_links = {
             //getUserServicePackage: `${authUrl}api/ServicePackages/all`,
             //getUserService: `${authUrl}api/Services/all`,
             getUserUser: `${authUrl}api/Users/All-Managed-Users`,
-            getUserVoucher: `${authUrl}api/Vouchers/User`,
+            getUserVoucher: `${authUrl}api/Voucher/User`,
             //getUserVoucherType: `${authUrl}api/VoucherTypes/all`,
 
             updateInformation: `${authUrl}api/Users`,
@@ -80,7 +80,7 @@ const api_links = {
             //GET
             getCustomerBooking: `${authUrl}api/Bookings/Customer`,
             getCustomerSupport: `${authUrl}api/Users/All-Supporting-Users`,
-            getCustomerVoucher: `${authUrl}api/Vouchers/Customer`,
+            getCustomerVoucher: `${authUrl}api/Voucher/Customer`,
 
             updateInformation: {
                 url: `${authUrl}api/Customers`,

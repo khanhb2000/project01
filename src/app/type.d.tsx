@@ -94,6 +94,29 @@ export type ServiceState = {
 
 export type ServiceListState = ServiceState[];
 
+export type VoucherState = {
+    "id": string,
+    "customer": {
+      "id": string,
+      "name": string,
+    },
+    "salesEmployee": {
+      "id": string,
+      "name": string,
+      "phoneNumber": string,
+    },
+    "voucherType": VoucherTypeState,
+    "issuedDate": string,
+    "expiredDate": string,
+    "actualPrice": number,
+    "usedValueDiscount": number | null,
+    "voucherStatus": string,
+    "bookings": BookingListState,
+    "voucherExtensions": VoucherExtensionListState,
+  }
+
+export type VoucherListState = VoucherState[];
+
 export type VoucherTypeState = {
   href: string | undefined;
   image: string;
@@ -104,6 +127,7 @@ export type VoucherTypeState = {
   "commonPrice": number,
   "availableNumberOfVouchers": number,
   "percentageDiscount": number,
+  "valueDiscount": number,
   "maximumValueDiscount": number,
   "conditionsAndPolicies": string,
   "vouchers": [],
@@ -112,17 +136,41 @@ export type VoucherTypeState = {
 
 export type VoucherTypeListState = VoucherTypeState[];
 
+export type VoucherExtensionState = {
+      "id": 2,
+      "voucher": VoucherState,
+      "salesEmployee": {
+        "id": string,
+        "name": string,
+        "phoneNumber": string,
+      }|null,
+      "price": number,
+      "extendedDateTime": string,
+      "oldExpiredDate": string,
+      "newExpiredDate": string,
+}
+
+export type VoucherExtensionListState = VoucherExtensionState[];
+
+
 export type BookingState = {
   "id": string,
-  "customer": null,
-  "salesEmployee": null,
-  "vouchers": [],
+  "customer": {
+    "id": string,
+    "name": string,
+  }|null,
+  "salesEmployee": {
+    "id": string,
+    "name": string,
+    "phone": string,
+  }|null,
+  "vouchers": VoucherListState,
   "servicePackage": null,
   "bookingTitle": string,
   "bookingDate": string,
   "bookingStatus": string,
-  "totalPrice": 100,
-  "priceDetails":string,
+  "totalPrice": any,
+  "priceDetails": string,
   "note": string,
   "descriptions": string,
   "startDateTime": string,
@@ -179,6 +227,7 @@ export type UserState = {
     }*/
   ],
   "roles": RoleState[],
+  "filePath": string,
 };
 
 export type UserListState = UserState[];
