@@ -27,10 +27,6 @@ import {
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 
-//Importing Bootstrap 5
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
-
 const { Option } = Select;
 
 interface DataNodeType {

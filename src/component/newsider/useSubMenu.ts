@@ -11,7 +11,6 @@ export const useSubMenu = () => {
       key: key,
       title: title,
       onTitleClick: (e: any) => {
-        console.log("onTitleClickInternal");
         onTitleClick!(e);
       }
     };

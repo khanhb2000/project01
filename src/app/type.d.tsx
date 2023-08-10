@@ -60,14 +60,14 @@ export type CustomerInformationLoginState = {
 };
 
 export type MenuState = {
-  isOpen: boolean,
-  userRole: RoleState,
+  "isOpen": boolean,
+  "userRole": RoleState,
 };
 
 export type ServicePackageState = {
-  href: string | undefined;
-  image: string;
-
+  "href": string | undefined;
+  "image": string;
+  "description": string,
   "id": number,
   "servicePackageName": string,
   "services":
@@ -83,8 +83,8 @@ export type ServicePackageState = {
 export type ServicePackageListState = ServicePackageState[];
 
 export type ServiceState = {
-  href: string | undefined;
-  image: string;
+  href?: string | undefined;
+  image?: string;
 
   "id": number,
   "serviceName": string,
@@ -118,13 +118,13 @@ export type VoucherState = {
 export type VoucherListState = VoucherState[];
 
 export type VoucherTypeState = {
-  href: string | undefined;
-  image: string;
-
+  "href"?: string | undefined;
+  "image"?: string;
   "id": number,
   "typeName": string,
   "isAvailable": boolean,
   "commonPrice": number,
+  "valueDiscount":number,
   "availableNumberOfVouchers": number,
   "percentageDiscount": number,
   "valueDiscount": number,
@@ -180,7 +180,7 @@ export type BookingState = {
 export type BookingListState = BookingState[];
 
 export type CustomerState = {
-  "id": string,
+  "id": number,
   "name": string,
   "email": string | null,
   "normalizedEmail": string | null,

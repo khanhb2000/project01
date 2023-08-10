@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate,useLocation } from 'react-router-dom';
+import { useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import './login.css'
+import './login.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -42,7 +42,7 @@ export default function Login() {
     information: information,
     role: role
   }
-  const location=useLocation();
+  const location = useLocation();
   const checked = location.pathname;
   //api_link
   const userLoginAPI = api_links.user.superAdmin.login;
@@ -66,7 +66,7 @@ export default function Login() {
 
   //check token existed 
   if (token != "") {
-    cookies.set("token", storeCookieData, { path: '/', maxAge: 4000 })  // set cookies for 30 minutes
+    cookies.set("token", storeCookieData, { path: '/', maxAge: 7200 })  // set cookies for 30 minutes
   }
 
   // Navigate to dashboard page if login successful
@@ -87,9 +87,9 @@ export default function Login() {
           <Form.Item
             name="username"
           >
-            <Input 
-            prefix={<UserOutlined className="site-form-item-icon" />} 
-            placeholder="Tên đăng nhập" />
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Tên đăng nhập" />
           </Form.Item>
           <Form.Item
             name="password"
@@ -105,12 +105,12 @@ export default function Login() {
               {isSuccess ? <FontAwesomeIcon className='circle-loading' icon={faSpinner} /> : "Đăng nhập"}
             </Button>
             {(errorMessage()) &&
-          <span style={{
-            color: "red",
-            textAlign: "center",
-            fontSize: "13px"
-          }}><br /> {errorMessage()}</span>
-        }
+              <span style={{
+                color: "red",
+                textAlign: "center",
+                fontSize: "13px"
+              }}><br /> {errorMessage()}</span>
+            }
           </Form.Item>
 
           <Form.Item>

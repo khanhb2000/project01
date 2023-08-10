@@ -21,13 +21,113 @@ const api_links = {
             createNewUser: `${authUrl}api/Register/User`,
             createNewVoucher: `${authUrl}api/Voucher`,
             createNewVoucherType: `${authUrl}api/VoucherTypes`,
-            
+
             /*createNewRole: `${authUrl}api/Roles`,
             createNewBooking: `${authUrl}api/Bookings`,
             registerNewUser: `${authUrl}api/Register/User`,
             registerNewCustomer: `${authUrl}api/Register/Customer`,*/
             blockUser: `${authUrl}api/Users`,
             blockCustomer: `${authUrl}api/Customers`,
+
+            ///////////// SERVICE PACKAGES ////////////////////
+            getAllServicePackages: {
+                url: `${authUrl}api/ServicePackages/all`,
+                method: "GET",
+                token: ""
+            },
+            createServicePackage: {
+                url: `${authUrl}api/ServicePackages`,
+                method: "POST",
+                token: "",
+                data: {}
+            },
+            getAllDeleteServicePackages: {
+                url: `${authUrl}api/ServicePackages/all-delete`,
+                method: "GET",
+                token: "",
+            },
+
+            deleteServicePackage: {
+                url: `${authUrl}api/ServicePackages/`,
+                method: "DELETE",
+                token: "",
+            },
+            deleteServicePackages: {
+                url: `${authUrl}api/ServicePackages/batch`,
+                method: "DELETE",
+                token: "",
+                data: [1, 2, 3]
+            },
+            recoverServicePackage: {
+                url: `${authUrl}api/ServicePackages/restore-servicepackage/`,
+                method: "PATCH",
+                token: "",
+            },
+            updateServicePackage: {
+                url: `${authUrl}api/ServicePackages/`,
+                method: "PUT",
+                token: "",
+                data: {}
+            },
+            updateServicePackage_VoucherType: {
+                url: `${authUrl}api/ServicePackages/VoucherTypes/`,
+                method: "PATCH",
+                token: "",
+                data: [1, 2, 3]
+            },
+            updateServicePackage_Services: {
+                url: `${authUrl}api/ServicePackages/Services/`,
+                method: "PATCH",
+                token: "",
+                data: [1, 2, 3]
+            },
+
+            //////////////////// VOUCHER TYPE ///////////////////////
+            getAllDeleteVoucherType: {
+                url: `${authUrl}api/VoucherTypes/all-delete`,
+                method: "GET",
+                token: ""
+            },
+            updateVoucherType: {
+                url: `${authUrl}api/VoucherTypes/`,
+                method: "PUT",
+                token: "",
+                data: {}
+            },
+            isAvailableVoucherType: {
+                url: `${authUrl}api/VoucherTypes/`,
+                method: "PATCH",
+                token: "",
+                data: {}
+            },
+            createVoucherType: {
+                url: `${authUrl}api/VoucherTypes/`,
+                method: "POST",
+                token: "",
+                data: {}
+            },
+            deleteVoucherType: {
+                url: `${authUrl}api/VoucherTypes/`,
+                method: "DELETE",
+                token: "",
+                data: {}
+            },
+            deleteVoucherTypes: {
+                url: `${authUrl}api/VoucherTypes/batch`,
+                method: "DELETE",
+                token: "",
+                data: [1, 2, 3]
+            },
+            recoverVoucherType: {
+                url: `${authUrl}api/VoucherTypes/restore-vouchertype/`,
+                method: "PATCH",
+                token: "",
+                data: {}
+            },
+
+
+
+            //////////////// USER ////////////////
             updateInformationForUser:
             {
                 url: `${authUrl}api/Users`,
@@ -53,7 +153,36 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Auth/Login/User`
+            login: `${authUrl}api/auth/Login/User`,
+            getAllServices: {
+                url: `${authUrl}api/Services/all`,
+                method: "GET",
+                token: ""
+            },
+
+            /////////////////////// SERVICE ////////////////////////////
+            getServiceById: {
+                url: `${authUrl}api/Services/`,
+                method: "GET",
+            },
+            recoverService: {
+                url: `${authUrl}api/Services/restore-service/`,
+                method: "PATCH",
+            },
+            getAllDeleteService: {
+                url: `${authUrl}api/Services/all-delete`,
+                method: "GET",
+            },
+            deleteService: {
+                url: `${authUrl}api/Services/`,
+                method: "DELETE",
+            },
+            updateService:{
+                url:`${authUrl}api/Services/`,
+                method:"PUT"
+            }
+
+
         },
         saleAdmin: {
             //GET
@@ -94,7 +223,7 @@ const api_links = {
                 data: {},
                 token: ""
             },
-            login: `${authUrl}api/Auth/Login/Customer`
+            login: `${authUrl}api/auth/Login/Customer`
         }
     }
 }

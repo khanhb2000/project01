@@ -9,8 +9,9 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import Cookies from 'universal-cookie';
+import Notification from '../../../component/notification/Notification';
 
-interface DataType {
+interface DataType_Customer {
     key: React.Key;
     id: string;
     name: string;
@@ -21,21 +22,22 @@ interface DataType {
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<CustomerListState>();
+    const [all_data, setAllData] = useState<CustomerListState>([]);
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
-
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType_Customer[]>([])
     const [filterType, setFilterType] = useState(0);
+
 
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
     const navigate = useNavigate();
 
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<DataType_Customer> = [
         {
             title: 'Tên khách hàng',
             dataIndex: 'name',
@@ -102,8 +104,8 @@ export default function Customers() {
     }, []);
 
     const dataListShow: DataType[] = [];
-    data?.map((dataTemp) => dataListShow.push({
-        key: dataTemp.id,//index
+    data?.map((dataTemp, index) => dataListShow.push({
+        key: index,
         id: dataTemp.id,
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
@@ -174,6 +176,8 @@ export default function Customers() {
         onChange: onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
+    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
+
 
     return (
         <div className='user-customerlist'>
@@ -192,9 +196,22 @@ export default function Customers() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
+                        <Button type="primary" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </button></div>
+                        </Button>
+                        <Notification
+                            type='customer'
+                            setSelectedRowKeys={setSelectedRowKeys}
+                            setDataRecover={setDataRecover}
+                            setData={setData}
+                            selectedRowData={selectedRowData}
+                            isDisable={!hasSelected}
+                            description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
+                            placement='top'
+                            buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} khách hàng`}
+                        >
+                        </Notification>
+                    </div>
 
                     <div className='dashboard-content-header2-right'>
                         <div className='dashboard-content-search'>
@@ -209,16 +226,20 @@ export default function Customers() {
                 </div>
 
                 <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
+                        size='large'
                         defaultValue="name"
-                        style={{ width: 120 }}
                         onChange={(e) => {
                             sortList(ascending, e);
                             setSortType(e)

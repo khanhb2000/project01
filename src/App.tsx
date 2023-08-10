@@ -13,43 +13,44 @@ import MyService from './pages/customer/myservice/MyService';
 import MyVoucher from './pages/customer/myvoucher/MyVoucher';
 import History from './pages/customer/history/History';
 import Customers from './pages/user/customers/Customers';
-import Services from './pages/user/services/Services';
+import Services from './pages/user/servicepackages/ServicePackage';
 import Vouchers from './pages/user/vouchers/Vouchers';
 import Employees from './pages/user/employee/Employee';
 //import BookDetail from './pages/Productdetail/product-detail';
 import CustomerDetail from './pages/user/customers/detail/customer-detail';
 
 //Importing Bootstrap 5
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
 import PopupScreen from './component/popupscreeninformation/PopupScreen';
+import NewService from './pages/user/servicepackages/NewServicePackage';
+import UpdateService from './pages/user/servicepackages/UpdateServicePackage';
+import BookDetail from './pages/Productdetail/product-detail';
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Routes >
+        <Routes>
           <Route path="/" element={<PreLogin />} />
           <Route path="login/nhanvien" element={<Login />} />
           <Route path="login/khachhang" element={<Login />} />
           <Route path="login/*" element={<PreLogin />} />
-          <Route path="dashboard/*" element={<Dashboard />} >
-            <Route path="*" element={<div></div>} />
-            {/*<Route path="profile" element={< Profile />} />*/}
-            <Route path="myservice" element={<MyService />} />
-            <Route path="myvoucher" element={<MyVoucher />} />
-            <Route path="history" element={< History />} />
-            <Route path="customers" element={<Customers />} >
-              <Route path="detail/:id" element={<CustomerDetail />} />
-            </Route>
-            <Route path="services" element={<Services />} />
-            <Route path="vouchers" element={<Vouchers />} />
-            <Route path="employee" element={<Employees />} />
-          </Route >
-          <Route path="profile" element={<PopupScreen />} />
-          <Route path="managerdashboard/*" element={<ManagerDashboard />} />
+          <Route path="dashboard/*" element={<Dashboard />} />
+          <Route path="*" element={<div></div>} />
+          {/*<Route path="profile" element={< Profile />} />*/}
+          {/* <Route path="myservice" element={<MyService />} />
+          <Route path="myvoucher" element={<MyVoucher />} />
+          <Route path="history" element={< History />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="detail/:id" element={<CustomerDetail />} />
+          <Route path="services" element={<Services />} />
+          <Route path="vouchers" element={<Vouchers />} />
+          <Route path="employee" element={<Employees />} />
+          <Route path="profile" element={<PopupScreen />} /> */}
+          {/* <Route path="testing" element={<UpdateService />} /> */}
+          {/* <Route path="/detail/:id" element={<BookDetail />} /> */}
+          {/* <Route path="managerdashboard/*" element={<ManagerDashboard />} /> */}
         </Routes>
-      </div>
+      </div >
     </BrowserRouter >
   );
 }

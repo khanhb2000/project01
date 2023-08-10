@@ -1,41 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { VoucherTypeListState, VoucherTypeState } from '../../../app/type.d';
-import { ColumnsType } from 'antd/es/table';
+import React, { useState, useEffect, ReactNode, useRef } from 'react';
+import './servicepackage.scss';
+//import Add from './addNew';D
+import { ServiceListState, ServicePackageListState, ServicePackageState, VoucherTypeListState } from '../../../app/type.d';
+import { Avatar, Form, Input, List, Modal, Popconfirm, Select, Space, Tag, message } from 'antd';
+import { Button, Table, Divider, Card, Col, Row } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Cookies from 'universal-cookie';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
-import { Button, Col, Modal, Row, Space, Tag, message, Table, Popconfirm, Divider, Select } from 'antd';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Notification from '../../../component/notification/Notification';
-import './stylesVouchers.scss'
+import { Link } from 'react-router-dom';
+
 
 
 interface DataType {
-    "key": React.Key;
-    "href"?: string | undefined;
-    "image"?: string;
-    "id": number,
-    "typeName": string,
-    "isAvailable": boolean,
-    "commonPrice": number,
-    "valueDiscount": number,
-    "availableNumberOfVouchers": number,
-    "percentageDiscount": number,
-    "maximumValueDiscount": number,
-    "conditionsAndPolicies": string,
-    "vouchers": [],
-    "usableServicePackages": []
-
+    key?: React.Key;
+    id: number;
+    servicePackageName: string;
+    image: string;
+    href: string;
+    description: string,
+    services: ServiceListState,
+    valuableVoucherTypes: VoucherTypeListState
 }
 
 
-export default function Services() {
 
-    //useState
-    const [all_data, setAllData] = useState<VoucherTypeListState>([]);
-    const [data, setData] = useState<VoucherTypeListState>(all_data);
+
+export default function ServicePackage() {
+    const [all_data, setAllData] = useState<ServicePackageListState>([]);
+    const [data, setData] = useState<ServicePackageListState>(all_data);
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -45,64 +41,45 @@ export default function Services() {
     const [addFormInformationService, setAddFormInformationService] = useState(false)
     const [record, setRecord] = useState<DataType>(undefined!)
 
+
     //get data from cookie
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
+    
 
+    // call api to get data
     useEffect(() => {
-        getAllVoucherTypes()
+        getAllServicePackages()
             .then((res) => {
                 if (res.status === 200) {
                     setAllData(res.data);
                     setData(res.data);
-
                 }
             })
             .catch((reason) => {
                 console.log(reason);
             })
-        getAllDeleteVoucherType()
+        getAllDeleteServicePackages()
             .then((res) => {
                 if (res.status === 200) {
-                    console.log(res);
                     setDataRecover(res.data)
                 }
             })
-            .catch((reason) => {
-                console.log(reason);
+            .catch((error) => {
+                console.log(error);
+
             })
-    }, [])
-
-
-    // call api to get data
-    const dataListShow: DataType[] = [];
-    data?.map((dataTemp) => dataListShow.push({
-        key: dataTemp.id,//index
-        id: String(dataTemp.id),
-        href: 'https://ant.design',
-        image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
-        typeName: dataTemp.typeName,
-        isAvailable: dataTemp.isAvailable,
-        commonPrice: dataTemp.commonPrice,
-        availableNumberOfVouchers: dataTemp.availableNumberOfVouchers,
-        percentageDiscount: dataTemp.percentageDiscount,
-        maximumValueDiscount: dataTemp.maximumValueDiscount,
-        conditionsAndPolicies: dataTemp.conditionsAndPolicies,
-        valueDiscount: dataTemp.valueDiscount,
-        vouchers: dataTemp.vouchers,
-        usableServicePackages: dataTemp.usableServicePackages
-    }));
-
+    }, []);
 
     // ======================================= use to render the format of the table ===============================================
     // quantity of column, title of column...
 
     const handleDelete = (e: number) => {
-        deleteVoucherType(e)
+        deleteServicePackages(e)
             .then((res) => {
                 if (res.status === 200) {
-                    message.success(res.data.message)
-                    getAllVoucherTypes()
+                    message.success("Xoá thành công")
+                    getAllServicePackages()
                         .then((res) => {
                             setAllData(res.data);
                             setData(res.data);
@@ -113,7 +90,7 @@ export default function Services() {
                 }
             })
             .catch((reason) => {
-                message.error(reason.message)
+                message.error("Xoá thất bại")
             })
     }
 
@@ -121,12 +98,12 @@ export default function Services() {
     // not yet
     const handleRecover = (recordId: number) => {
         const recoverData = dataRecover.filter((data) => data.id !== recordId)
-        recoverVoucherType(recordId)
+        recoverServicePackage(recordId)
             .then((res_re) => {
                 if (res_re.status === 200) {
                     setDataRecover(recoverData)
                     message.success(res_re.data.message)
-                    getAllVoucherTypes()
+                    getAllServicePackages()
                         .then((res) => {
                             if (res.status === 200) {
                                 setAllData(res.data)
@@ -159,15 +136,11 @@ export default function Services() {
             dataIndex: 'service',
             render: (text, record, index) => <>
                 <div className="item-content">
-                    <a style={{ fontWeight: "bold" }}>{record?.typeName}</a>
-                    <span>
-                        Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount}đ`}
-                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('en-US')}đ )`) : ""}
-
-                    </span>
+                    <a style={{ fontWeight: "bold" }}>{record.servicePackageName}</a>
+                    <span>Nội dung: {record.description}</span>
                 </div>
                 <div className="bonus-content">
-                    <div>Số lượng còn lại: {record?.availableNumberOfVouchers}</div>
+                    <div>Đã bán: </div>
                 </div></>,
         },
         {
@@ -176,7 +149,7 @@ export default function Services() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Link to={"updatevoucher"} state={record}>
+                    <Link to={"updateservicepackage"} state={record}>
                         <Button
                             title='Sửa đổi'
                             size={"large"} >
@@ -191,26 +164,26 @@ export default function Services() {
 
     const columnsRecover: ColumnsType<DataType> = [
         {
-            title: 'Gói khuyến mãi',
-            dataIndex: 'typeName',
+            title: 'Lựa chọn',
+            dataIndex: 'id',
             render: (text, record, index) =>
                 <div className="item-content-recover">
-                    <a style={{ fontWeight: "bold" }}>{record.typeName}</a>
+                    <span>{record.id}</span>
                 </div>
 
         },
         {
-            title: 'Điều kiện',
-            dataIndex: 'conditionsAndPolicies',
+            title: 'Gói dịch vụ',
+            dataIndex: 'servicePackageName',
             render: (text, record, index) =>
                 <div className="item-content-recover">
-
-                    <p>Nội dung: {record.conditionsAndPolicies}</p>
+                    <a style={{ fontWeight: "bold" }}>{record.servicePackageName}</a>
+                    <p>Nội dung: {record.description}</p>
                 </div>
         },
         {
-            title: 'Thao tác',
-            dataIndex: 'action',
+            title: 'Miêu tả',
+            dataIndex: 'description',
             render: (text, record) =>
                 <div className="item-content-recover">
                     <Button type='primary' onClick={() => handleRecover(record.id)} style={{ backgroundColor: "#465d65" }}>Khôi phục</Button>
@@ -235,7 +208,18 @@ export default function Services() {
 
     const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
 
-
+    // put data into table to display
+    const dataListShow: DataType[] = [];
+    data?.map((dataTemp, index) => dataListShow.push({
+        key: index,
+        id: dataTemp.id,
+        servicePackageName: dataTemp.servicePackageName,
+        href: 'https://ant.design',
+        image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
+        description: dataTemp.description,
+        services: dataTemp.services,
+        valuableVoucherTypes: dataTemp.valuableVoucherTypes
+    }));
 
 
     // search data
@@ -243,7 +227,7 @@ export default function Services() {
         if (event.target.value !== '') {
             let search_results = all_data?.filter((item) => {
                 return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
-                    item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
+                    item.servicePackageName.toLowerCase().includes(event.target.value.toLowerCase())
             }
             );
             setData(search_results);
@@ -258,16 +242,7 @@ export default function Services() {
         if (tang_dan) {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.typeName > b.typeName) ? 1 : -1);
-                    break;
-                case "cost":
-                    data?.sort((a, b) => (a.commonPrice > b.commonPrice) ? 1 : -1);
-                    break;
-                case "maxvalue":
-                    data?.sort((a, b) => (a.maximumValueDiscount > b.maximumValueDiscount) ? 1 : -1);
-                    break;
-                case "remain":
-                    data?.sort((a, b) => (a.availableNumberOfVouchers > b.availableNumberOfVouchers) ? 1 : -1);
+                    data?.sort((a, b) => (a.servicePackageName > b.servicePackageName) ? 1 : -1);
                     break;
                 default:
                     break;
@@ -276,16 +251,7 @@ export default function Services() {
         else {
             switch (sorttype) {
                 case "name":
-                    data?.sort((a, b) => (a.typeName < b.typeName) ? 1 : -1);
-                    break;
-                case "cost":
-                    data?.sort((a, b) => (a.commonPrice < b.commonPrice) ? 1 : -1);
-                    break;
-                case "maxvalue":
-                    data?.sort((a, b) => (a.maximumValueDiscount < b.maximumValueDiscount) ? 1 : -1);
-                    break;
-                case "remain":
-                    data?.sort((a, b) => (a.availableNumberOfVouchers < b.availableNumberOfVouchers) ? 1 : -1);
+                    data?.sort((a, b) => (a.servicePackageName < b.servicePackageName) ? 1 : -1);
                     break;
                 default:
                     break;
@@ -294,32 +260,30 @@ export default function Services() {
     }
 
     //=========================== GET API ====================================
-    const getAllVoucherTypes = () => {
-        const api_link = {
-            url: api_links.user.superAdmin.getAllVoucherType,
-            method:"GET",
-            token:token
-        }
+    const getAllServicePackages = () => {
+        const api_link = api_links.user.superAdmin.getAllServicePackages
+        api_link.token = token
         return fetch_Api(api_link)
+
     }
-    const deleteVoucherType = (e: number) => {
+    const deleteServicePackages = (e: number) => {
         const api_link = {
-            url: `${api_links.user.superAdmin.deleteVoucherType.url}${e}`,
+            url: `${api_links.user.superAdmin.deleteServicePackage.url}${e}`,
             method: "DELETE",
             token: token
         }
         return fetch_Api(api_link)
     }
 
-    const getAllDeleteVoucherType = () => {
-        const api_link = api_links.user.superAdmin.getAllDeleteVoucherType
+    const getAllDeleteServicePackages = () => {
+        const api_link = api_links.user.superAdmin.getAllDeleteServicePackages
         api_link.token = token
         return fetch_Api(api_link)
     }
 
-    const recoverVoucherType = (recordId: number) => {
+    const recoverServicePackage = (recordId: number) => {
         const api_link = {
-            url: `${api_links.user.superAdmin.recoverVoucherType.url}${recordId}`,
+            url: `${api_links.user.superAdmin.recoverServicePackage.url}${recordId}`,
             method: "PATCH",
             token: token
         }
@@ -348,19 +312,12 @@ export default function Services() {
             >
                 <Row>
                     <Col span={24}>
-                        <Link to={"createvoucher"}>
-                            <Button style={{ width: "100%" }} type='default' size='large'>
-                                Thêm mã khuyến mãi
+                        <Link to={"createservicepackage"}>
+                            <Button style={{width:"100%"}} type='default' size='large'>
+                                Thêm dịch vụ
                             </Button>
                         </Link>
                     </Col>
-                    {/* <Col span={12}>
-                        <Link to={"createvoucerservice"}>
-                            <Button type='default' size='large'>
-                                Thêm voucher cho dịch vụ
-                            </Button>
-                        </Link>
-                    </Col> */}
                 </Row>
             </Modal>
 
@@ -371,7 +328,7 @@ export default function Services() {
                 title="Khôi phục"
                 onCancel={() => {
                     setAddFormRecover(!addFormRecover)
-                    getAllVoucherTypes()
+                    getAllServicePackages()
                         .then((res) => {
                             if (res.status === 200) {
                                 setAllData(res.data);
@@ -399,10 +356,10 @@ export default function Services() {
                 footer={[]}
                 width="65vw"
             >
-                <Space size={[25, 0]} direction='horizontal' className='uservoucher-record' align='center'>
-                    <Space.Compact className='coupon-left' direction='vertical'>
+                <Space className='userservice-record' direction='horizontal' align='start' size="large">
+                    <Space.Compact direction='vertical'>
                         <div>
-                            <img src={record?.image} alt="image" width="250px" />
+                            <img src={record?.image} alt="image" width="300px" />
                         </div>
                         <Popconfirm
                             className="ant-popconfirm"
@@ -419,51 +376,50 @@ export default function Services() {
                             <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
                         </Popconfirm>
                     </Space.Compact>
-                    <Space.Compact className='coupon-con' direction='vertical'>
+                    <Space.Compact direction='vertical'>
                         <Divider orientation='left'>Thông tin</Divider>
-                        <Space direction='vertical' className='uservoucher-record--information'>
+                        <Space direction='vertical' className='userservice-record--information'>
                             <Space>
-                                <span style={{ color: "#0958d9" }}>Tên gói khuyến mãi: </span>
-                                <span>{record?.typeName}</span>
+                                <span style={{ color: "#0958d9" }}>Tên gói dịch vụ: </span>
+                                <span>{record?.servicePackageName}</span>
                             </Space>
                             <Space>
-                                <span style={{ color: "#0958d9", display: "inline-block", width: "4vw" }}>Điều kiện: </span>
-                                <span>{record?.conditionsAndPolicies}</span>
+                                <span style={{ color: "#0958d9" }}>Miêu tả: </span>
+                                <span>{record?.description}</span>
                             </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9" }}>Giá trị: </span>
-                                <span>{record?.commonPrice.toLocaleString("en")}đ</span>
+                            <Divider orientation='left'>Dịch vụ</Divider>
+                            <Space wrap direction='horizontal'>
+                                {record?.services.map((service) => {
+                                    return (
+                                        <Tag color='blue'>{service.serviceName}:{service.description}</Tag>
+                                    )
+                                })}
                             </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9" }}>Số lượng khuyến mãi còn lại: </span>
-                                <span>{record?.availableNumberOfVouchers}</span>
-                            </Space>
-                            <Space>
-                                {record?.percentageDiscount ?
-                                    <>
-                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
-                                        <span>{record?.percentageDiscount}%</span>
-                                    </>
-                                    :
-                                    <>
-                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
-                                        <span>{record?.valueDiscount.toLocaleString("en")}</span>
-                                    </>
 
-                                }
-                            </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9" }}>Giảm giá tối đa: </span>
-                                <span>{record?.maximumValueDiscount ? record?.maximumValueDiscount.toLocaleString("en") : "0"}đ</span>
-                            </Space>
                         </Space>
                     </Space.Compact>
                 </Space>
+                <Divider orientation='left'>Mã khuyến mãi</Divider>
+                <Space className='userservice-record--voucher' size={[10, 8]} style={{ width: "100%", alignItems:"start" }} direction='horizontal' wrap>
+                    {record?.valuableVoucherTypes.map((voucher) => {
+                        return (
+                            <Space align='baseline' className='userservice-record--information-voucher' direction='vertical'>
+                                <span style={{ color: "#0958d9" }}>{voucher?.typeName}</span>
+                                <span><b>Giá trị: </b>{voucher?.commonPrice}</span>
+                                <span><b>Điều kiện: </b>{voucher?.conditionsAndPolicies}</span>
+                            </Space>
+                        )
+                    })}
+                </Space>
             </Modal>
 
-            <div className="user-vouchers">
+
+
+
+
+            <div className="user-services">
                 <div className="dashboard-content-header1">
-                    <h2>Danh sách mã khuyến mãi</h2>
+                    <h2>Danh sách gói dịch vụ</h2>
 
                     <hr
                         style={{
@@ -479,7 +435,7 @@ export default function Services() {
                             Thêm
                         </Button>
                         <Notification
-                            type='voucher'
+                            type='service'
                             setSelectedRowKeys={setSelectedRowKeys}
                             setDataRecover={setDataRecover}
                             setData={setData}
@@ -522,17 +478,12 @@ export default function Services() {
                         className="text-bold"
                         size='large'
                         defaultValue="name"
-                        style={{ width: 120 }}
                         onChange={(e) => {
                             sortList(ascending, e);
                             setSortType(e)
                         }}
                         options={[
                             { value: 'name', label: 'Tên' },
-                            { value: 'cost', label: 'Giá bán' },
-                            { value: 'maxValue', label: 'Giá trị tối đa' },
-                            { value: 'remain', label: 'Số lượng tồn' },
-
                         ]}
                     />
                 </div>
@@ -547,4 +498,3 @@ export default function Services() {
     )
 
 };
-

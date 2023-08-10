@@ -111,7 +111,7 @@ export default function Header() {
 
 
     return (
-        <React.Fragment>
+        <div className='header'>
             <PopupScreenInformation isPopup={popupInformation} setPopup={setPopupInformation} />
             <PopupScreenPassword  isPopup = {popupPassword} setPopup={setPopupPassword}/>
             <div className='dashbord-header-container'>
@@ -198,6 +198,6 @@ src='https://reqres.in/img/faces/9-image.jpg' />*/}
 
                 </div>
             </div>
-        </React.Fragment>
+        </div>
     )
 }

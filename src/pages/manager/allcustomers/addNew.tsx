@@ -26,10 +26,6 @@ import { LoadingOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/
 import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 
-//Importing Bootstrap 5
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
-
 const { Option } = Select;
 
 interface DataNodeType {

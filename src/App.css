@@ -28,13 +28,17 @@
 */
 @import "../node_modules/react-widgets/styles.css";
 
-h1,h2,h3,h4,h5,h6{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0 !important;
   padding: 0 !important;
 }
 
 .App {
-  text-align: center;
   position: inherit;
   display: block;
   /*min-height: 100vh;
@@ -42,7 +46,7 @@ h1,h2,h3,h4,h5,h6{
   flex-direction: column;*/
   align-items: center;
   font-size: calc(10px + 2vmin);
-  
+
 }
 
 .dashboard-content-header1 {
@@ -51,18 +55,21 @@ h1,h2,h3,h4,h5,h6{
   justify-content: space-between;*/
   text-align: left;
 }
+
 .dashboard-content-header2 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 20px;
 }
+
 .dashboard-content-header3 {
   display: flex;
   flex-direction: row;
   justify-content: left;
   font-size: 16px;
 }
+
 .dashboard-content-header1 h2 {
   margin-top: auto;
   margin-bottom: auto;
@@ -70,6 +77,7 @@ h1,h2,h3,h4,h5,h6{
   font-size: xx-large;
   font-weight: 700;
 }
+
 .dashboard-content-search {
   font-weight: 400;
   line-height: 1.4em;
@@ -84,12 +92,14 @@ h1,h2,h3,h4,h5,h6{
   font-size: 0.875rem;
   border-radius: 2rem;
   border: 1px solid gray;
-  width:300px;
+  width: 300px;
 }
+
 .dashboard-content-search:focus {
   outline: #2D83B5 auto 1px;
 
 }
+
 .dashboard-content-input {
   font-style: inherit;
   font-variant: inherit;
@@ -100,42 +110,47 @@ h1,h2,h3,h4,h5,h6{
   letter-spacing: inherit;
   border: 0px;
   box-sizing: content-box;
-  background: none transparent;   
+  background: none transparent;
   margin: 0px;
   display: block;
   min-width: 0px;
-  width: 100%;  
+  width: 100%;
   font-size: 0.75rem;
   padding: 0.625rem;
   border-radius: 16px;
 
 
 }
+
 .dashboard-content-header2-left {
-  display:flex;
+  display: flex;
   justify-content: left;
-  gap:20px;
+  gap: 20px;
 }
+
 .dashboard-content-header2-right {
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: right;
-  gap:20px;
+  gap: 20px;
 }
-.dashboard-content-header3 span {
-  padding-top:6px;
-    /*position: relative;
+
+/* .dashboard-content-header3 span {
+  padding-top:6px; */
+/*position: relative;
   vertical-align: middle;
   transform: translate(0%, 75%);
   font-size: 16px;*/
-}
+/* } */
 .dashboard-content-header2 button {
   min-width: 80px;
 }
+
 .Dropdown-menu {
   text-align: left;
 }
-.Dropdown-control{
+
+.Dropdown-control {
   text-align: left;
-  width:130px;
+  width: 130px;
 }
