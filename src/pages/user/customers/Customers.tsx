@@ -103,10 +103,10 @@ export default function Customers() {
         }, 1000);
     }, []);
 
-    const dataListShow: DataType[] = [];
+    const dataListShow: DataType_Customer[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id: dataTemp.id,
+        id: String(dataTemp.id),
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",

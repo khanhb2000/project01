@@ -16,7 +16,7 @@ interface DataType {
     "key": React.Key;
     "href"?: string | undefined;
     "image"?: string;
-    "id": number,
+    "id": number|string,
     "typeName": string,
     "isAvailable": boolean,
     "commonPrice": number,
