@@ -16,7 +16,7 @@ interface DataType {
     "key": React.Key;
     "href"?: string | undefined;
     "image"?: string;
-    "id": number|string,
+    "id": number,
     "typeName": string,
     "isAvailable": boolean,
     "commonPrice": number,
@@ -78,7 +78,7 @@ export default function Services() {
     const dataListShow: DataType[] = [];
     data?.map((dataTemp) => dataListShow.push({
         key: dataTemp.id,//index
-        id: String(dataTemp.id),
+        id: dataTemp.id,
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
         typeName: dataTemp.typeName,

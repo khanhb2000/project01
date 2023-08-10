@@ -62,7 +62,7 @@ export function SupportedCustomerInformation() {
         ];
         data?.map((dataTemp, index) => dataListShow.push({
             key: dataTemp.id,//index
-            id: dataTemp.id,
+            id: String(dataTemp.id),
             name: dataTemp.name,
             contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
             status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",

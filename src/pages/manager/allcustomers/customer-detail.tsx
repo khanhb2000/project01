@@ -42,11 +42,15 @@ export default function CustomerDetail() {
         <div className='user-detail'>
        <PersonalInformation
        api_link={api_links.user.superAdmin.blockCustomer}/>
+       
        <Tabs
         defaultActiveKey="1"
         type="card"
         size={"middle"}
         items={tab_item}
+        style={{
+          width: '100%',
+        }}
       />
        
         </div>

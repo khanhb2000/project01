@@ -56,7 +56,7 @@ const api_links = {
                 url: `${authUrl}api/ServicePackages/batch`,
                 method: "DELETE",
                 token: "",
-                data: [1, 2, 3]
+                data: [1, "2", 3]
             },
             recoverServicePackage: {
                 url: `${authUrl}api/ServicePackages/restore-servicepackage/`,
@@ -116,7 +116,7 @@ const api_links = {
                 url: `${authUrl}api/VoucherTypes/batch`,
                 method: "DELETE",
                 token: "",
-                data: [1, 2, 3]
+                data: [1, "2", 3]
             },
             recoverVoucherType: {
                 url: `${authUrl}api/VoucherTypes/restore-vouchertype/`,

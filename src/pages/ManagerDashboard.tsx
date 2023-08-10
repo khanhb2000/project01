@@ -8,8 +8,8 @@ import { selectRole, selectToken } from './login/loginSlice';
 import Header from '../component/header/Header';
 import Cookies from 'universal-cookie';
 import AllCustomers from './manager/allcustomers/Customers';
-import AllServices from './manager/allservices/Services';
-import AllServicePackages from './manager/allservices/ServicesPackages';
+import AllServices from './manager/allservices/services/Service';
+import AllServicePackages from './manager/allservices/servicepackages/ServicePackage';
 import AllVouchers from './manager/allvouchers/Vouchers';
 import AllEmployees from './manager/allemployee/Employee';
 import AllBooking from './manager/allbookings/Booking';
@@ -17,6 +17,11 @@ import CustomerDetail from './manager/allcustomers/customer-detail';
 import EmployeeDetail from './manager/allemployee/employee-detail';
 import UMenuNew from '../component/newsider/indexUMenu';
 import Role from './manager/allemployee/Role';
+import NewServicePackage from './manager/allservices/servicepackages/NewServicePackage';
+import UpdateServicePackage from './manager/allservices/servicepackages/UpdateServicePackage';
+import NewService from './manager/allservices/services/NewService';
+import Newvoucher from './manager/allvouchers/NewVoucher';
+import UpdateVoucher from './manager/allvouchers/UpdateVoucher';
 
 export default function ManagerDashboard() {
 
@@ -39,15 +44,20 @@ export default function ManagerDashboard() {
         {isMenu && <UMenuNew />}
         <Routes>
           <Route path="*" element={<div></div>} />
-          <Route path="customers" element={<AllCustomers />} />
-          <Route path="customers/detail/:id" element={<CustomerDetail />} />
-          <Route path="goidichvu" element={<AllServicePackages />} />
-          <Route path="loaidichvu" element={<AllServices />} />
+          <Route path="khach-hang" element={<AllCustomers />} />
+          <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
+          <Route path="goi-dich-vu" element={<AllServicePackages />} />
+          <Route path="goi-dich-vu/tao-moi" element={<NewServicePackage />} />
+          <Route path="goi-dich-vu/cap-nhat" element={<UpdateServicePackage />} />
+          <Route path="loai-dich-vu" element={<AllServices />} />
+          <Route path="loai-dich-vu/tao-moi" element={<NewService />} />
           <Route path="vouchers" element={<AllVouchers />} />
-          <Route path="employee" element={<AllEmployees />} />
-          <Route path="employee/role" element={<Role />} />
-          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
-          <Route path="booking" element={<AllBooking />} />
+          <Route path="vouchers/tao-moi" element={<Newvoucher />} />
+          <Route path="vouchers/cap-nhat" element={<UpdateVoucher />} />
+          <Route path="nhan-vien" element={<AllEmployees />} />
+          <Route path="nhan-vien/role" element={<Role />} />
+          <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
+          <Route path="giao-dich" element={<AllBooking />} />
 
         </Routes>
       </div>

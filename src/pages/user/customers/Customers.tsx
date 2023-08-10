@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './stylesCustomers.css';
+import './stylesCustomers.scss';
 import Add from '../addNew/newCustomer';
 import { CustomerListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select } from 'antd';

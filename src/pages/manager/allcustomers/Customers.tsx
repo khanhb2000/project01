@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './stylesCustomers.css';
 import Add from './addNew';
 import { CustomerListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select, message } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -17,6 +17,9 @@ interface DataType {
     name: string;
     contact: string;
     status: string;
+    phoneNumber?:string;
+    email?:string;
+    citizenId?:string;
 }
 
 
@@ -30,6 +33,10 @@ export default function Customers() {
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+    const [record, setRecord] = useState<DataType>(undefined!)
+    const [addFormRecover, setAddFormRecover] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType[]>([])
 
     const navigate = useNavigate();
 
@@ -67,9 +74,32 @@ export default function Customers() {
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} onClick={() => handleDelete1(record.id,record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
                 </Space>
             ),
+        },
+    ];
+    const columnsRecover: ColumnsType<DataType> = [
+        {
+            title: 'Tên khách hàng',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Thông tin',
+            dataIndex: 'contact',
+            render: (_, record) =>
+            <div>
+                {record.citizenId&&"CCCD/CMND: "+record.citizenId}<br/>
+                {record.phoneNumber?"ĐT: "+record.phoneNumber: record.email?"Email: " + record.email:""}
+            </div>
+        },
+        {
+            title: 'Thao tác',
+            dataIndex: 'action',
+            render: (text, record) =>
+                <div className="item-content-recover">
+                    <Button type='primary' onClick={() => handleRecover(record.id)} style={{ backgroundColor: "#465d65" }}>Khôi phục</Button>
+                </div>
         },
     ];
 
@@ -83,13 +113,20 @@ export default function Customers() {
                 setAllData(data.data);
                 setData(data.data);
             })
-
-    }, [data]);
+            
+            fetch_Api({
+                url: "http://bevm.e-biz.com.vn/api/Customers/all-deleted-customers",
+                method: 'GET',
+            })
+                .then(data => {
+                    setDataRecover(data.data);
+                })
+    }, [data,dataRecover]);
 
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: dataTemp.id,//index
-        id: dataTemp.id,
+        id: String(dataTemp.id),
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",
@@ -160,7 +197,7 @@ export default function Customers() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
-    function handleDelete1(itemId: string,itemName: string) {
+    function handleDelete1(itemId: string, itemName: string) {
         message.loading({
             key: 'openloading',
             type: 'loading',
@@ -178,7 +215,7 @@ export default function Customers() {
         message.destroy('openloading');
         message.success({
             type: 'success',
-            content: 'Xóa thành công khách hàng '+ itemName + '!'
+            content: 'Xóa thành công khách hàng ' + itemName + '!'
         }, 1.5)
     }
 
@@ -186,96 +223,142 @@ export default function Customers() {
         message.loading({
             key: 'openloading',
             type: 'loading',
-            content: 'Đang xóa '+ String(selectedRowKeys.length) + ' khách hàng...',
+            content: 'Đang xóa ' + String(selectedRowKeys.length) + ' khách hàng...',
         }, 0);
-        selectedRowKeys.map((key)=>{
-        fetch_Api({
-            url: api_links.user.superAdmin.blockCustomer + '/' + key,
-            method: 'delete',
-        })
-            .then(data => {
-                console.log(data.data);
+        selectedRowKeys.map((key) => {
+            fetch_Api({
+                url: api_links.user.superAdmin.blockCustomer + '/' + key,
+                method: 'delete',
             })
-    })
+                .then(data => {
+                    console.log(data.data);
+                })
+        })
         message.destroy('openloading');
         message.success({
             type: 'success',
-            content: 'Đã xóa '+ String(selectedRowKeys.length) + ' khách hàng!'
+            content: 'Đã xóa ' + String(selectedRowKeys.length) + ' khách hàng!'
         }, 1.5)
     }
 
+    const handleRecover = (recordId: string) => {
+        fetch_Api({
+            url: "http://bevm.e-biz.com.vn/api/Customers/restore-customer/"+recordId,
+            method: "PATCH",
+        })
+            .then((res_re) => {
+                if (res_re.status === 200) {
+                    message.success(res_re.data.message)
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+    }
+
     return (
-        <div className='user-customerlist'>
+        <React.Fragment>
+            <Modal
+                //width="80vw"
+                style={{ top: "5vh" }}
+                open={addFormRecover}
+                title="Khôi phục"
+                onCancel={() => {
+                    setAddFormRecover(!addFormRecover)
+                }}
+                footer={[]}>
+                <Table className='recover-table' columns={columnsRecover} dataSource={dataRecover} />
+            </Modal>
 
-            {!addForm && <>
-                <div className='dashboard-content-header1'>
-                    <h2>Danh sách khách hàng</h2>
+            <div className='user-customerlist'>
+                {!addForm && <>
+                    <div className='dashboard-content-header1'>
+                        <h2>Danh sách khách hàng</h2>
 
-                    <hr
-                        style={{
-                            borderTop: '1px solid black',
-                            width: '100%',
-                            opacity: '.25',
-                        }}
-                    />
-                </div>
-                <div className='dashboard-content-header2'>
-                    <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" onClick={() => setAddForm(!addForm)}>
-                            Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" onClick={() => {hasSelected &&handleDeleteMulti();setSelectedRowKeys([])}}>
-                            Xóa
-                        </button></div>
+                        <hr
+                            style={{
+                                borderTop: '1px solid black',
+                                width: '100%',
+                                opacity: '.25',
+                            }}
+                        />
+                    </div>
+                    <div className='dashboard-content-header2'>
+                        <div className='dashboard-content-header2-left'>
+                            <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                                Thêm
+                            </Button>
+                            <Button
+                                disabled={!hasSelected}
+                                type="primary"
+                                style={!hasSelected ? 
+                            { backgroundColor: "rgba(0,0,0,0.45)" } 
+                            : { backgroundColor: "red" }}
+                                onClick={() => //openNotification(placement)
+                                {  handleDeleteMulti(); setSelectedRowKeys([]) }}
+                            >
+                                Xóa
+                            </Button>
+                            <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                        </div>
 
-                    <div className='dashboard-content-header2-right'>
-                        <div className='dashboard-content-search'>
-                            <input
-                                type='text'
-                                onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
-                                className='dashboard-content-input'
-                            />
+                        <div className='dashboard-content-header2-right'>
+                            <div className='dashboard-content-search'>
+                                <input
+                                    type='text'
+                                    onChange={e => __handleSearch(e)}
+                                    placeholder='Search..'
+                                    className='dashboard-content-input'
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
-                        {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
-                    <Select
-                        defaultValue="name"
-                        style={{ width: 120 }}
-                        onChange={(e) => {
-                            sortList(ascending, e);
-                            setSortType(e)
-                        }}
-                        options={[
-                            { value: 'name', label: 'Tên' },
-                        ]}
-                    />
-                </div>
+                    <div className='dashboard-content-header3'>
+                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%'}}>
+                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                    </span>
+                        <Button
+                            size='large'
+                            type="default"
+                            onClick={() => {
+                                sortList(!ascending, sortType);
+                                setAscending(!ascending)
+                            }}
+                            style={{ fontSize: "14px", fontWeight: "bold" }}
+                        >
+                            {ascending ? "Tăng dần" : "Giảm dần"}
+                        </Button>
+                        <Select
+                            className="text-bold"
+                            size='large'
+                            defaultValue="name"
+                            style={{ width: 120 }}
+                            onChange={(e) => {
+                                sortList(ascending, e);
+                                setSortType(e)
+                            }}
+                            options={[
+                                { value: 'name', label: 'Tên' },
+                            ]}
+                        />
+                    </div>
 
-                <span style={{ textAlign: 'left', fontSize: 'initial', }}>
-                    {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                </span>
 
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
-            }
 
-            {addForm && <><div className='dashboard-content-header2'>
-                <h2>Thông tin khách hàng</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                </>
+                }
 
-            </>}
-        </div>
+                {addForm && <><div className='dashboard-content-header2'>
+                    <h2>Thông tin khách hàng</h2>
+                    <button type="submit" className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</button></div>
+                    <Add />
+
+                </>}
+            </div>
+        </React.Fragment>
+
     )
 };
