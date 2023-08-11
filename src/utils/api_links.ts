@@ -56,7 +56,7 @@ const api_links = {
                 url: `${authUrl}api/ServicePackages/batch`,
                 method: "DELETE",
                 token: "",
-                data: [1, 2, 3]
+                data: [1, "2", 3]
             },
             recoverServicePackage: {
                 url: `${authUrl}api/ServicePackages/restore-servicepackage/`,
@@ -116,7 +116,7 @@ const api_links = {
                 url: `${authUrl}api/VoucherTypes/batch`,
                 method: "DELETE",
                 token: "",
-                data: [1, 2, 3]
+                data: [1, "2", 3]
             },
             recoverVoucherType: {
                 url: `${authUrl}api/VoucherTypes/restore-vouchertype/`,
@@ -186,14 +186,14 @@ const api_links = {
         },
         saleAdmin: {
             //GET
-            getUserBooking: `${authUrl}api/Bookings/all`,
-            getUserCustomer: `${authUrl}api/Customers/all-customers`,
-            getUserRole: `${authUrl}api/Roles/all`,
-            getUserServicePackage: `${authUrl}api/ServicePackages/all`,
-            getUserService: `${authUrl}api/Services/all`,
-            getUserUser: `${authUrl}api/Users/all-users`,
-            getUserVoucher: `${authUrl}api/Vouchers/all`,
-            getUserVoucherType: `${authUrl}api/VoucherTypes/all`,
+            getUserBooking: `${authUrl}api/Bookings/User`,
+            getUserCustomer: `${authUrl}api/Customers/All-Supported-Customers`,
+            //getUserRole: `${authUrl}api/Roles/all`,
+            //getUserServicePackage: `${authUrl}api/ServicePackages/all`,
+            //getUserService: `${authUrl}api/Services/all`,
+            getUserUser: `${authUrl}api/Users/All-Managed-Users`,
+            getUserVoucher: `${authUrl}api/Voucher/User`,
+            //getUserVoucherType: `${authUrl}api/VoucherTypes/all`,
 
             updateInformation: `${authUrl}api/Users`,
             resetPassword: `${authUrl}api/Users/Reset-Password`,
@@ -209,7 +209,7 @@ const api_links = {
             //GET
             getCustomerBooking: `${authUrl}api/Bookings/Customer`,
             getCustomerSupport: `${authUrl}api/Users/All-Supporting-Users`,
-            getCustomerVoucher: `${authUrl}api/Vouchers/Customer`,
+            getCustomerVoucher: `${authUrl}api/Voucher/Customer`,
 
             updateInformation: {
                 url: `${authUrl}api/Customers`,

@@ -21,7 +21,6 @@ import Employees from './user/employee/Employee';
 import Booking from './user/bookings/Booking';
 import CustomerDetail from './user/customers/detail/customer-detail';
 import EmployeeDetail from './user/employee/detail/employee-detail';
-import BookDetail from './Productdetail/product-detail';
 import NewService from './user/services/NewService';
 import UMenuNew from '../component/newsider/indexUMenu';
 import CMenuNew from '../component/newsider/indexCMenu';
@@ -75,7 +74,6 @@ export default function Dashboard() {
           <Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />
-          <Route path="detail/:id" element={<BookDetail />} />
           <Route path="booking" element={<Booking />} />
 
         </Routes>

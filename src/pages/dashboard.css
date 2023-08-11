@@ -1,6 +1,7 @@
 .dashboard-container {
     display: block;
-    /*flex-direction: row;*/
+    /*flex-direction: row;
+    height: calc(100vh - 100px);*/
 }
 .dashboard-body {
     flex: 1;

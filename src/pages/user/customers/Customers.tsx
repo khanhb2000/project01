@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './stylesCustomers.scss';
-import Add from './addNew';
+import Add from '../addNew/newCustomer';
 import { CustomerListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -106,7 +106,7 @@ export default function Customers() {
     const dataListShow: DataType_Customer[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
         key: index,
-        id: dataTemp.id.toString(),
+        id: String(dataTemp.id),
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
         status: dataTemp.isBlocked ? "Đã khóa" : "Đang hoạt động",

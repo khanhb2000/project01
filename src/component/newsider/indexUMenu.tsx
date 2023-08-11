@@ -45,7 +45,7 @@ function UMenuNew() {
 
       >
         <Menu.Item
-          key="customers"
+          key="khach-hang"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faUser} />}
           style={{
             padding: '2em',
@@ -62,7 +62,7 @@ function UMenuNew() {
           {...subMenuProps("service", "Dịch vụ", handleTitleClick)}
         >
           <Menu.Item
-            key="servicepackage"
+            key="goi-dich-vu"
             style={{
               padding: '2em',
             }}
@@ -70,7 +70,7 @@ function UMenuNew() {
             Các gói dịch vụ
           </Menu.Item>
           <Menu.Item
-            key="service"
+            key="loai-dich-vu"
             style={{
               padding: '2em',
             }}
@@ -89,14 +89,14 @@ function UMenuNew() {
           Vouchers
         </Menu.Item>
         <Menu.Item
-          key="employee"
+          key="nhan-vien"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faIdCard} />}
           style={{
             padding: '2em',
             textAlign: 'left',
           }}>Nhân viên</Menu.Item>
         <Menu.Item
-          key="booking"
+          key="giao-dich"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faCalendarCheck} />}
           style={{
             padding: '2em',

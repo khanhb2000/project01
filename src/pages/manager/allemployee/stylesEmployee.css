@@ -22,3 +22,6 @@
 .ant-space{
     display: flex;
 }
+.dashboard-content-header2>.dashboard-content-header2-left button {
+            width: 10vw !important;
+}

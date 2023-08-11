@@ -23,7 +23,6 @@ import CustomerDetail from './pages/user/customers/detail/customer-detail';
 import PopupScreen from './component/popupscreeninformation/PopupScreen';
 import NewService from './pages/user/servicepackages/NewServicePackage';
 import UpdateService from './pages/user/servicepackages/UpdateServicePackage';
-import BookDetail from './pages/Productdetail/product-detail';
 
 function App() {
   return (
@@ -48,7 +47,7 @@ function App() {
           <Route path="profile" element={<PopupScreen />} /> */}
           {/* <Route path="testing" element={<UpdateService />} /> */}
           {/* <Route path="/detail/:id" element={<BookDetail />} /> */}
-          {/* <Route path="managerdashboard/*" element={<ManagerDashboard />} /> */}
+          <Route path="managerdashboard/*" element={<ManagerDashboard />} />
         </Routes>
       </div >
     </BrowserRouter >
