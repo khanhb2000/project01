@@ -45,8 +45,6 @@ export default function ServicePackage() {
     //get data from cookie
     var cookies = new Cookies()
     var token = cookies.get("token")?.token;
-    
-
     // call api to get data
     useEffect(() => {
         getAllServicePackages()
@@ -262,7 +260,7 @@ export default function ServicePackage() {
     //=========================== GET API ====================================
     const getAllServicePackages = () => {
         const api_link = api_links.user.superAdmin.getAllServicePackages
-        api_link.token = token
+        api_link.token = token        
         return fetch_Api(api_link)
 
     }

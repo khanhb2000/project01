@@ -30,10 +30,10 @@ export default function Header() {
     dispatch(setMenuRole(userRole));
 
     //log out
-    const handleLogout = () => {
+    const handleLogout = () => {  
         dispatch(logout())
-        cookies.remove("token");
         navigate("/login")
+        cookies.remove("token");
     };
 
 
@@ -86,8 +86,8 @@ export default function Header() {
         } as MenuItem;
     }
     const items: MenuProps['items'] = [
-        getItem("Cài đặt", 'menu', <SettingFilled />, [
-            getItem(<span>{cookies.get("token").role?.normalizedName}</span>, '1', <UserOutlined />),
+        getItem(`Xin chào ${cookies.get("token").information?.name}`, 'menu', <SettingFilled />, [
+            getItem(<span>Thông tin tài khoản</span>, '1', <UserOutlined />),
             getItem(<span>Thay đổi mật khẩu</span>, '2', <SettingOutlined />),
             getItem(<span>Đăng xuất</span>, '3', <LogoutOutlined />),
         ]),
@@ -117,9 +117,6 @@ export default function Header() {
             <div className='dashbord-header-container'>
                 <div className='dashbord-header-right'>
                     <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
-                    <h4>
-                        Welcome {cookies.get("token").information?.name}
-                    </h4>
                 </div>
 
                 <div className='dashboard-header-setting'>

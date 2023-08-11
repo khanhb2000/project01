@@ -33,7 +33,7 @@ export default function Login() {
   const token = useAppSelector(selectToken);
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
-
+  
   //variable
   const cookies = new Cookies();
   const dispatch = useAppDispatch();
@@ -65,12 +65,12 @@ export default function Login() {
   };
 
   //check token existed 
-  if (token != "") {
+  if (token != undefined) {
     cookies.set("token", storeCookieData, { path: '/', maxAge: 7200 })  // set cookies for 30 minutes
   }
 
   // Navigate to dashboard page if login successful
-  if (cookies.get("token")?.token !== undefined) {
+  if (cookies.get("token")?.token !== undefined) { 
     return <Navigate to='/dashboard' />;
   }
 
