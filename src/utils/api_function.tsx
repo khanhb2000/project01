@@ -14,7 +14,7 @@ interface Api {
 const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
     const config: AxiosRequestConfig = {
         headers: {
-            "Authorization": `Bearer  ${token ?? token}`,
+            "Authorization": `Bearer  ${token}`,
             "Content-Type": "application/json"
         },
         url: params.url,

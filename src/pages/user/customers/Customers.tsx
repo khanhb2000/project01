@@ -2,42 +2,46 @@ import React, { useState, useEffect } from 'react';
 import './stylesCustomers.scss';
 import Add from '../addNew/newCustomer';
 import { CustomerListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
-import Cookies from 'universal-cookie';
-import Notification from '../../../component/notification/Notification';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
+import { havePermission } from '../../../utils/permission_proccess';
 
-interface DataType_Customer {
+interface DataType {
     key: React.Key;
     id: string;
     name: string;
     contact: string;
     status: string;
+    phoneNumber?: string;
+    email?: string;
+    citizenId?: string;
 }
 
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<CustomerListState>([]);
+    const [messageApi, contextHolder] = message.useMessage();
+    const [all_data, setAllData] = useState<CustomerListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
+
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [dataRecover, setDataRecover] = useState<DataType_Customer[]>([])
-    const [filterType, setFilterType] = useState(0);
 
-
-    var cookies = new Cookies()
-    var token = cookies.get("token")?.token;
     const navigate = useNavigate();
 
-    const columns: ColumnsType<DataType_Customer> = [
+    const addPermission = havePermission("Customer", "write");
+    const deletePermission = havePermission("Customer", "delete");
+    const allPermission = havePermission("Customer", "all");
+
+    const columns: ColumnsType<DataType> = [
         {
             title: 'Tên khách hàng',
             dataIndex: 'name',
@@ -65,47 +69,34 @@ export default function Customers() {
 
         },
         {
-            title: 'Action',
+            title: '',
             key: 'action',
             width: '112px',
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
         },
     ];
-
+   
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        setLoading(true);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Customers/All-Supported-Customers',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
+        fetch_Api({
+            url: api_links.user.saleAdmin.getUserCustomer,
+            method: 'GET',
+            data: undefined
         })
             .then(data => {
-                setAllData(data);
-                setData(data);
+                setAllData(data.data);
+                setData(data.data);
             })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
 
-    const dataListShow: DataType_Customer[] = [];
+    }, [data]);
+
+    const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
-        key: index,
+        key: dataTemp.id,//index
         id: String(dataTemp.id),
         name: dataTemp.name,
         contact: dataTemp.phoneNumber ? dataTemp.phoneNumber : (dataTemp.email ? dataTemp.email : ""),
@@ -176,95 +167,141 @@ export default function Customers() {
         onChange: onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
-    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
 
+    function handleDelete1(itemId: string, itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.blockCustomer + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        console.log(itemId);
+        console.log(itemName);
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công khách hàng ' + itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa ' + String(selectedRowKeys.length) + ' khách hàng...',
+        }, 0);
+        selectedRowKeys.map((key) => {
+            fetch_Api({
+                url: api_links.user.superAdmin.blockCustomer + '/' + key,
+                method: 'delete',
+            })
+                .then(data => {
+                    console.log(data.data);
+                })
+        })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa ' + String(selectedRowKeys.length) + ' khách hàng!'
+        }, 1.5)
+    }
 
     return (
-        <div className='user-customerlist'>
-
-            {!addForm && <>
-                <div className='dashboard-content-header1'>
-                    <h2>Danh sách khách hàng</h2>
-
-                    <hr
-                        style={{
-                            borderTop: '1px solid black',
-                            width: '100%',
-                            opacity: '.25',
-                        }}
-                    />
-                </div>
-                <div className='dashboard-content-header2'>
-                    <div className='dashboard-content-header2-left'>
-                        <Button type="primary" onClick={() => setAddForm(!addForm)}>
-                            Thêm
-                        </Button>
-                        <Notification
-                            type='customer'
-                            setSelectedRowKeys={setSelectedRowKeys}
-                            setDataRecover={setDataRecover}
-                            setData={setData}
-                            selectedRowData={selectedRowData}
-                            isDisable={!hasSelected}
-                            description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
-                            placement='top'
-                            buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} khách hàng`}
-                        >
-                        </Notification>
+            <div className='user-customerlist'>
+                {!addForm && <>
+                    <div className='dashboard-content-header1'>
+                   <div className='dashboard-content-header2'>
+                            <h2>Danh sách khách hàng</h2>
+                             {allPermission &&<Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/khach-hang")}>
+                                Xem tất cả
+                            </Button>}
+                            </div>
+                        <hr
+                            style={{
+                                borderTop: '1px solid black',
+                                width: '100%',
+                                opacity: '.25',
+                            }}
+                        />
                     </div>
+                    <div className='dashboard-content-header2'>
+                        <div className='dashboard-content-header2-left'>
+                            {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                                Thêm
+                            </Button>}
+                            {deletePermission && <Button
+                                disabled={!hasSelected}
+                                type="primary"
+                                style={!hasSelected ?
+                                    { backgroundColor: "rgba(0,0,0,0.45)" }
+                                    : { backgroundColor: "red" }}
+                                onClick={() => //openNotification(placement)
+                                { handleDeleteMulti(); setSelectedRowKeys([]) }}
+                            >
+                                Xóa
+                            </Button>}
+                        </div>
 
-                    <div className='dashboard-content-header2-right'>
-                        <div className='dashboard-content-search'>
-                            <input
-                                type='text'
-                                onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
-                                className='dashboard-content-input'
-                            />
+                        <div className='dashboard-content-header2-right'>
+                            <div className='dashboard-content-search'>
+                                <input
+                                    type='text'
+                                    onChange={e => __handleSearch(e)}
+                                    placeholder='Search..'
+                                    className='dashboard-content-input'
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className='dashboard-content-header3'>
-                    <Button
-                        size='large'
-                        type="default"
-                        onClick={() => {
-                            sortList(!ascending, sortType);
-                            setAscending(!ascending)
-                        }}
-                        style={{ fontSize: "14px", fontWeight: "bold" }}
-                    >
-                        {ascending ? "Tăng dần" : "Giảm dần"}
-                    </Button>
-                    <Select
-                        size='large'
-                        defaultValue="name"
-                        onChange={(e) => {
-                            sortList(ascending, e);
-                            setSortType(e)
-                        }}
-                        options={[
-                            { value: 'name', label: 'Tên' },
-                        ]}
-                    />
-                </div>
+                    <div className='dashboard-content-header3'>
+                        <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                        </span>
+                        <Button
+                            size='large'
+                            type="default"
+                            onClick={() => {
+                                sortList(!ascending, sortType);
+                                setAscending(!ascending)
+                            }}
+                            style={{ fontSize: "14px", fontWeight: "bold" }}
+                        >
+                            {ascending ? "Tăng dần" : "Giảm dần"}
+                        </Button>
+                        <Select
+                            className="text-bold"
+                            size='large'
+                            defaultValue="name"
+                            style={{ width: 120 }}
+                            onChange={(e) => {
+                                sortList(ascending, e);
+                                setSortType(e)
+                            }}
+                            options={[
+                                { value: 'name', label: 'Tên' },
+                            ]}
+                        />
+                    </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
+                    {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                        : <Table columns={columns} dataSource={dataListShow} />}
+                </>}
 
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
-            }
+                {addForm && <><div className='dashboard-content-header2'>
+                    <h2>Thông tin khách hàng</h2>
+                    <Button className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
+                    <Add />
 
-            {addForm && <><div className='dashboard-content-header2'>
-                <h2>Thông tin khách hàng</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
+                </>}
+            </div>
 
-            </>}
-        </div>
     )
 };

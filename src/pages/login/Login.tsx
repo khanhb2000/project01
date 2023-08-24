@@ -12,12 +12,15 @@ import {
   selectError,
   selectToken,
   selectRole,
-  selectInformation
+  selectInformation,
+  selectPermission,
+  selectLogin
 } from './loginSlice';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 import api_links from '../../utils/api_links';
+import handlePermission from '../../utils/permission_proccess'
 import Cookies from 'universal-cookie';
 import { log } from 'console';
 import { unescapeLeadingUnderscores } from 'typescript';
@@ -33,6 +36,9 @@ export default function Login() {
   const token = useAppSelector(selectToken);
   const information = useSelector(selectInformation);
   const role = useSelector(selectRole);
+  const permission = useSelector(selectPermission);
+  //const loginSelect = useSelector(selectLogin);
+  //const permissionDone= handlePermission(permission?permission:[]);
 
   //variable
   const cookies = new Cookies();
@@ -40,7 +46,8 @@ export default function Login() {
   const storeCookieData = {
     token: token,
     information: information,
-    role: role
+    role: role,
+    permissions: permission,
   }
   const location = useLocation();
   const checked = location.pathname;

@@ -63,7 +63,6 @@ export default function Header() {
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
-
     };
 
 
@@ -86,8 +85,8 @@ export default function Header() {
         } as MenuItem;
     }
     const items: MenuProps['items'] = [
-        getItem("Cài đặt", 'menu', <SettingFilled />, [
-            getItem(<span>{cookies.get("token").role?.normalizedName}</span>, '1', <UserOutlined />),
+        getItem(cookies.get("token").role?.normalizedName, 'menu', <SettingFilled />, [
+            getItem(<span>{cookies.get("token").information?.name}</span>, '1', <UserOutlined />),
             getItem(<span>Thay đổi mật khẩu</span>, '2', <SettingOutlined />),
             getItem(<span>Đăng xuất</span>, '3', <LogoutOutlined />),
         ]),
@@ -117,9 +116,7 @@ export default function Header() {
             <div className='dashbord-header-container'>
                 <div className='dashbord-header-right'>
                     <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>
-                    <h4>
-                        Welcome {cookies.get("token").information?.name}
-                    </h4>
+                    <h4> </h4>
                 </div>
 
                 <div className='dashboard-header-setting'>

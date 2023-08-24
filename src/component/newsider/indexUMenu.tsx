@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMoneyBills, faIdCard, faTags, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { useSubMenu } from "./useSubMenu";
+import { LogoutOutlined } from '@ant-design/icons/lib/icons';
 const { SubMenu } = Menu;
 
 function UMenuNew() {
@@ -13,7 +14,7 @@ function UMenuNew() {
   const location = useLocation();
 
   const onClick: MenuProps['onClick'] = (e) => {
-    navigate(e.key);
+    navigate("/dashboard/"+e.key);
   };
   const handleTitleClick: Pick<SubMenuProps, "onTitleClick">["onTitleClick"] = (
     e

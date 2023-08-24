@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { UserState, LoginState } from '../../app/type.d';
+import { UserState, LoginState, LoginPermissionState } from '../../app/type.d';
 import { RootState } from '../../app/store';
 /*
 const initialState:UserState = {
@@ -8,11 +8,12 @@ const initialState:UserState = {
   currentUser: null,
   isOpenMenu: true,
 };*/
+
 const initialState: LoginState = {
   "message": "",
   "isSuccess": false,
   "errors": null,
-  "token": undefined,
+  "token": "",
   "customerInformation": null,
   "userInformation": null,
   "role": {
@@ -21,7 +22,9 @@ const initialState: LoginState = {
     "isManager": true,
     "roleClaims": [],
   },
+  "permission": [],
 };
+
 // Fetch API
 
 export const login = createAsyncThunk(
@@ -66,7 +69,7 @@ export const loginSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.token = action.payload.token;
       state.errors = action.payload.errors;
-      state.isSuccess = false;
+      state.isSuccess = action.payload.isSuccess;
       state.message = action.payload.message;
       state.customerInformation = action.payload.customerInformation;
       state.userInformation = action.payload.userInformation;
@@ -76,6 +79,7 @@ export const loginSlice = createSlice({
         "isManager": false,
         "users": null,
       };
+      state.permission = (action.payload.userInformation?.permission)? action.payload.userInformation.permission: ["Customer"] ;
     });
 
     // Request error
@@ -103,7 +107,8 @@ export const selectToken = (state: RootState) => state.login.token;
 export const selectError = (state: RootState) => state.login.errors;
 export const selectInformation = (state: RootState) => state.login.userInformation != null ? state.login.userInformation : state.login.customerInformation;
 export const selectRole = (state: RootState) => state.login.role;
-export const selectLogin = (state: RootState) => state.login
+export const selectLogin = (state: RootState) => state.login;
+export const selectPermission = (state: RootState) => state.login.permission;
 
 // Export reducer
 export default loginSlice.reducer;

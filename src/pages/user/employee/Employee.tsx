@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
 import Add from '../addNew/newEmployee';
-import { UserListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { LoginPermissionState, UserListState } from '../../../app/type.d';
+import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-import Cookies from 'universal-cookie';
-
+import { havePermission } from '../../../utils/permission_proccess';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
 
 interface DataType {
     key: React.Key;
@@ -17,7 +18,10 @@ interface DataType {
     name: string;
     contact: string;
     status: string;
-    level: string
+    level: string;
+    phoneNumber?: string;
+    email?: string;
+    citizenId?: string;
 }
 
 export default function Employees() {
@@ -29,13 +33,13 @@ export default function Employees() {
     const [sortType, setSortType] = useState('name');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [filterType, setFilterType] = useState(0);
 
     const dataListShow: DataType[] = [];
-    var cookies = new Cookies();
     const navigate = useNavigate();
-    var token = cookies.get("token")?.token;
+
+    const addPermission = havePermission("User", "write");
+    const deletePermission = havePermission("User", "delete");
+    const allPermission = havePermission("User", "all");
 
     const columns: ColumnsType<DataType> = [
         {
@@ -84,45 +88,32 @@ export default function Employees() {
 
         },
         {
-            title: 'Action',
+            title: '',
             key: 'action',
             width: '112px',
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
         },
     ];
 
     useEffect(() => {
-        cookies = new Cookies()
-        token = cookies.get("token")?.token;
-        setLoading(true);
-        const response = fetch(
-            'http://bevm.e-biz.com.vn/api/Users/All-Managed-Users',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                },
-            }
-        ).then(response => {
-            return response.json()
+        fetch_Api({
+            url: api_links.user.saleAdmin.getUserUser,
+            method: 'GET',
+            data: undefined
         })
             .then(data => {
-                setAllData(data);
-                setData(data);
+                setAllData(data.data);
+                setData(data.data);
             })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
 
-    data?.map((dataTemp) => dataListShow.push({
+    }, [data]);
+
+    data?.map((dataTemp, index) => dataListShow.push({
         key: dataTemp.id,//index
         id: dataTemp.id,
         name: dataTemp.name,
@@ -167,6 +158,7 @@ export default function Employees() {
                     break;
             }
         }
+        console.log(addPermission);
     }
 
     function filterList(filtype: number) {
@@ -196,13 +188,59 @@ export default function Employees() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    function handleDelete1(itemId: string, itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.blockUser + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công nhân viên ' + itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa ' + String(selectedRowKeys.length) + ' nhân viên...',
+        }, 0);
+        selectedRowKeys.map((key) => {
+            fetch_Api({
+                url: api_links.user.superAdmin.blockUser + '/' + key,
+                method: 'delete',
+            })
+                .then(data => {
+                    console.log(data.data);
+                })
+        })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa ' + String(selectedRowKeys.length) + ' nhân viên!'
+        }, 1.5)
+    }
+
     return (
         <div className='user-employlist'>
 
             {!addForm && <>
                 <div className='dashboard-content-header1'>
-                    <h2>Danh sách nhân viên</h2>
-
+                    <div className='dashboard-content-header2'>
+                        <h2>Danh sách nhân viên</h2>
+                        {allPermission && <Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/nhan-vien")}>
+                            Xem tất cả
+                        </Button>}
+                    </div>
                     <hr
                         style={{
                             borderTop: '1px solid black',
@@ -213,7 +251,20 @@ export default function Employees() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        
+                        {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                            Thêm
+                        </Button>}
+                        {deletePermission && <Button
+                            disabled={!hasSelected}
+                            type="primary"
+                            style={!hasSelected ?
+                                { backgroundColor: "rgba(0,0,0,0.45)" }
+                                : { backgroundColor: "red" }}
+                            onClick={() => //openNotification(placement)
+                            { handleDeleteMulti(); setSelectedRowKeys([]) }}
+                        >
+                            Xóa
+                        </Button>}
                     </div>
 
                     <div className='dashboard-content-header2-right'>
@@ -229,14 +280,23 @@ export default function Employees() {
                 </div>
 
                 <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                    </span>
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
+                        className="text-bold"
+                        size='large'
                         defaultValue="name"
                         style={{ width: 120 }}
                         onChange={(e) => {
@@ -249,19 +309,14 @@ export default function Employees() {
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
-
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
-            }
-
+                {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                    : <Table columns={columns} dataSource={dataListShow} />}
+            </>}
             {addForm && <><div className='dashboard-content-header2'>
                 <h2>Thông tin nhân viên</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
+                <Button className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
+                    <Add />
             </>}
         </div>
     )

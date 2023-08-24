@@ -11,7 +11,101 @@ export type LoginState = {
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
   "role": RoleState | null,
+  "permission"?:undefined|string[],
+  
 };
+export type LoginPermissionState = {
+    Customer: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    User: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Voucher: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    VoucherType: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    VoucherExtension: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Service: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    ServicePackage: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Booking: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Role: {
+      read: boolean,
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Statistic: {
+      read: boolean,
+      //khong su dung
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+      restore: boolean,
+    },
+    Log: {
+      read: boolean,
+      restore: boolean,
+      //khong su dung
+      write: boolean,
+      update: boolean,
+      delete: boolean,
+      all: boolean,
+    }
+  };
 
 export type RoleState = {
   "id": string,
@@ -95,25 +189,25 @@ export type ServiceState = {
 export type ServiceListState = ServiceState[];
 
 export type VoucherState = {
+  "id": string,
+  "customer": {
     "id": string,
-    "customer": {
-      "id": string,
-      "name": string,
-    },
-    "salesEmployee": {
-      "id": string,
-      "name": string,
-      "phoneNumber": string,
-    },
-    "voucherType": VoucherTypeState,
-    "issuedDate": string,
-    "expiredDate": string,
-    "actualPrice": number,
-    "usedValueDiscount": number | null,
-    "voucherStatus": string,
-    "bookings": BookingListState,
-    "voucherExtensions": VoucherExtensionListState,
-  }
+    "name": string,
+  },
+  "salesEmployee": {
+    "id": string,
+    "name": string,
+    "phoneNumber": string,
+  },
+  "voucherType": VoucherTypeState,
+  "issuedDate": string,
+  "expiredDate": string,
+  "actualPrice": number,
+  "usedValueDiscount": number | null,
+  "voucherStatus": string,
+  "bookings": BookingListState,
+  "voucherExtensions": VoucherExtensionListState,
+}
 
 export type VoucherListState = VoucherState[];
 
@@ -137,17 +231,17 @@ export type VoucherTypeState = {
 export type VoucherTypeListState = VoucherTypeState[];
 
 export type VoucherExtensionState = {
-      "id": 2,
-      "voucher": VoucherState,
-      "salesEmployee": {
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-      }|null,
-      "price": number,
-      "extendedDateTime": string,
-      "oldExpiredDate": string,
-      "newExpiredDate": string,
+  "id": 2,
+  "voucher": VoucherState,
+  "salesEmployee": {
+    "id": string,
+    "name": string,
+    "phoneNumber": string,
+  } | null,
+  "price": number,
+  "extendedDateTime": string,
+  "oldExpiredDate": string,
+  "newExpiredDate": string,
 }
 
 export type VoucherExtensionListState = VoucherExtensionState[];
@@ -158,12 +252,12 @@ export type BookingState = {
   "customer": {
     "id": string,
     "name": string,
-  }|null,
+  } | null,
   "salesEmployee": {
     "id": string,
     "name": string,
     "phone": string,
-  }|null,
+  } | null,
   "vouchers": VoucherListState,
   "servicePackage": null,
   "bookingTitle": string,
@@ -180,7 +274,7 @@ export type BookingState = {
 export type BookingListState = BookingState[];
 
 export type CustomerState = {
-  "id": number|string,
+  "id": number | string,
   "name": string,
   "email": string | null,
   "normalizedEmail": string | null,

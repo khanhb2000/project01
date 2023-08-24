@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import './stylesBookings.css';
 //import Add from './addNew';
 import { BookingListState, BookingState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
-import Cookies from 'universal-cookie';
+import { havePermission } from '../../../utils/permission_proccess';
 
 interface DataType {
     key: React.Key;
@@ -44,7 +44,16 @@ export default function Booking() {
     const dataListShow: DataType[] = [];
     const navigate = useNavigate();
 
+    const addPermission = havePermission("Booking", "write");
+    const deletePermission = havePermission("Booking", "delete");
+    const allPermission = havePermission("Booking", "all");
+
     const columns: ColumnsType<DataType> = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+        },
         {
             title: 'Tên',
             dataIndex: 'bookingTitle',
@@ -54,26 +63,6 @@ export default function Booking() {
             title: 'Ngày thực hiện',
             dataIndex: 'bookingDate',
         },
-
-        /*{
-            title: 'Chức vụ',
-            dataIndex: 'level',
-            filters: [
-                {
-                    text: 'Super Admin',
-                    value: 'SUPER ADMIN',
-                },
-                {
-                    text: 'Sales Admin',
-                    value: 'SALES ADMIN',
-                },
-                {
-                    text: 'Sales',
-                    value: 'SALES',
-                },
-            ],
-            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
-        },*/
         {
             title: 'Tình trạng',
             dataIndex: 'bookingStatus',
@@ -98,15 +87,17 @@ export default function Booking() {
         {
             title: 'Thành tiền',
             dataIndex: 'totalPrice',
+            align: 'right',
         },
         {
             title: 'Action',
             key: 'action',
             width: '112px',
+
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.bookingTitle)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
         },
@@ -120,16 +111,11 @@ export default function Booking() {
         }).then(data => {
             setAllData(data.data);
             setData(data.data);
-            console.log(typeof data.data);
-            console.log(data.data);
         })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
 
-    data?.map((dataTemp) => {
+    }, [data]);
+
+    data?.map((dataTemp, index) => {
         const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
             key: dataTemp.id,//index
@@ -140,9 +126,8 @@ export default function Booking() {
             bookingDate: date.toLocaleString(),
             bookingStatus: dataTemp.bookingStatus,
             totalPrice: dataTemp.totalPrice.toLocaleString('en-US', {
-                style: 'currency',
                 currency: 'USD',
-              }),
+            }),
             priceDetails: dataTemp.priceDetails,
             note: dataTemp.note,
             descriptions: dataTemp.descriptions,
@@ -202,23 +187,6 @@ export default function Booking() {
         }
     }
 
-    /*function filterList(filtype: number) {
-        switch (filtype) {
-            case 0:
-                setData(all_data);
-                sortList(ascending, sortType);
-                break;
-            case 1:
-                setData(data?.filter((a) => (a.lockoutEnabled == true)));
-                break;
-            case 2:
-                setData(data?.filter((a) => (a.lockoutEnabled == false)));
-                break;
-            default:
-                break;
-        }
-    }*/
-
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -229,13 +197,61 @@ export default function Booking() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    function handleDelete1(itemId: string, itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.createNewBooking + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        console.log(itemId);
+        console.log(itemName);
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công giao dịch ' + itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa ' + String(selectedRowKeys.length) + ' giao dịch...',
+        }, 0);
+        selectedRowKeys.map((key) => {
+            fetch_Api({
+                url: api_links.user.superAdmin.createNewBooking + '/' + key,
+                method: 'delete',
+            })
+                .then(data => {
+                    console.log(data.data);
+                })
+        })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa ' + String(selectedRowKeys.length) + ' giao dịch!'
+        }, 1.5)
+    }
+
     return (
         <div className='user-bookinglist'>
 
             {!addForm && <>
                 <div className='dashboard-content-header1'>
-                    <h2>Danh sách giao dịch</h2>
-
+                    <div className='dashboard-content-header2'>
+                        <h2>Danh sách giao dịch</h2>
+                        {allPermission && <Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/giao-dich")}>
+                            Xem tất cả
+                        </Button>}
+                    </div>
                     <hr
                         style={{
                             borderTop: '1px solid black',
@@ -246,12 +262,20 @@ export default function Booking() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" >
+                        {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
+                        </Button>}
+                        {deletePermission && <Button
+                            disabled={!hasSelected}
+                            type="primary"
+                            style={!hasSelected ?
+                                { backgroundColor: "rgba(0,0,0,0.45)" }
+                                : { backgroundColor: "red" }}
+                            onClick={() => //openNotification(placement)
+                            { handleDeleteMulti(); setSelectedRowKeys([]) }}
+                        >
                             Xóa
-                        </button>
+                        </Button>}
                     </div>
 
                     <div className='dashboard-content-header2-right'>
@@ -267,14 +291,23 @@ export default function Booking() {
                 </div>
 
                 <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                    </span>
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
+                        className="text-bold"
+                        size='large'
                         defaultValue="name"
                         style={{ width: 120 }}
                         onChange={(e) => {
@@ -289,12 +322,8 @@ export default function Booking() {
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
-
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
+                {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                    : <Table columns={columns} dataSource={dataListShow} />}            </>
             }
 
             {/*addForm && <><div className='dashboard-content-header2'>
