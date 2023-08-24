@@ -118,6 +118,7 @@ export type VoucherState = {
 export type VoucherListState = VoucherState[];
 
 export type VoucherTypeState = {
+  "appropriate"?: boolean,
   "href"?: string | undefined;
   "image"?: string;
   "id": number,
@@ -154,16 +155,16 @@ export type VoucherExtensionListState = VoucherExtensionState[];
 
 
 export type BookingState = {
-  "id": string,
+  "id": number,
   "customer": {
     "id": string,
     "name": string,
-  }|null,
+  },
   "salesEmployee": {
     "id": string,
     "name": string,
     "phone": string,
-  }|null,
+  },
   "vouchers": VoucherListState,
   "servicePackage": null,
   "bookingTitle": string,

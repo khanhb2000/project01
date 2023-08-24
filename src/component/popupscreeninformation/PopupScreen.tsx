@@ -37,7 +37,6 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
         setFileAvatar(null)
     }
 
-    console.log(data);
 
     const handleOk = () => {
         form

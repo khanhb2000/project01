@@ -4,7 +4,7 @@ import React from "react"
 import api_links from "../../utils/api_links";
 import fetch_Api from "../../utils/api_function";
 import Cookies from "universal-cookie";
-import { CustomerListState, CustomerState, ServiceListState, ServicePackageListState, ServicePackageState, VoucherTypeListState, VoucherTypeState } from "../../app/type.d";
+import { BookingListState, BookingState, CustomerListState, CustomerState, ServiceListState, ServicePackageListState, ServicePackageState, VoucherTypeListState, VoucherTypeState } from "../../app/type.d";
 
 
 interface DataType {
@@ -42,17 +42,18 @@ interface DataType_Voucher {
     "usableServicePackages": []
 }
 
+
 interface NotificationProps {
     type: string,
     description: string,
     placement: NotificationPlacement,
     buttonContent: string,
-    children: React.ReactNode;
+    children?: React.ReactNode;
     isDisable?: boolean,
     setSelectedRowKeys: React.Dispatch<React.SetStateAction<React.Key[]>>,
-    selectedRowData: ServicePackageState[] | CustomerState[] | VoucherTypeState[],
-    setDataRecover: React.Dispatch<React.SetStateAction<DataType[]>> | React.Dispatch<React.SetStateAction<DataType_Customer[]>> | React.Dispatch<React.SetStateAction<DataType_Voucher[]>>,
-    setData: React.Dispatch<React.SetStateAction<ServicePackageListState>> | React.Dispatch<React.SetStateAction<CustomerListState>> | React.Dispatch<React.SetStateAction<VoucherTypeListState>>
+    selectedRowData: BookingState[] | ServicePackageState[] | CustomerState[] | VoucherTypeState[],
+    setDataRecover:React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<DataType[]>> | React.Dispatch<React.SetStateAction<DataType_Customer[]>> | React.Dispatch<React.SetStateAction<DataType_Voucher[]>>,
+    setData:  React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<ServicePackageListState>> | React.Dispatch<React.SetStateAction<CustomerListState>> | React.Dispatch<React.SetStateAction<VoucherTypeListState>>
 }
 const Notification: React.FC<NotificationProps> = ({ type, setSelectedRowKeys, setDataRecover, setData, selectedRowData, description, placement, buttonContent, isDisable }) => {
     const key = `open${Date.now()}`;
@@ -144,6 +145,7 @@ const Notification: React.FC<NotificationProps> = ({ type, setSelectedRowKeys, s
     }
 
     const selectedRowDataById = selectedRowData.map((data) => data.id)
+    
 
     /////////////////////////// GET API //////////////////////////////////
     const deleteBatchServicePackages = () => {

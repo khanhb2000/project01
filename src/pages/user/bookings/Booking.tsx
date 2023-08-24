@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './stylesBookings.css';
+import { Link, useNavigate } from 'react-router-dom';
+import './booking.scss';
 //import Add from './addNew';
 import { BookingListState, BookingState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select, Modal, Row, Col, Popconfirm, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
 import Cookies from 'universal-cookie';
+import Notification from '../../../component/notification/Notification';
 
 interface DataType {
     key: React.Key;
-    id: string;
+    id: number;
     vouchers: [],
     servicePackage: null,
     bookingTitle: string,
@@ -25,34 +26,58 @@ interface DataType {
     descriptions: string,
     startDateTime: string,
     endDateTime: string,
-    customer: null,
-    salesEmployee: null
+    customer: string,
+    salesEmployee: string
 }
 
 export default function Booking() {
-    const [addForm, setAddForm] = useState(false);
-    const [all_data, setAllData] = useState<BookingListState>();
-    const [search, setSearch] = useState('');
-    const [data, setData] = useState(all_data);
-
-    const [sortType, setSortType] = useState('name');
+    const [addForm, setAddForm] = useState(false)
+    const [all_data, setAllData] = useState<BookingListState>([]);
+    const [data, setData] = useState<BookingListState>(all_data);
+    const [dataRecover, setDataRecover] = useState<BookingListState>([])
+    const [sortType, setSortType] = useState('price');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [filterType, setFilterType] = useState(0);
+    const [addFormRecover, setAddFormRecover] = useState(false);
 
     const dataListShow: DataType[] = [];
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getAllBooking()
+            .then(res => {
+                setAllData(res.data);
+                setData(res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+
+            })
+    }, []);
 
     const columns: ColumnsType<DataType> = [
         {
             title: 'Tên',
             dataIndex: 'bookingTitle',
-            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+            render: (text, record) => <a>{text}</a>,
         },
         {
             title: 'Ngày thực hiện',
             dataIndex: 'bookingDate',
+            render: (_, record) => {
+                return (
+                    <span>{new Date(record.startDateTime).toLocaleString("vi-VN")}</span>
+                )
+            }
+        },
+        {
+            title: 'Ngày kết thúc',
+            dataIndex: 'endDateTime',
+            render: (_, record) => {
+                return (
+                    <span>{new Date(record.endDateTime).toLocaleString("vi-VN")}</span>
+                )
+            }
         },
 
         /*{
@@ -81,87 +106,91 @@ export default function Booking() {
             filters: [
                 {
                     text: 'Đã thanh toán',
-                    value: 'Confirmed',
+                    value: "Đã thanh toán",
                 },
                 {
                     text: 'Đang xử lí',
-                    value: 'Pending',
+                    value: "Đang xử lí",
                 },
                 {
                     text: 'Đã hủy',
-                    value: 'Cancelled',
+                    value: "Đã huỷ",
                 },
             ],
-            onFilter: (value: any, record) => record.bookingStatus.indexOf(value) === 0,
+            onFilter: (value: any, record) => {
+                return record.bookingStatus.includes(value)
+            }
 
         },
         {
-            title: 'Thành tiền',
+            title: 'Tổng tiền',
             dataIndex: 'totalPrice',
+            render: (_, record) => {
+                return (
+                    <span>{record.totalPrice.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                    })}</span>
+                )
+            }
         },
         {
-            title: 'Action',
+            title: 'Thao tác',
             key: 'action',
             width: '112px',
-            render: (_, record) => (
-                <Space size="small">
-                    <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                </Space>
-            ),
+            render: (_, record) => {
+                return (
+                    <>
+                        {record.bookingStatus === "Đang xử lí" ?
+                            <Space size="small">
+                                <Link to={"updatebooking"} state={record}>
+                                    <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                                </Link>
+                                <Popconfirm
+                                    title="Xoá dịch vụ"
+                                    description="Bạn có chắc chắn xoá không ?"
+                                    onConfirm={() => handleDelete(record.id)}
+                                >
+                                    <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>
+                                </Popconfirm>
+                            </Space>
+                            :
+                            <></>}
+                    </>
+                )
+            },
         },
     ];
 
-    useEffect(() => {
-        setLoading(true);
-        fetch_Api({
-            url: api_links.user.saleAdmin.getUserBooking,
-            method: 'GET',
-        }).then(data => {
-            setAllData(data.data);
-            setData(data.data);
-            console.log(typeof data.data);
-            console.log(data.data);
-        })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
 
     data?.map((dataTemp) => {
-        const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
             key: dataTemp.id,//index
-            id: String(dataTemp.id),
+            id: dataTemp.id,
             vouchers: [],
             servicePackage: null,
             bookingTitle: dataTemp.bookingTitle,
-            bookingDate: date.toLocaleString(),
-            bookingStatus: dataTemp.bookingStatus,
-            totalPrice: dataTemp.totalPrice.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-              }),
+            bookingDate: String(new Date(dataTemp.bookingDate)),
+            bookingStatus: dataTemp.bookingStatus === "Confirmed" ? "Đã thanh toán" : dataTemp.bookingStatus === "Cancelled" ? "Đã huỷ" : "Đang xử lí",
+            totalPrice: dataTemp.totalPrice,
             priceDetails: dataTemp.priceDetails,
             note: dataTemp.note,
             descriptions: dataTemp.descriptions,
-            startDateTime: dataTemp.startDateTime,
-            endDateTime: dataTemp.endDateTime,
-            customer: null,
-            salesEmployee: null
+            startDateTime: new Date(dataTemp.startDateTime).toLocaleString("en-EN"),
+            endDateTime: String(new Date(dataTemp.endDateTime).toLocaleString("en-EN")),
+            customer: dataTemp.customer?.name,
+            salesEmployee: dataTemp.salesEmployee?.name
         });
     });
 
-    const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(event.target.value);
-        if (event.target.value !== '') {
-            let search_results = all_data?.filter((item) =>
-                String(item.id).toLowerCase().includes(search.toLowerCase()) ||
-                item.id.toLowerCase().includes(search.toLowerCase()) ||
-                item.startDateTime.toLowerCase().includes(search.toLowerCase()) ||
-                item.endDateTime.toLowerCase().includes(search.toLowerCase())
-            );
+    const __handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value
+        console.log(value);
+
+        if (value !== "") {
+            let search_results = all_data.filter((item) => {
+                return item.bookingTitle.toLowerCase().includes(value.toLowerCase())
+            });
             setData(search_results);
         }
         else {
@@ -178,7 +207,7 @@ export default function Booking() {
                 case "dateCreate":
                     data?.sort((a, b) => (a.bookingDate > b.bookingDate) ? 1 : -1);
                     break;
-                case "value":
+                case "price":
                     data?.sort((a, b) => (a.totalPrice > b.totalPrice) ? 1 : -1);
                     break;
                 default:
@@ -193,7 +222,7 @@ export default function Booking() {
                 case "dateCreate":
                     data?.sort((a, b) => (a.bookingDate < b.bookingDate) ? 1 : -1);
                     break;
-                case "value":
+                case "price":
                     data?.sort((a, b) => (a.totalPrice < b.totalPrice) ? 1 : -1);
                     break;
                 default:
@@ -202,37 +231,75 @@ export default function Booking() {
         }
     }
 
-    /*function filterList(filtype: number) {
-        switch (filtype) {
-            case 0:
-                setData(all_data);
-                sortList(ascending, sortType);
-                break;
-            case 1:
-                setData(data?.filter((a) => (a.lockoutEnabled == true)));
-                break;
-            case 2:
-                setData(data?.filter((a) => (a.lockoutEnabled == false)));
-                break;
-            default:
-                break;
-        }
-    }*/
+    const handleDelete = (id: number) => {
+        deleteBooking(id)
+            .then((res) => {
+                if (res.status === 200) {
+                    message.success(res.data.message)
+                    getAllBooking()
+                        .then(res => {
+                            setAllData(res.data);
+                            setData(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error);
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
+                        })
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+    }
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
+
     const hasSelected = selectedRowKeys.length > 0;
+    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
+
+    ////////////////////// GET API ///////////////////////////////
+    const getAllCustomer = () => {
+        const api_link = {
+            url: api_links.user.superAdmin.getAllCustomer,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
+
+    const getAllBooking = () => {
+        const api_link = {
+            url: api_links.user.superAdmin.getAllBooking,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
+
+    const deleteBooking = (id: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.deleteBooking.url}${id}`,
+            method: "DELETE"
+        }
+        return fetch_Api(api_link)
+    }
 
     return (
-        <div className='user-bookinglist'>
-
-            {!addForm && <>
+        <>
+            <Modal
+                open={addForm}
+                footer={[]}
+                onCancel={() => setAddForm(false)}
+                style={{ top: "25vh", width: " 500px" }}
+            >
+                <Row>
+                    <Col span={24}>
+                        <Link to={"createbooking"}>
+                            <Button style={{ width: "100%" }} type='default' size='large'>
+                                Thêm dịch vụ
+                            </Button>
+                        </Link>
+                    </Col>
+                </Row>
+            </Modal>
+            <div className='user-bookinglist'>
                 <div className='dashboard-content-header1'>
                     <h2>Danh sách giao dịch</h2>
 
@@ -246,12 +313,21 @@ export default function Booking() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" >
+                        <Button onClick={() => setAddForm(!addForm)} type="primary">
                             Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
-                        </button>
+                        </Button>
+                        {/* <Notification
+                        isDisable={!hasSelected}
+                        type='booking'
+                        buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
+                        placement='top'
+                        selectedRowData={selectedRowData}
+                        setData={setData}
+                        description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
+                        setDataRecover={setDataRecover}
+                        setSelectedRowKeys={setSelectedRowKeys}
+                    /> */}
+                        {/* <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button> */}
                     </div>
 
                     <div className='dashboard-content-header2-right'>
@@ -266,43 +342,36 @@ export default function Booking() {
                     </div>
                 </div>
 
-                <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
+                <div className="dashboard-content-header3">
+                    <Button
+                        size='large'
+                        type="default"
+                        onClick={() => {
+                            sortList(!ascending, sortType);
+                            setAscending(!ascending)
+                        }}
+                        style={{ fontSize: "14px", fontWeight: "bold" }}
+                    >
                         {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
+                    </Button>
                     <Select
-                        defaultValue="name"
-                        style={{ width: 120 }}
+                        className="text-bold"
+                        size='large'
+                        defaultValue="price"
                         onChange={(e) => {
                             sortList(ascending, e);
                             setSortType(e)
                         }}
                         options={[
+                            { value: 'price', label: 'Giá trị' },
                             { value: 'name', label: 'Tên' },
-                            { value: 'dateCreate', label: 'Ngày tạo' },
-                            { value: 'value', label: 'Giá trị đơn hàng' },
+                            { value: 'dateCreate', label: 'Ngày' },
                         ]}
                     />
                 </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
-
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
-            }
-
-            {/*addForm && <><div className='dashboard-content-header2'>
-                <h2>Thông tin nhân viên</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
-        </>*/}
-        </div>
+                <Table columns={columns} dataSource={dataListShow} />
+            </div>
+        </>
     )
 };

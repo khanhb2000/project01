@@ -32,6 +32,9 @@ import Service from './user/services/Service';
 import NewServicePackage from './user/servicepackages/NewServicePackage';
 import UpdateServicePackage from './user/servicepackages/UpdateServicePackage';
 import ServicePackage from './user/servicepackages/ServicePackage';
+import NewBooking from './user/bookings/NewBooking';
+import NewVoucherCustomer from './user/vouchers/NewVoucherCustomer';
+import UpdateBooking from './user/bookings/UpdateBooking';
 
 export default function Dashboard() {
 
@@ -59,10 +62,10 @@ export default function Dashboard() {
           <Route path="myservice" element={<MyService />} />
           <Route path="myvoucher" element={<MyVoucher />} />
           <Route path="history" element={< History />} />
-          <Route path="customers" element={<Customers />} />
-          <Route path="servicepackage" element={<ServicePackage />} />
-          <Route path="servicepackage/createservicepackage" element={<NewServicePackage />} />
-          <Route path="servicepackage/updateservicepackage" element={<UpdateServicePackage />} />
+          <Route path="khach-hang" element={<Customers />} />
+          <Route path="goi-dich-vu" element={<ServicePackage />} />
+          <Route path="goi-dich-vu/createservicepackage" element={<NewServicePackage />} />
+          <Route path="goi-dich-vu/updateservicepackage" element={<UpdateServicePackage />} />
           <Route path="service" element={<Service />} />
           <Route path="service/createservice" element={<NewService />} />
           <Route path="customers/detail/:id" element={<CustomerDetail />} />
@@ -70,11 +73,14 @@ export default function Dashboard() {
           {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="vouchers/createvoucher" element={<Newvoucher />} />
+          <Route path="vouchers/createvouchercustomer" element={<NewVoucherCustomer />} />
           <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
           <Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />
-          <Route path="booking" element={<Booking />} />
+          <Route path="giao-dich" element={<Booking />} />
+          <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
+          <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
         </Routes>
       </div>
