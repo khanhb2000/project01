@@ -11,7 +11,7 @@ export type LoginState = {
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
   "role": RoleState | null,
-  "permission"?:undefined|string[],
+  "permission"?:undefined|string[]|null,
   
 };
 export type LoginPermissionState = {

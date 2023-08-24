@@ -13,7 +13,7 @@ const initialState: LoginState = {
   "message": "",
   "isSuccess": false,
   "errors": null,
-  "token": "",
+  "token": undefined,
   "customerInformation": null,
   "userInformation": null,
   "role": {
@@ -22,7 +22,7 @@ const initialState: LoginState = {
     "isManager": true,
     "roleClaims": [],
   },
-  "permission": [],
+  "permission": null,
 };
 
 // Fetch API
@@ -79,7 +79,7 @@ export const loginSlice = createSlice({
         "isManager": false,
         "users": null,
       };
-      state.permission = (action.payload.userInformation?.permission)? action.payload.userInformation.permission: ["Customer"] ;
+      state.permission = (action.payload.userInformation?.permission)? action.payload.userInformation.permissions: ["Customer"] ;
     });
 
     // Request error

@@ -25,7 +25,7 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
     const data = cookies.get("token")?.information
     const role = cookies.get("token")?.role
 
-    const [avatar, setAvatar] = useState<string>(data.filePath)
+    const [avatar, setAvatar] = useState<string>(data?.filePath)
     const [loading, setLoading] = useState<boolean>(false)
     const [fileAvatar, setFileAvatar] = useState<File | null>()
 
@@ -33,7 +33,7 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
 
     const handleCancel = () => {
         setPopup(false);
-        setAvatar(data.filePath)
+        setAvatar(data?.filePath)
         setFileAvatar(null)
     }
 
@@ -72,10 +72,10 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
         const file = e.target.files
         if (file !== null && file.length == 1) {
             const dataChange: DataType = {
-                name: data.name,
-                citizenid: data.citizenId,
+                name: data?.name,
+                citizenid: data?.citizenId,
                 email: data.email,
-                phoneNumber: data.phoneNumber,
+                phoneNumber: data?.phoneNumber,
                 avatar: file[0]
             }
             const createAvatar = URL.createObjectURL(new Blob([file[0]]))
