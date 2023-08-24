@@ -81,9 +81,9 @@ export default function Dashboard() {
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
           <Route path="giao-dich" element={<Booking />} />
-          <Route path="employee" element={<Employees />} />
+          {/*<Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
-          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
+          <Route path="employee/detail/:id" element={<EmployeeDetail />} />*/}
           <Route path="giao-dich" element={<Booking />} />
           <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
           <Route path="giao-dich/createbooking" element={<NewBooking />} />

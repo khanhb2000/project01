@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './booking.scss';
 //import Add from './addNew';
 import { BookingListState, BookingState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal, Popconfirm, Row, Col } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -28,7 +28,7 @@ interface DataType {
     startDateTime: string,
     endDateTime: string,
     customer: string,
-    salesEmployee: string
+    salesEmployee: string | undefined,
 }
 
 export default function Booking() {
@@ -153,8 +153,8 @@ export default function Booking() {
         },
     ];
 
-    useEffect(() => {
-        setLoading(true);
+    /*useEffect(() => {
+        //setLoading(true);
         fetch_Api({
             url: api_links.user.saleAdmin.getUserBooking,
             method: 'GET',
@@ -163,7 +163,7 @@ export default function Booking() {
             setData(data.data);
         })
 
-    }, [data]);
+    }, [data]);*/
 
     data?.map((dataTemp) => {
         const date = new Date(dataTemp.bookingDate);
@@ -322,7 +322,7 @@ export default function Booking() {
                     <div className='dashboard-content-header2-left'>
                         {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </Button>
+                        </Button>}
                         {/* <Notification
                         isDisable={!hasSelected}
                         type='booking'
@@ -380,16 +380,8 @@ export default function Booking() {
                     />
                 </div>
 
-                {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-                    : <Table columns={columns} dataSource={dataListShow} />}            </>
-            }
-
-            {/*addForm && <><div className='dashboard-content-header2'>
-                <h2>Thông tin nhân viên</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
-        </>*/}
-        </div>
-    )
+                {deletePermission && <Table columns={columns} dataSource={dataListShow} />}
+            </div>
+        </>
+    );
 };
