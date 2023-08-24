@@ -129,14 +129,15 @@ function Add() {
     }
 
     useEffect(() => {
-        fetch_Api({
+        if (role.isManager) {
+            fetch_Api({
             url: api_links.user.superAdmin.getAllRole,
             method: 'GET',
             data: undefined
         }).then(data => {
             setCV(data.data);
         });
-        if (role.isManager) {
+        
             fetch_Api({
                 url: api_links.user.saleAdmin.getUserUser,
                 method: 'GET',
