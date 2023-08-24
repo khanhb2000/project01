@@ -44,10 +44,7 @@ export default function PopupScreenPassword({ isPopup, setPopup }: { isPopup: bo
                 const api_link = role == "Customer" ? api_links.user.customer.resetPassword : api_links.user.superAdmin.resetPasswordForUser
                 api_link.token = token
                 api_link.data = values
-
-
-
-
+                
                 fetch_Api(api_link)
                     .then((res) => {
                         if (res.status === 200) {

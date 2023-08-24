@@ -32,6 +32,9 @@ import Service from './user/services/Service';
 import NewServicePackage from './user/servicepackages/NewServicePackage';
 import UpdateServicePackage from './user/servicepackages/UpdateServicePackage';
 import ServicePackage from './user/servicepackages/ServicePackage';
+import NewBooking from './user/bookings/NewBooking';
+import NewVoucherCustomer from './user/vouchers/NewVoucherCustomer';
+import UpdateBooking from './user/bookings/UpdateBooking';
 import CustomerDetail from './manager/allcustomers/customer-detail';
 import EmployeeDetail from './manager/allemployee/employee-detail';
 
@@ -72,11 +75,18 @@ export default function Dashboard() {
           {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="vouchers/createvoucher" element={<Newvoucher />} />
+          <Route path="vouchers/createvouchercustomer" element={<NewVoucherCustomer />} />
           <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
           <Route path="nhan-vien" element={<Employees />} />
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
           <Route path="giao-dich" element={<Booking />} />
+          <Route path="employee" element={<Employees />} />
+          <Route path="employee/role" element={<Role />} />
+          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
+          <Route path="giao-dich" element={<Booking />} />
+          <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
+          <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
         </Routes>
       </div>

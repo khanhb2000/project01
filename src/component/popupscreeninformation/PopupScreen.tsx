@@ -1,13 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectInformation } from "../../pages/login/loginSlice";
 import './popupscreen.css'
-import { Button, Col, Form, Input, Modal, Row, message } from "antd";
+import { Avatar, Button, Col, Form, Input, InputRef, Modal, Row, Space, message } from "antd";
 import Cookies from "universal-cookie";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, MouseEvent, useRef, useState } from "react";
 import api_links from "../../utils/api_links";
-import fetch_Api from "../../utils/api_function";
-import { Rule } from 'antd/lib/form';
+import fetch_Api_MultiForm from "../../utils/api_function_multi";
 
+interface DataType {
+    name: string,
+    citizenid: string,
+    email: string,
+    phoneNumber: string,
+    avatar: File
+}
 
 export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?: boolean, setPopup?: any }) {
 
@@ -19,28 +25,40 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
     const data = cookies.get("token")?.information
     const role = cookies.get("token")?.role
 
+    const [avatar, setAvatar] = useState<string>(data.filePath)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [fileAvatar, setFileAvatar] = useState<File | null>()
+
+
+
     const handleCancel = () => {
         setPopup(false);
+        setAvatar(data.filePath)
+        setFileAvatar(null)
     }
+
 
     const handleOk = () => {
         form
             .validateFields()
             .then((values) => {
-                const api_link = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
-                api_link.data = values
-                api_link.token = cookies.get("token").token
+                setLoading(true)
+                if (values.avatar === undefined) {
+                    values.avatar = null
+                }
 
-                fetch_Api(api_link)
+                ///multidataform
+                updateInformation(values)
                     .then((res) => {
                         if (res.status == 200) {
-                            cookies.set("token", { ...cookies.get("token"), information: api_link.data }, { path: "/", maxAge: 3600 })
+                            cookies.set("token", { ...cookies.get("token"), information: res.data.loginUser ? res.data.loginUser : res.data.loginCustomer }, { path: "/", maxAge: 7200 }) // ve nha sua cai nay
                             message.success(res.data.message)
-                            setPopup(false);
+                            setLoading(false)
                         }
                     })
                     .catch((reason) => {
-                        message.error("Dữ liệu không đổi")
+                        message.error(reason.message)
+                        setLoading(false)
 
                     })
             })
@@ -50,8 +68,37 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
     }
 
 
+    const handleAvatar = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files
+        if (file !== null && file.length == 1) {
+            const dataChange: DataType = {
+                name: data.name,
+                citizenid: data.citizenId,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                avatar: file[0]
+            }
+            const createAvatar = URL.createObjectURL(new Blob([file[0]]))
+            setAvatar(createAvatar)
+            setFileAvatar(file[0])
+            // updateInformation(data)
+        } else {
+            setAvatar(data.filePath)
+            setFileAvatar(null)
+        }
+    }
+
+
+    const updateInformation = (values: any) => {
+        const api_link = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
+        api_link.data = { ...values, avatar: fileAvatar }
+        api_link.token = cookies.get("token").token
+        return fetch_Api_MultiForm(api_link)
+    }
+
     return (
         <Modal
+            width="50vw"
             title="Thông tin"
             open={isPopup}
             onCancel={handleCancel}
@@ -59,7 +106,7 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
                 <Button onClick={handleCancel} type="default" key="back">
                     Huỷ
                 </Button>,
-                <Button onClick={handleOk} type="primary" htmlType="submit" key="submit">
+                <Button loading={loading} onClick={handleOk} type="primary" htmlType="submit" key="submit">
                     Sửa đổi
                 </Button>
             ]}
@@ -67,51 +114,68 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
             <Form
                 form={form}
             >
-                <Row>
-                    <Col span={24}>
+                <Space direction="horizontal" align="center" style={{ justifyContent: "space-around" }}>
+                    <Space>
                         <Form.Item
-                            label="Tên"
-                            name="name"
-                            rules={[{ required: true, message: 'Please input your name!' }]}
-                            initialValue={data?.name}
+                            name="avatar"
                         >
-                            <Input />
+                            <div className="avatar-information">
+                                <img src={avatar} alt="avatar" />
+                                <Input title="Chọn ảnh" onChange={handleAvatar} type="file" accept="image/*" />
+                            </div>
                         </Form.Item>
-                    </Col>
-
-                    <Col span={24}>
-                        <Form.Item
-                            label="CMND"
-                            name="citizenId"
-                            rules={[{ required: true, message: 'Please input your citizen id!' }]}
-                            initialValue={data?.citizenId}
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[{ required: true, message: 'Please input your email!' }]}
-                            initialValue={data?.email}
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                        <Form.Item
-                            label="Số Điện thoại"
-                            name="phoneNumber"
-                            rules={[{ required: true, message: 'Please input your phone number!' }]}
-                            initialValue={data?.phoneNumber}
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
-                </Row>
+                    </Space>
+                    <Space direction="vertical">
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Tên"
+                                    name="name"
+                                    rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+                                    initialValue={data?.name}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="CMND"
+                                    name="citizenId"
+                                    rules={[{ required: true, message: 'Vui lòng nhập mã số chứng minh!' }]}
+                                    initialValue={data?.citizenId}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Email"
+                                    name="email"
+                                    rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+                                    initialValue={data?.email}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Số Điện thoại"
+                                    name="phoneNumber"
+                                    rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+                                    initialValue={data?.phoneNumber}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Space>
+                </Space>
             </Form>
         </Modal >
 

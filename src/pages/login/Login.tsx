@@ -72,12 +72,12 @@ export default function Login() {
   };
 
   //check token existed 
-  if (token != "") {
+  if (token != undefined) {
     cookies.set("token", storeCookieData, { path: '/', maxAge: 7200 })  // set cookies for 30 minutes
   }
 
   // Navigate to dashboard page if login successful
-  if (cookies.get("token")?.token !== undefined) {
+  if (cookies.get("token")?.token !== undefined) { 
     return <Navigate to='/dashboard' />;
   }
 

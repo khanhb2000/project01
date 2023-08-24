@@ -97,3 +97,7 @@
 .ant-menu-root{
   height: auto;
 }
+
+.ant-menu-light .ant-menu-submenu-selected >.ant-menu-submenu-title{
+  color: white !important;
+}

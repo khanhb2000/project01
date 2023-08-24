@@ -64,7 +64,6 @@ export default function Services() {
         getAllDeleteVoucherType()
             .then((res) => {
                 if (res.status === 200) {
-                    console.log(res);
                     setDataRecover(res.data)
                 }
             })
@@ -162,7 +161,7 @@ export default function Services() {
                     <a style={{ fontWeight: "bold" }}>{record?.typeName}</a>
                     <span>
                         Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount}đ`}
-                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('en-US')}đ )`) : ""}
+                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('vi-VN')}đ )`) : ""}
 
                     </span>
                 </div>
@@ -233,7 +232,13 @@ export default function Services() {
     //===================================================================================================================================
 
 
-    const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
+    const selectedRowData = all_data.filter((row, index) => {
+        if (selectedRowKeys.includes(row.id)) {
+            return row
+        }
+    })
+
+
 
 
 
@@ -297,8 +302,8 @@ export default function Services() {
     const getAllVoucherTypes = () => {
         const api_link = {
             url: api_links.user.superAdmin.getAllVoucherType,
-            method:"GET",
-            token:token
+            method: "GET",
+            token: token
         }
         return fetch_Api(api_link)
     }
@@ -346,22 +351,24 @@ export default function Services() {
                 onCancel={() => setAddForm(false)}
                 style={{ top: "25vh", width: " 500px" }}
             >
-                <Row>
-                    <Col span={24}>
-                        <Link to={"createvoucher"}>
-                            <Button style={{ width: "100%" }} type='default' size='large'>
-                                Thêm mã khuyến mãi
-                            </Button>
-                        </Link>
-                    </Col>
-                    {/* <Col span={12}>
-                        <Link to={"createvoucerservice"}>
-                            <Button type='default' size='large'>
-                                Thêm voucher cho dịch vụ
-                            </Button>
-                        </Link>
-                    </Col> */}
-                </Row>
+                <Space direction='horizontal' style={{ justifyContent: "space-between" }}>
+                    <Row gutter={[17, 0]}>
+                        <Col span={10}>
+                            <Link to={"createvoucher"}>
+                                <Button style={{ width: "100%" }} type='default' size='large'>
+                                    Tạo voucher
+                                </Button>
+                            </Link>
+                        </Col>
+                        <Col span={14}>
+                            <Link to={"createvouchercustomer"}>
+                                <Button type='default' size='large'>
+                                    Tạo voucher cho khách hàng
+                                </Button>
+                            </Link>
+                        </Col>
+                    </Row>
+                </Space>
             </Modal>
 
             <Modal
@@ -463,7 +470,7 @@ export default function Services() {
 
             <div className="user-vouchers">
                 <div className="dashboard-content-header1">
-                    <h2>Danh sách mã khuyến mãi</h2>
+                    <h2>Danh sách voucher</h2>
 
                     <hr
                         style={{
@@ -476,7 +483,7 @@ export default function Services() {
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
                         <Button type="primary" onClick={() => setAddForm(true)}>
-                            Thêm
+                            Tạo
                         </Button>
                         <Notification
                             type='voucher'

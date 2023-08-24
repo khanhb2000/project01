@@ -1,30 +1,28 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useState } from 'react';
-import Cookies from 'universal-cookie';
+import { AutoFixNormalSharp } from "@mui/icons-material";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
+import Cookies from "universal-cookie";
+
 
 interface Api {
     url: string,
     method: string,
     token?: string,
-    data?: any
+    data?: {}
 }
 
 
 
-
-
-
-const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
+const fetch_Api_MultiForm = async function (params: Api): Promise<AxiosResponse> {
     const cookies = new Cookies()
-    const token = cookies.get("token")?.token
+    const token = cookies.get("token")?.token;
     const config: AxiosRequestConfig = {
         headers: {
-            "Authorization": `Bearer  ${token}`,
-            "Content-Type": "application/json"
+            "Authorization": `Bearer ${token ?? token}`,
+            "Content-Type": "multipart/form-data"
         },
         url: params.url,
         method: params.method,
-        data: params.data,
+        data: params.data
     }
     try {
         const response: AxiosResponse = await axios(config);
@@ -39,6 +37,4 @@ const fetch_Api = async function (params: Api): Promise<AxiosResponse> {
     }
 }
 
-
-export default fetch_Api
-
+export default fetch_Api_MultiForm

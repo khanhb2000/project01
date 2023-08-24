@@ -81,7 +81,22 @@ const api_links = {
                 token: "",
                 data: [1, 2, 3]
             },
+            getServicePackage: {
+                url: `${authUrl}api/ServicePackages/`,
+                method: "GET",
+            },
 
+
+            ///////////////////// VOUCHER ////////////////////////////
+            getVoucherCustomer: {
+                url: `${authUrl}api/Voucher/Customer/`,
+                method: "GET"
+            },
+            createVoucher: {
+                url: `${authUrl}api/Voucher/`,
+                method: "POST",
+                data: {}
+            },
             //////////////////// VOUCHER TYPE ///////////////////////
             getAllDeleteVoucherType: {
                 url: `${authUrl}api/VoucherTypes/all-delete`,
@@ -177,11 +192,28 @@ const api_links = {
                 url: `${authUrl}api/Services/`,
                 method: "DELETE",
             },
-            updateService:{
-                url:`${authUrl}api/Services/`,
-                method:"PUT"
-            }
+            updateService: {
+                url: `${authUrl}api/Services/`,
+                method: "PUT"
+            },
 
+            /////////////////////// CUSTOMER //////////////////////////
+            getCustomer: {
+                url: `${authUrl}api/Customers/`,
+                method: "GET"
+            },
+
+
+            ////////////////////// BOOKING /////////////////////////////
+            updateBooking: {
+                url: `${authUrl}api/Bookings/`,
+                method: "PUT",
+                data: {}
+            },
+            deleteBooking: {
+                url: `${authUrl}api/Bookings/`,
+                method: "DELETE"
+            }
 
         },
         saleAdmin: {

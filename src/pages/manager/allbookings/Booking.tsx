@@ -190,7 +190,7 @@ export default function Booking() {
         if (event.target.value !== '') {
             let search_results = all_data?.filter((item) =>
                 String(item.id).toLowerCase().includes(search.toLowerCase()) ||
-                item.id.toLowerCase().includes(search.toLowerCase()) ||
+                String(item.id).toLowerCase().includes(search.toLowerCase()) ||
                 item.startDateTime.toLowerCase().includes(search.toLowerCase()) ||
                 item.endDateTime.toLowerCase().includes(search.toLowerCase())
             );
