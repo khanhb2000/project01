@@ -79,8 +79,7 @@ export default function Login() {
   // Navigate to dashboard page if login successful
   if (cookies.get("token")?.token !== undefined) { 
     //return 
-    
-    window.location.pathname='/dashboard/khach-hang' ;
+    window.location.pathname= checked == "/login/nhanvien" ? '/dashboard/khach-hang':'/dashboard/profile' ;
   }
 
   return (
