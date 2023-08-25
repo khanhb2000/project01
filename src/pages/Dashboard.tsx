@@ -19,8 +19,8 @@ import Services from './user/servicepackages/ServicePackage';
 import Vouchers from './user/vouchers/Vouchers';
 import Employees from './user/employee/Employee';
 import Booking from './user/bookings/Booking';
-import CustomerDetail from './user/customers/detail/customer-detail';
-import EmployeeDetail from './user/employee/detail/employee-detail';
+//import CustomerDetail from './user/customers/detail/customer-detail';
+//import EmployeeDetail from './user/employee/detail/employee-detail';
 import NewService from './user/services/NewService';
 import UMenuNew from '../component/newsider/indexUMenu';
 import CMenuNew from '../component/newsider/indexCMenu';
@@ -38,6 +38,8 @@ import UpdateBooking from './user/bookings/UpdateBooking';
 import VoucherCustomer from './user/vouchers/VoucherCustomer';
 import VoucherExtension from './user/vouchers/VoucherExtension';
 
+import CustomerDetail from './manager/allcustomers/customer-detail';
+import EmployeeDetail from './manager/allemployee/employee-detail';
 
 export default function Dashboard() {
 
@@ -69,9 +71,9 @@ export default function Dashboard() {
           <Route path="goi-dich-vu" element={<ServicePackage />} />
           <Route path="goi-dich-vu/createservicepackage" element={<NewServicePackage />} />
           <Route path="goi-dich-vu/updateservicepackage" element={<UpdateServicePackage />} />
-          <Route path="service" element={<Service />} />
-          <Route path="service/createservice" element={<NewService />} />
-          <Route path="customers/detail/:id" element={<CustomerDetail />} />
+          <Route path="loai-dich-vu" element={<Service />} />
+          <Route path="loai-dich-vu/createservice" element={<NewService />} />
+          <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
           {/* <Route path="goidichvu" element={<Services />} /> */}
           {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
@@ -82,8 +84,13 @@ export default function Dashboard() {
           <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
 
           <Route path="employee" element={<Employees />} />
+          <Route path="nhan-vien" element={<Employees />} />
+          <Route path="nhan-vien/role" element={<Role />} />
+          <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
+          <Route path="giao-dich" element={<Booking />} />
+          {/*<Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
-          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
+          <Route path="employee/detail/:id" element={<EmployeeDetail />} />*/}
           <Route path="giao-dich" element={<Booking />} />
           <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
           <Route path="giao-dich/createbooking" element={<NewBooking />} />

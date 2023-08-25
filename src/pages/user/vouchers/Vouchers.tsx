@@ -329,8 +329,7 @@ export default function Services() {
 
 
     // ====================================================================
-
-    // not yet
+    
     const handleTableRowClick = (record: DataType) => {
         setAddFormInformationService(!addFormInformationService)
         setRecord(record)

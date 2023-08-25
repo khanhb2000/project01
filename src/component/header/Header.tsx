@@ -30,10 +30,10 @@ export default function Header() {
     dispatch(setMenuRole(userRole));
 
     //log out
-    const handleLogout = () => {  
-        dispatch(logout())
-        navigate("/login")
+    const handleLogout = () => {
+        dispatch(logout());
         cookies.remove("token");
+        navigate("/login");
     };
 
 
@@ -63,7 +63,6 @@ export default function Header() {
     const handleClickMenubtn = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         dispatch(setOpenMenu());
-
     };
 
 
@@ -113,7 +112,7 @@ export default function Header() {
     return (
         <div className='header'>
             <PopupScreenInformation isPopup={popupInformation} setPopup={setPopupInformation} />
-            <PopupScreenPassword  isPopup = {popupPassword} setPopup={setPopupPassword}/>
+            <PopupScreenPassword isPopup={popupPassword} setPopup={setPopupPassword} />
             <div className='dashbord-header-container'>
                 <div className='dashbord-header-right'>
                     <button className='dashbord-header-btn' onClick={handleClickMenubtn}>|||</button>

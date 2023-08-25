@@ -81,7 +81,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                message.error("Tạo thất bại")
+                message.error(error.message)
             })
 
 

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './booking.scss';
 //import Add from './addNew';
 import { BookingListState, BookingState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select, Modal, Row, Col, Popconfirm, message } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal, Popconfirm, Row, Col } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -11,24 +11,25 @@ import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
 import Cookies from 'universal-cookie';
 import Notification from '../../../component/notification/Notification';
+import { havePermission } from '../../../utils/permission_proccess';
 
-interface DataType {
-    key: React.Key;
-    id: number;
-    vouchers: [],
-    servicePackage: null,
-    bookingTitle: string,
-    bookingDate: string,
-    bookingStatus: string,
-    totalPrice: any,
-    priceDetails: string,
-    note: string,
-    descriptions: string,
-    startDateTime: string,
-    endDateTime: string,
-    customer: string,
-    salesEmployee: string
-}
+// interface DataType {
+//     key: React.Key;
+//     id: number;
+//     vouchers: [],
+//     servicePackage: null,
+//     bookingTitle: string,
+//     bookingDate: string,
+//     bookingStatus: string,
+//     totalPrice: any,
+//     priceDetails: string,
+//     note: string,
+//     descriptions: string,
+//     startDateTime: string,
+//     endDateTime: string,
+//     customer: string,
+//     salesEmployee: string | undefined,
+// }
 
 export default function Booking() {
     const [addForm, setAddForm] = useState(false)
@@ -39,9 +40,15 @@ export default function Booking() {
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [addFormRecover, setAddFormRecover] = useState(false);
+    const [addFormInformationService, setAddFormInformationService] = useState(false)
+    const [record, setRecord] = useState<BookingState>(undefined!)
 
-    const dataListShow: DataType[] = [];
+    const dataListShow: BookingState[] = [];
     const navigate = useNavigate();
+
+    const addPermission = havePermission("Booking", "write");
+    const deletePermission = havePermission("Booking", "delete");
+    const allPermission = havePermission("Booking", "all");
 
     useEffect(() => {
         getAllBooking()
@@ -55,7 +62,12 @@ export default function Booking() {
             })
     }, []);
 
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<BookingState> = [
+        {
+            title: 'ID',
+            dataIndex: 'key',
+            render: (text, record) => <a>{text}</a>,
+        },
         {
             title: 'Tên',
             dataIndex: 'bookingTitle',
@@ -79,26 +91,6 @@ export default function Booking() {
                 )
             }
         },
-
-        /*{
-            title: 'Chức vụ',
-            dataIndex: 'level',
-            filters: [
-                {
-                    text: 'Super Admin',
-                    value: 'SUPER ADMIN',
-                },
-                {
-                    text: 'Sales Admin',
-                    value: 'SALES ADMIN',
-                },
-                {
-                    text: 'Sales',
-                    value: 'SALES',
-                },
-            ],
-            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
-        },*/
         {
             title: 'Tình trạng',
             dataIndex: 'bookingStatus',
@@ -125,6 +117,7 @@ export default function Booking() {
         {
             title: 'Tổng tiền',
             dataIndex: 'totalPrice',
+            align: 'right',
             render: (_, record) => {
                 return (
                     <span>{record.totalPrice.toLocaleString('vi-VN', {
@@ -162,11 +155,11 @@ export default function Booking() {
         },
     ];
 
-
-    data?.map((dataTemp) => {
+    data?.map((dataTemp, index) => {
+        const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
-            key: dataTemp.id,//index
-            id: dataTemp.id,
+            id: dataTemp.id,//index
+            key: index,
             vouchers: [],
             servicePackage: null,
             bookingTitle: dataTemp.bookingTitle,
@@ -178,8 +171,8 @@ export default function Booking() {
             descriptions: dataTemp.descriptions,
             startDateTime: new Date(dataTemp.startDateTime).toLocaleString("en-EN"),
             endDateTime: String(new Date(dataTemp.endDateTime).toLocaleString("en-EN")),
-            customer: dataTemp.customer?.name,
-            salesEmployee: dataTemp.salesEmployee?.name
+            customer: dataTemp.customer,
+            salesEmployee: dataTemp.salesEmployee
         });
     });
 
@@ -256,10 +249,32 @@ export default function Booking() {
     const hasSelected = selectedRowKeys.length > 0;
     const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
 
+
+    const handleTableRowClick = (record: BookingState) => {
+        setAddFormInformationService(!addFormInformationService)
+        getBooking(record.id)
+            .then((res) => {
+                if (res.status === 200) {
+                    setRecord(res.data)
+                }
+            })
+            .catch((error) => {
+                message.error("Vui lòng đăng nhập lại")
+            })
+
+    }
     ////////////////////// GET API ///////////////////////////////
     const getAllCustomer = () => {
         const api_link = {
             url: api_links.user.superAdmin.getAllCustomer,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
+
+    const getBooking = (bookingId: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.getBooking.url}${bookingId}`,
             method: "GET"
         }
         return fetch_Api(api_link)
@@ -299,10 +314,105 @@ export default function Booking() {
                     </Col>
                 </Row>
             </Modal>
+
+            <Modal
+                open={addFormInformationService}
+                onCancel={() => setAddFormInformationService(!addFormInformationService)}
+                footer={[]}
+                width="65vw"
+            >
+                <Space size={[25, 0]} direction='horizontal' className='uservoucher-record' align='center'>
+                    <Space.Compact className='coupon-left' direction='vertical'>
+                        <div>
+                            <img src={"https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"} alt="image" width="250px" />
+                        </div>
+                        <Popconfirm
+                            className="ant-popconfirm"
+                            title="Xoá dịch vụ"
+                            description="Bạn có chắc chắn xoá không ?"
+                            onConfirm={() => {
+                                handleDelete(record.id)
+                                setAddFormInformationService(!addFormInformationService)
+                            }}
+                            okText="Xoá"
+                            cancelText="Huỷ"
+                            placement='bottomLeft'
+                        >
+                            <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                        </Popconfirm>
+                    </Space.Compact>
+                    <Space.Compact className='coupon-con' direction='vertical'>
+                        <Divider orientation='left'>Thông tin</Divider>
+                        <Space direction='vertical' className='uservoucher-record--information'>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Khách hàng: </span>
+                                        <span>{record?.customer?.name}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Nhân viên: </span>
+                                        <span>{record?.salesEmployee?.name}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Tổng tiền: </span>
+                                        <span>{record?.totalPrice.toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày thực hiện: </span>
+                                        <span>{new Date(record?.bookingDate).toLocaleString("vi-VN")}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày kết thúc: </span>
+                                        <span>{new Date(record?.endDateTime).toLocaleString("vi-VN")}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Giao dịch: </span>
+                                        <span>{record?.bookingTitle}</span>
+                                    </Col>
+                                </Row>
+                            </Space>
+                        </Space>
+                    </Space.Compact>
+                </Space>
+            </Modal>
+
             <div className='user-bookinglist'>
                 <div className='dashboard-content-header1'>
-                    <h2>Danh sách giao dịch</h2>
-
+                    <div className='dashboard-content-header2'>
+                        <h2>Danh sách giao dịch</h2>
+                        {allPermission && <Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/giao-dich")}>
+                            Xem tất cả
+                        </Button>}
+                    </div>
                     <hr
                         style={{
                             borderTop: '1px solid black',
@@ -313,9 +423,9 @@ export default function Booking() {
                 </div>
                 <div className='dashboard-content-header2'>
                     <div className='dashboard-content-header2-left'>
-                        <Button onClick={() => setAddForm(!addForm)} type="primary">
+                        {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                             Thêm
-                        </Button>
+                        </Button>}
                         {/* <Notification
                         isDisable={!hasSelected}
                         type='booking'
@@ -342,7 +452,10 @@ export default function Booking() {
                     </div>
                 </div>
 
-                <div className="dashboard-content-header3">
+                <div className='dashboard-content-header3'>
+                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                    </span>
                     <Button
                         size='large'
                         type="default"
@@ -370,8 +483,15 @@ export default function Booking() {
                     />
                 </div>
 
-                <Table columns={columns} dataSource={dataListShow} />
+                {deletePermission &&
+                    <Table
+                        columns={columns}
+                        dataSource={dataListShow}
+                        onRow={(record) => ({
+                            onClick: () => handleTableRowClick(record),
+                        })}
+                    />}
             </div>
         </>
-    )
+    );
 };

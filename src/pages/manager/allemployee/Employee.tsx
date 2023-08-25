@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './stylesEmployee.css';
 import Add from './addNew';
-import { UserListState } from '../../../app/type.d';
+import { LoginPermissionState, UserListState } from '../../../app/type.d';
 import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +10,7 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
+import { havePermission } from '../../../utils/permission_proccess';
 
 interface DataType {
     key: React.Key;
@@ -39,6 +40,10 @@ export default function Employees() {
 
     const dataListShow: DataType[] = [];
     const navigate = useNavigate();
+
+    const addPermission = havePermission("Customer", "write");
+    const deletePermission = havePermission("Customer", "delete");
+    const restorePermission = havePermission("Customer", "restore");
 
     const columns: ColumnsType<DataType> = [
         {
@@ -93,7 +98,7 @@ export default function Employees() {
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
         },
@@ -109,7 +114,7 @@ export default function Employees() {
             render: (_, record) =>
                 <div>
                     {record.citizenId && "CCCD/CMND: " + record.citizenId}<br />
-                    {record.phoneNumber ? "ĐT: " + record.phoneNumber : record.email?"Email: " + record.email:""}
+                    {record.phoneNumber ? "ĐT: " + record.phoneNumber : record.email ? "Email: " + record.email : ""}
                 </div>
         },
         {
@@ -229,8 +234,6 @@ export default function Employees() {
             .then(data => {
                 console.log(data.data);
             })
-        console.log(itemId);
-        console.log(itemName);
         message.destroy('openloading');
         message.success({
             type: 'success',
@@ -293,8 +296,12 @@ export default function Employees() {
 
                 {!addForm && <>
                     <div className='dashboard-content-header1'>
-                        <h2>Danh sách nhân viên</h2>
-
+                        <div className='dashboard-content-header2'>
+                            <h2>Danh sách nhân viên</h2>
+                            <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/nhan-vien")}>
+                                Trở về
+                            </Button>
+                        </div>
                         <hr
                             style={{
                                 borderTop: '1px solid black',
@@ -305,10 +312,10 @@ export default function Employees() {
                     </div>
                     <div className='dashboard-content-header2'>
                         <div className='dashboard-content-header2-left'>
-                            <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                            {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                                 Thêm
-                            </Button>
-                            <Button
+                            </Button>}
+                            {deletePermission && <Button
                                 disabled={!hasSelected}
                                 type="primary"
                                 style={!hasSelected ?
@@ -318,8 +325,8 @@ export default function Employees() {
                                 { handleDeleteMulti(); setSelectedRowKeys([]) }}
                             >
                                 Xóa
-                            </Button>
-                            <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                            </Button>}
+                            {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                             {/*<Button type='primary' className="btnRole" onClick={() => navigate('role')}>
                             Phân quyền
                         </Button>*/}
@@ -338,9 +345,9 @@ export default function Employees() {
                     </div>
 
                     <div className='dashboard-content-header3'>
-                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%'}}>
-                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                    </span>
+                        <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                        </span>
                         <Button
                             size='large'
                             type="default"
@@ -367,18 +374,15 @@ export default function Employees() {
                         />
                     </div>
 
-                    <span style={{ textAlign: 'left', fontSize: 'initial', }}>
-                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                    </span>
-
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                    {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                        : <Table columns={columns} dataSource={dataListShow} />}
                 </>
                 }
 
                 {addForm && <><div className='dashboard-content-header2'>
                     <h2>Thông tin nhân viên</h2>
-                    <button type="submit" className="btn btn-primary"
-                        onClick={() => setAddForm(!addForm)}>Cancel</button></div>
+                    <Button className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
                     <Add />
                 </>}
             </div>

@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import './stylesBookings.css';
 //import Add from './addNew';
 import { BookingListState, BookingState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
+import { havePermission } from '../../../utils/permission_proccess';
 
 interface DataType {
     key: React.Key;
@@ -39,9 +40,15 @@ export default function Booking() {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
     const [filterType, setFilterType] = useState(0);
+    const [addFormRecover, setAddFormRecover] = useState(false);
+    const [dataRecover, setDataRecover] = useState<DataType[]>([])
 
     const dataListShow: DataType[] = [];
     const navigate = useNavigate();
+
+    const addPermission = havePermission("Booking", "write");
+    const deletePermission = havePermission("Booking", "delete");
+    const restorePermission = havePermission("Booking", "restore");
 
     const columns: ColumnsType<DataType> = [
         {
@@ -58,26 +65,6 @@ export default function Booking() {
             title: 'Ngày thực hiện',
             dataIndex: 'bookingDate',
         },
-
-        /*{
-            title: 'Chức vụ',
-            dataIndex: 'level',
-            filters: [
-                {
-                    text: 'Super Admin',
-                    value: 'SUPER ADMIN',
-                },
-                {
-                    text: 'Sales Admin',
-                    value: 'SALES ADMIN',
-                },
-                {
-                    text: 'Sales',
-                    value: 'SALES',
-                },
-            ],
-            onFilter: (value: any, record) => record.level.indexOf(value) === 0,
-        },*/
         {
             title: 'Tình trạng',
             dataIndex: 'bookingStatus',
@@ -102,17 +89,54 @@ export default function Booking() {
         {
             title: 'Thành tiền',
             dataIndex: 'totalPrice',
+            align: 'right',
         },
         {
             title: 'Action',
             key: 'action',
             width: '112px',
+
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.bookingTitle)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
+        },
+    ];
+    const columnsRecover: ColumnsType<DataType> = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'bookingTitle',
+        },
+        {
+            title: 'Ngày thực hiện',
+            dataIndex: 'bookingDate',
+            render: (text) => {
+                const date = new Date(text);
+                return date.toLocaleString().split(' ')[1];
+            }
+        },
+        {
+            title: 'Tình trạng',
+            dataIndex: 'bookingStatus',
+        },
+        {
+            title: 'Thành tiền',
+            dataIndex: 'totalPrice',
+            align: 'right',
+        },
+        {
+            title: 'Thao tác',
+            dataIndex: 'action',
+            render: (text, record) =>
+                <div className="item-content-recover">
+                    <Button type='primary' onClick={() => handleRecover(record.id)} style={{ backgroundColor: "#465d65" }}>Khôi phục</Button>
+                </div>
         },
     ];
 
@@ -127,14 +151,16 @@ export default function Booking() {
         }).then(data => {
             setAllData(data.data);
             setData(data.data);
-            console.log(typeof data.data);
-            console.log(data.data);
         })
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
+
+        fetch_Api({
+            url: "http://bevm.e-biz.com.vn/api/Bookings/all-delete",
+            method: 'GET',
+        })
+            .then(data => {
+                setDataRecover(data.data);
+            })
+    }, [data, dataRecover]);
 
     data?.map((dataTemp, index) => {
         const date = new Date(dataTemp.bookingDate);
@@ -208,23 +234,6 @@ export default function Booking() {
         }
     }
 
-    /*function filterList(filtype: number) {
-        switch (filtype) {
-            case 0:
-                setData(all_data);
-                sortList(ascending, sortType);
-                break;
-            case 1:
-                setData(data?.filter((a) => (a.lockoutEnabled == true)));
-                break;
-            case 2:
-                setData(data?.filter((a) => (a.lockoutEnabled == false)));
-                break;
-            default:
-                break;
-        }
-    }*/
-
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -235,80 +244,172 @@ export default function Booking() {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    function handleDelete1(itemId: string, itemName: string) {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa... ',
+        }, 0);
+        fetch_Api({
+            url: api_links.user.superAdmin.createNewBooking + '/' + itemId,
+            method: 'delete',
+        })
+            .then(data => {
+                console.log(data.data);
+            })
+        console.log(itemId);
+        console.log(itemName);
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Xóa thành công giao dịch ' + itemName + '!'
+        }, 1.5)
+    }
+
+    function handleDeleteMulti() {
+        message.loading({
+            key: 'openloading',
+            type: 'loading',
+            content: 'Đang xóa ' + String(selectedRowKeys.length) + ' giao dịch...',
+        }, 0);
+        selectedRowKeys.map((key) => {
+            fetch_Api({
+                url: api_links.user.superAdmin.createNewBooking + '/' + key,
+                method: 'delete',
+            })
+                .then(data => {
+                    console.log(data.data);
+                })
+        })
+        message.destroy('openloading');
+        message.success({
+            type: 'success',
+            content: 'Đã xóa ' + String(selectedRowKeys.length) + ' giao dịch!'
+        }, 1.5)
+    }
+
+    const handleRecover = (recordId: string) => {
+        fetch_Api({
+            url: "http://bevm.e-biz.com.vn/api/Bookings/restore-booking/" + recordId,
+            method: "PATCH",
+        })
+            .then((res_re) => {
+                if (res_re.status === 200) {
+                    message.success(res_re.data.message)
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+    }
+
     return (
-        <div className='user-bookinglist'>
+        <React.Fragment>
+            <Modal
+                width="fit-content"
+                style={{ top: "5vh" }}
+                open={addFormRecover}
+                title="Khôi phục"
+                onCancel={() => {
+                    setAddFormRecover(!addFormRecover)
+                }}
+                footer={[]}>
+                <Table className='recover-table' columns={columnsRecover} dataSource={dataRecover} />
+            </Modal>
 
-            {!addForm && <>
-                <div className='dashboard-content-header1'>
-                    <h2>Danh sách giao dịch</h2>
+            <div className='user-bookinglist'>
 
-                    <hr
-                        style={{
-                            borderTop: '1px solid black',
-                            width: '100%',
-                            opacity: '.25',
-                        }}
-                    />
-                </div>
-                <div className='dashboard-content-header2'>
-                    <div className='dashboard-content-header2-left'>
-                        <button type="button" className="btn btn-primary" >
-                            Thêm
-                        </button>
-                        <button type="button" className="btn btn-danger" >
-                            Xóa
-                        </button>
+                {!addForm && <>
+                    <div className='dashboard-content-header1'>
+                        <div className='dashboard-content-header2'>
+                            <h2>Danh sách giao dịch</h2>
+                            <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/giao-dich")}>
+                                Trở về
+                            </Button></div>
+                        <hr
+                            style={{
+                                borderTop: '1px solid black',
+                                width: '100%',
+                                opacity: '.25',
+                            }}
+                        />
                     </div>
+                    <div className='dashboard-content-header2'>
+                        <div className='dashboard-content-header2-left'>
+                            {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                                Thêm
+                            </Button>}
+                            {deletePermission && <Button
+                                disabled={!hasSelected}
+                                type="primary"
+                                style={!hasSelected ?
+                                    { backgroundColor: "rgba(0,0,0,0.45)" }
+                                    : { backgroundColor: "red" }}
+                                onClick={() => //openNotification(placement)
+                                { handleDeleteMulti(); setSelectedRowKeys([]) }}
+                            >
+                                Xóa
+                            </Button>}
+                            {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
 
-                    <div className='dashboard-content-header2-right'>
-                        <div className='dashboard-content-search'>
-                            <input
-                                type='text'
-                                onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
-                                className='dashboard-content-input'
-                            />
+                        </div>
+
+                        <div className='dashboard-content-header2-right'>
+                            <div className='dashboard-content-search'>
+                                <input
+                                    type='text'
+                                    onChange={e => __handleSearch(e)}
+                                    placeholder='Search..'
+                                    className='dashboard-content-input'
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className='dashboard-content-header3'>
-                    <span>Sắp xếp theo </span>
-                    <button type="button" className="btn" onClick={() => {
-                        sortList(!ascending, sortType);
-                        setAscending(!ascending)
-                    }}>
-                        {ascending ? "Tăng dần" : "Giảm dần"}
-                    </button>
-                    <Select
-                        defaultValue="name"
-                        style={{ width: 120 }}
-                        onChange={(e) => {
-                            sortList(ascending, e);
-                            setSortType(e)
-                        }}
-                        options={[
-                            { value: 'name', label: 'Tên' },
-                            { value: 'dateCreate', label: 'Ngày tạo' },
-                            { value: 'value', label: 'Giá trị đơn hàng' },
-                        ]}
-                    />
-                </div>
+                    <div className='dashboard-content-header3'>
+                        <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                        </span>
+                        <Button
+                            size='large'
+                            type="default"
+                            onClick={() => {
+                                sortList(!ascending, sortType);
+                                setAscending(!ascending)
+                            }}
+                            style={{ fontSize: "14px", fontWeight: "bold" }}
+                        >
+                            {ascending ? "Tăng dần" : "Giảm dần"}
+                        </Button>
+                        <Select
+                            className="text-bold"
+                            size='large'
+                            defaultValue="name"
+                            style={{ width: 120 }}
+                            onChange={(e) => {
+                                sortList(ascending, e);
+                                setSortType(e)
+                            }}
+                            options={[
+                                { value: 'name', label: 'Tên' },
+                                { value: 'dateCreate', label: 'Ngày tạo' },
+                                { value: 'value', label: 'Giá trị đơn hàng' },
+                            ]}
+                        />
+                    </div>
 
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-                </span>
+                    {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                        : <Table columns={columns} dataSource={dataListShow} />}
+                </>
+                }
 
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-            </>
-            }
-
-            {/*addForm && <><div className='dashboard-content-header2'>
+                {/*addForm && <><div className='dashboard-content-header2'>
                 <h2>Thông tin nhân viên</h2>
-                <button type="submit" className="btn btn-primary"
-                    onClick={() => setAddForm(!addForm)}>Cancel</button></div>
-                <Add />
+                     <Button className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
+                    <Add />
         </>*/}
-        </div>
+            </div>
+        </React.Fragment>
     )
 };

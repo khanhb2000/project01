@@ -10,6 +10,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
+import { havePermission } from '../../../utils/permission_proccess';
 
 interface DataType {
     key: React.Key;
@@ -17,9 +18,9 @@ interface DataType {
     name: string;
     contact: string;
     status: string;
-    phoneNumber?:string;
-    email?:string;
-    citizenId?:string;
+    phoneNumber?: string;
+    email?: string;
+    citizenId?: string;
 }
 
 
@@ -39,6 +40,10 @@ export default function Customers() {
     const [dataRecover, setDataRecover] = useState<DataType[]>([])
 
     const navigate = useNavigate();
+
+    const addPermission = havePermission("Customer", "write");
+    const deletePermission = havePermission("Customer", "delete");
+    const restorePermission = havePermission("Customer", "restore");
 
     const columns: ColumnsType<DataType> = [
         {
@@ -74,7 +79,7 @@ export default function Customers() {
             render: (_, record) => (
                 <Space size="small">
                     <Button size={"middle"} onClick={() => navigate("detail/" + record.id)}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                    <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>
+                    {deletePermission && <Button size={"middle"} onClick={() => handleDelete1(record.id, record.name)}><FontAwesomeIcon icon={faTrashCan} /></Button>}
                 </Space>
             ),
         },
@@ -88,10 +93,10 @@ export default function Customers() {
             title: 'Thông tin',
             dataIndex: 'contact',
             render: (_, record) =>
-            <div>
-                {record.citizenId&&"CCCD/CMND: "+record.citizenId}<br/>
-                {record.phoneNumber?"ĐT: "+record.phoneNumber: record.email?"Email: " + record.email:""}
-            </div>
+                <div>
+                    {record.citizenId && "CCCD/CMND: " + record.citizenId}<br />
+                    {record.phoneNumber ? "ĐT: " + record.phoneNumber : record.email ? "Email: " + record.email : ""}
+                </div>
         },
         {
             title: 'Thao tác',
@@ -113,15 +118,15 @@ export default function Customers() {
                 setAllData(data.data);
                 setData(data.data);
             })
-            
-            fetch_Api({
-                url: "http://bevm.e-biz.com.vn/api/Customers/all-deleted-customers",
-                method: 'GET',
+
+        fetch_Api({
+            url: "http://bevm.e-biz.com.vn/api/Customers/all-deleted-customers",
+            method: 'GET',
+        })
+            .then(data => {
+                setDataRecover(data.data);
             })
-                .then(data => {
-                    setDataRecover(data.data);
-                })
-    }, [data,dataRecover]);
+    }, [data, dataRecover]);
 
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
@@ -243,7 +248,7 @@ export default function Customers() {
 
     const handleRecover = (recordId: string) => {
         fetch_Api({
-            url: "http://bevm.e-biz.com.vn/api/Customers/restore-customer/"+recordId,
+            url: "http://bevm.e-biz.com.vn/api/Customers/restore-customer/" + recordId,
             method: "PATCH",
         })
             .then((res_re) => {
@@ -273,8 +278,12 @@ export default function Customers() {
             <div className='user-customerlist'>
                 {!addForm && <>
                     <div className='dashboard-content-header1'>
-                        <h2>Danh sách khách hàng</h2>
-
+                        <div className='dashboard-content-header2'>
+                            <h2>Danh sách khách hàng</h2>
+                            <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/khach-hang")}>
+                                Trở về
+                            </Button>
+                            </div>
                         <hr
                             style={{
                                 borderTop: '1px solid black',
@@ -285,21 +294,21 @@ export default function Customers() {
                     </div>
                     <div className='dashboard-content-header2'>
                         <div className='dashboard-content-header2-left'>
-                            <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                            {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                                 Thêm
-                            </Button>
-                            <Button
+                            </Button>}
+                            {deletePermission && <Button
                                 disabled={!hasSelected}
                                 type="primary"
-                                style={!hasSelected ? 
-                            { backgroundColor: "rgba(0,0,0,0.45)" } 
-                            : { backgroundColor: "red" }}
+                                style={!hasSelected ?
+                                    { backgroundColor: "rgba(0,0,0,0.45)" }
+                                    : { backgroundColor: "red" }}
                                 onClick={() => //openNotification(placement)
-                                {  handleDeleteMulti(); setSelectedRowKeys([]) }}
+                                { handleDeleteMulti(); setSelectedRowKeys([]) }}
                             >
                                 Xóa
-                            </Button>
-                            <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                            </Button>}
+                            {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                         </div>
 
                         <div className='dashboard-content-header2-right'>
@@ -315,9 +324,9 @@ export default function Customers() {
                     </div>
 
                     <div className='dashboard-content-header3'>
-                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%'}}>
-                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                    </span>
+                        <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                            {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
+                        </span>
                         <Button
                             size='large'
                             type="default"
@@ -344,16 +353,14 @@ export default function Customers() {
                         />
                     </div>
 
-
-
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
-                </>
-                }
+                    {deletePermission ? <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} />
+                        : <Table columns={columns} dataSource={dataListShow} />}
+                </>}
 
                 {addForm && <><div className='dashboard-content-header2'>
                     <h2>Thông tin khách hàng</h2>
-                    <button type="submit" className="btn btn-primary"
-                        onClick={() => setAddForm(!addForm)}>Cancel</button></div>
+                    <Button className="btn btn-primary"
+                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
                     <Add />
 
                 </>}

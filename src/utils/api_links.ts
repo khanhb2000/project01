@@ -115,9 +115,9 @@ const api_links = {
                 data: []
             },
 
-            recoverVoucher:{
+            recoverVoucher: {
                 url: `${authUrl}api/Voucher/restore-voucher/`,
-                method:"PATCH"
+                method: "PATCH"
             },
             //////////////////// VOUCHER TYPE ///////////////////////
             getAllDeleteVoucherType: {
@@ -241,6 +241,10 @@ const api_links = {
             deleteBooking: {
                 url: `${authUrl}api/Bookings/`,
                 method: "DELETE"
+            },
+            getBooking: {
+                url: `${authUrl}api/Bookings/`,
+                method: "GET"
             }
 
         },

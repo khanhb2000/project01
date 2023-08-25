@@ -145,7 +145,7 @@ export default function VoucherCustomer() {
                     <span><b style={{ color: "#4096ff" }}>Hết hạn:</b> {new Date(record?.expiredDate).toLocaleString("vi-VN")}</span>
                 </div>
                 <div className="bonus-content">
-                    <div>Giá trị: {record?.actualPrice}</div>
+                    <div>Giá trị: {record?.actualPrice.toLocaleString("vi-VN")}</div>
                 </div></>,
         },
         {

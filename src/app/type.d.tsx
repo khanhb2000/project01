@@ -11,6 +11,100 @@ export type LoginState = {
   "userInformation"?: UserInformationLoginState | null,
   "customerInformation"?: CustomerInformationLoginState | null,
   "role": RoleState | null,
+  "permission"?: undefined | string[] | null,
+
+};
+export type LoginPermissionState = {
+  Customer: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  User: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Voucher: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  VoucherType: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  VoucherExtension: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Service: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  ServicePackage: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Booking: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Role: {
+    read: boolean,
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Statistic: {
+    read: boolean,
+    //khong su dung
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+    restore: boolean,
+  },
+  Log: {
+    read: boolean,
+    restore: boolean,
+    //khong su dung
+    write: boolean,
+    update: boolean,
+    delete: boolean,
+    all: boolean,
+  }
 };
 
 export type RoleState = {
@@ -158,6 +252,7 @@ export type VoucherExtensionListState = VoucherExtensionState[];
 
 
 export type BookingState = {
+  key?: number
   "id": number,
   "customer": {
     "id": string,
@@ -167,7 +262,7 @@ export type BookingState = {
     "id": string,
     "name": string,
     "phone": string,
-  },
+  } | null,
   "vouchers": VoucherListState,
   "servicePackage": null,
   "bookingTitle": string,
