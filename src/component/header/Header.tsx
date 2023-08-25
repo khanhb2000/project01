@@ -32,8 +32,8 @@ export default function Header() {
     //log out
     const handleLogout = () => {
         dispatch(logout());
-        cookies.remove("token");
-        navigate("/login");
+        cookies.remove("token", { path: '/' });
+        window.location.pathname="/login";
     };
 
 

@@ -49,6 +49,7 @@ export default function Booking() {
     const addPermission = havePermission("Booking", "write");
     const deletePermission = havePermission("Booking", "delete");
     const allPermission = havePermission("Booking", "all");
+    const editPermission = havePermission("Booking", "update");
 
     useEffect(() => {
         getAllBooking()
@@ -136,18 +137,18 @@ export default function Booking() {
                     <>
                         {record.bookingStatus === "Đang xử lí" ?
                             <Space size="small">
-                                <Link to={"updatebooking"} state={record}>
-                                    <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                                </Link>
-                                <Popconfirm
-                                    title="Xoá dịch vụ"
-                                    description="Bạn có chắc chắn xoá không ?"
-                                    onConfirm={() => handleDelete(record.id)}
-                                >
-                                    <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>
-                                </Popconfirm>
-                            </Space>
-                            :
+                            {editPermission && <Link to={"updatebooking"} state={record}>
+                                <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                            </Link>}
+                            <Popconfirm
+                                title="Xoá dịch vụ"
+                                description="Bạn có chắc chắn xoá không ?"
+                                onConfirm={() => handleDelete(record.id)}
+                            >
+                                {deletePermission && <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>}
+                            </Popconfirm>
+                        </Space>
+                        :
                             <></>}
                     </>
                 )
@@ -282,7 +283,7 @@ export default function Booking() {
 
     const getAllBooking = () => {
         const api_link = {
-            url: api_links.user.superAdmin.getAllBooking,
+            url: api_links.user.saleAdmin.getUserBooking,
             method: "GET"
         }
         return fetch_Api(api_link)
