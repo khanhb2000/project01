@@ -51,7 +51,7 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
     const [data, setData] = useState<DataType>();
     const [chuc_vu, setCV] = useState<RoleListState>();
     var cookies = new Cookies();
-    const editPermission = (cookies.get("token")?.role.id == "0")?havePermission("Customer", "update"):havePermission("User", "update"); 
+    const editPermission = (cookies.get("token")?.role.id == "0") ? havePermission("Customer", "update") : havePermission("User", "update");
 
     const [isChangeInformation, setIsChangeInformation] = useState(false);
     const [isChangeRoles, setIsChangeRoles] = useState(false);
@@ -67,14 +67,14 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
         }).then(data => {
             setData(data.data);
         })
-
-        fetch_Api({
-            url: api_links.user.superAdmin.getAllRole,
-            method: 'GET',
-            data: undefined
-        }).then(data => {
-            setCV(data.data);
-        });
+        if (cookies.get("token").role.isManager)
+            fetch_Api({
+                url: api_links.user.superAdmin.getAllRole,
+                method: 'GET',
+                data: undefined
+            }).then(data => {
+                setCV(data.data);
+            });
     }, [id, data]);
 
     var isDelete: boolean;
@@ -171,9 +171,9 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
                     )
                 })}
                 <List.Item style={{ textAlign: "left" }}>
-                <Button type="dashed" onClick={() => setIsAddChangeEmployees(true)} block icon={<PlusOutlined />}>
-              Thêm 
-            </Button>
+                    <Button type="dashed" onClick={() => setIsAddChangeEmployees(true)} block icon={<PlusOutlined />}>
+                        Thêm
+                    </Button>
                 </List.Item>
             </List>)
     }
@@ -181,27 +181,28 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
     return (
         <React.Fragment>
             <div className="detail-left">
-            <AssignSupportersPopupScreen 
-            isPopup={isAddChangeEmployees} 
-            setPopup={setIsAddChangeEmployees} 
-            customerId={id} />
+            {cookies.get("token").role.isManager && <AssignSupportersPopupScreen
+                    isPopup={isAddChangeEmployees}
+                    setPopup={setIsAddChangeEmployees}
+                    customerId={id} />}
 
-            <PersonalInformationPopupScreen 
-            isPopup={isChangeInformation} 
-            setPopup={setIsChangeInformation}  
-            data={data}
-            componentDisabled={componentDisabled}
-            setComponentDisabled={setComponentDisabled}
-            />
+                <PersonalInformationPopupScreen
+                    isPopup={isChangeInformation}
+                    setPopup={setIsChangeInformation}
+                    data={data}
+                    componentDisabled={componentDisabled}
+                    setComponentDisabled={setComponentDisabled}
+                />
 
                 <div className="personal-information">
                     {data?.isBlocked && <Tag color="orange" style={{ width: "fit-content" }}>Tài khoản đã bị khóa</Tag>}
-                    <Descriptions title={<Space>{data?.name}{editPermission && <FontAwesomeIcon size='sm' icon={faPenToSquare} 
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                        setComponentDisabled(data?.isBlocked)
-                        setIsChangeInformation(true)}
-                    }/>}</Space>}
+                    <Descriptions title={<Space>{data?.name}{editPermission && <FontAwesomeIcon size='sm' icon={faPenToSquare}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            setComponentDisabled(data?.isBlocked)
+                            setIsChangeInformation(true)
+                        }
+                        } />}</Space>}
                         column={1}>
                         <Descriptions.Item label="ID">{data?.id}</Descriptions.Item>
                         <Descriptions.Item label="CitizenId">{data?.citizenId}</Descriptions.Item>
@@ -215,10 +216,10 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
 
                     <div className="more-information">
                         <Divider orientation="left">Chức vụ&ensp;
-                        {editPermission && 
-                            (!isChangeRoles ? <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => setIsChangeRoles(true)} style={{ cursor: "pointer" }} />
-                                : <FontAwesomeIcon size='sm' icon={faFloppyDisk} onClick={() => setIsChangeRoles(false)} style={{ cursor: "pointer" }} />)
-                        }</Divider>
+                            {editPermission &&
+                                (!isChangeRoles ? <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => setIsChangeRoles(true)} style={{ cursor: "pointer" }} />
+                                    : <FontAwesomeIcon size='sm' icon={faFloppyDisk} onClick={() => setIsChangeRoles(false)} style={{ cursor: "pointer" }} />)
+                            }</Divider>
                         {isChangeRoles ? changeRoles() :
                             <List size="small" bordered>
                                 {data?.roles.length != 0 ?
@@ -229,9 +230,9 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
                             </List>
                         }
                         <Divider orientation="left">Quản lý&ensp;
-                        {editPermission && 
-                        <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => console.log("checked")} style={{ cursor: "pointer" }} />
-                        }
+                            {editPermission &&
+                                <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => console.log("checked")} style={{ cursor: "pointer" }} />
+                            }
                         </Divider>
                         <List size="small" bordered>
                             {data?.salesManager ?
@@ -242,10 +243,10 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
                     :
                     <div className="more-information">
                         <Divider orientation="left">Nhân viên tư vấn&ensp;
-                        {editPermission && 
-                        (!isChangeEmployees ? <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => setIsChangeEmployees(true)} style={{ cursor: "pointer" }} />
-                                : <FontAwesomeIcon size='sm' icon={faFloppyDisk} onClick={() => setIsChangeEmployees(false)} style={{ cursor: "pointer" }} />
-                        )}</Divider>
+                            {editPermission &&
+                                (!isChangeEmployees ? <FontAwesomeIcon size='sm' icon={faPenToSquare} onClick={() => setIsChangeEmployees(true)} style={{ cursor: "pointer" }} />
+                                    : <FontAwesomeIcon size='sm' icon={faFloppyDisk} onClick={() => setIsChangeEmployees(false)} style={{ cursor: "pointer" }} />
+                                )}</Divider>
                         {isChangeEmployees ? changeEmployees() :
                             <List size="small" bordered>
                                 {data?.users.length != 0 ?

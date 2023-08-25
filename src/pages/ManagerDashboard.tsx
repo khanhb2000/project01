@@ -22,6 +22,8 @@ import UpdateServicePackage from './manager/allservices/servicepackages/UpdateSe
 import NewService from './manager/allservices/services/NewService';
 import Newvoucher from './manager/allvouchers/NewVoucher';
 import UpdateVoucher from './manager/allvouchers/UpdateVoucher';
+import handlePermission from '../utils/permission_proccess';
+import Unauthorized from './Unauthorized';
 
 export default function ManagerDashboard() {
 
@@ -32,34 +34,48 @@ export default function ManagerDashboard() {
   const r = useSelector(selectRole);
   const cookies = new Cookies();
   //const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
+  
+  const permission = handlePermission(cookies.get("token")?.information.permission);
+  const path = window.location.pathname;
 
   if (cookies.get("token")?.token == undefined) {
     return (<Navigate replace to="/login" />)
   }
+
+  const unauthorized:boolean=
+  ((path == "/managerdashboard/khach-hang" && !permission.Customer.all)
+    || (path == "/managerdashboard/nhan-vien" && !permission.User.all)
+    || (path == "/managerdashboard/giao-dich" && !permission.Booking.all)
+    || (path == "/dashboard/khach-hang" && !permission.Customer.read)
+    || (path == "/dashboard/nhan-vien" && !permission.User.read)
+    || (path == "/dashboard/giao-dich" && !permission.Booking.read)
+  ) ? true:false;
 
   return (
     <div className='dashboard-container'>
       <Header />
       <div className='dashboard-body'>
         {isMenu && <UMenuNew />}
-        <Routes>
+        {unauthorized ?
+    <Unauthorized/>
+    :<Routes>
           <Route path="*" element={<div></div>} />
           <Route path="khach-hang" element={<AllCustomers />} />
           <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
-          <Route path="goi-dich-vu" element={<AllServicePackages />} />
+          {/*<Route path="goi-dich-vu" element={<AllServicePackages />} />
           <Route path="goi-dich-vu/tao-moi" element={<NewServicePackage />} />
           <Route path="goi-dich-vu/cap-nhat" element={<UpdateServicePackage />} />
           <Route path="loai-dich-vu" element={<AllServices />} />
           <Route path="loai-dich-vu/tao-moi" element={<NewService />} />
           <Route path="vouchers" element={<AllVouchers />} />
           <Route path="vouchers/tao-moi" element={<Newvoucher />} />
-          <Route path="vouchers/cap-nhat" element={<UpdateVoucher />} />
+  <Route path="vouchers/cap-nhat" element={<UpdateVoucher />} />*/}
           <Route path="nhan-vien" element={<AllEmployees />} />
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
           <Route path="giao-dich" element={<AllBooking />} />
 
-        </Routes>
+        </Routes>}
       </div>
     </div>
   );

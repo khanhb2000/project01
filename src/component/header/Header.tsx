@@ -32,7 +32,7 @@ export default function Header() {
     //log out
     const handleLogout = () => {
         dispatch(logout());
-        cookies.remove("token");
+        cookies.remove("token", { path: '/' });
         navigate("/login");
     };
 

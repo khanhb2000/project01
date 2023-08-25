@@ -37,9 +37,12 @@ import NewVoucherCustomer from './user/vouchers/NewVoucherCustomer';
 import UpdateBooking from './user/bookings/UpdateBooking';
 import CustomerDetail from './manager/allcustomers/customer-detail';
 import EmployeeDetail from './manager/allemployee/employee-detail';
+import handlePermission from '../utils/permission_proccess';
+import Unauthorized from './Unauthorized';
 
 export default function Dashboard() {
-
+  useEffect(() => {
+  }, []);
   //useSelector, useNavigate
   const isMenu = useSelector(selectOpenMenu);
   const nagivate = useNavigate();
@@ -48,9 +51,21 @@ export default function Dashboard() {
   const cookies = new Cookies();
   //const sidebar_menu = (cookies.get("token")?.role.id == "0") ? sidebar_menu_customer : sidebar_menu_user;
 
+  const permission = handlePermission(cookies.get("token")?.information.permission);
+  const path = window.location.pathname;
   if (cookies.get("token")?.token == undefined) {
     return (<Navigate replace to="/login" />)
   }
+
+const unauthorized:boolean=
+  ((path == "/managerdashboard/khach-hang" && !permission.Customer.all)
+    || (path == "/managerdashboard/nhan-vien" && !permission.User.all)
+    || (path == "/managerdashboard/giao-dich" && !permission.Booking.all)
+    || (path == "/dashboard/khach-hang" && !permission.Customer.read)
+    || (path == "/dashboard/nhan-vien" && !permission.User.read)
+    || (path == "/dashboard/giao-dich" && !permission.Booking.read)
+  ) ? true:false;
+
 
   return (
     <div className='dashboard-container'>
@@ -58,7 +73,10 @@ export default function Dashboard() {
       <div className='dashboard-body'>
         {isMenu &&
           ((cookies.get("token")?.role.id == "0") ? <CMenuNew /> : <UMenuNew />)}
-        <Routes>
+        {unauthorized ?
+    <Unauthorized/>
+    :
+          <Routes>
           <Route path="*" element={<div></div>} />
           <Route path="profile" element={< Profile />} />
           <Route path="myservice" element={<MyService />} />
@@ -80,7 +98,6 @@ export default function Dashboard() {
           <Route path="nhan-vien" element={<Employees />} />
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
-          <Route path="giao-dich" element={<Booking />} />
           {/*<Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />*/}
@@ -88,7 +105,7 @@ export default function Dashboard() {
           <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
           <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
-        </Routes>
+        </Routes>}
       </div>
     </div>
   );
