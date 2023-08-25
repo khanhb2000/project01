@@ -35,6 +35,9 @@ import ServicePackage from './user/servicepackages/ServicePackage';
 import NewBooking from './user/bookings/NewBooking';
 import NewVoucherCustomer from './user/vouchers/NewVoucherCustomer';
 import UpdateBooking from './user/bookings/UpdateBooking';
+import VoucherCustomer from './user/vouchers/VoucherCustomer';
+import VoucherExtension from './user/vouchers/VoucherExtension';
+
 
 export default function Dashboard() {
 
@@ -73,8 +76,11 @@ export default function Dashboard() {
           {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="vouchers/createvoucher" element={<Newvoucher />} />
-          <Route path="vouchers/createvouchercustomer" element={<NewVoucherCustomer />} />
           <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
+          <Route path="vouchers-customer" element={<VoucherCustomer />} />
+          <Route path="vouchers-customer/createvoucherextension" element={<VoucherExtension />} />
+          <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
+
           <Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />

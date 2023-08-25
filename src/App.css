@@ -154,3 +154,9 @@ h6 {
   text-align: left;
   width: 130px;
 }
+
+
+.ant-menu-inline.ant-menu-root .ant-menu-item>.ant-menu-title-content {
+  overflow: unset;
+  text-overflow: unset;
+}

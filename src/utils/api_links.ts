@@ -10,7 +10,7 @@ const api_links = {
             getAllServicePackage: `${authUrl}api/ServicePackages/all`,
             getAllService: `${authUrl}api/Services/all`,
             getAllUser: `${authUrl}api/Users/all-users`,
-            getAllVoucher: `${authUrl}api/Vouchers/all`,
+            getAllVoucher: `${authUrl}api/Voucher/all`,
             getAllVoucherType: `${authUrl}api/VoucherTypes/all`,
             //POST
             createNewBooking: `${authUrl}api/Bookings`,
@@ -97,6 +97,28 @@ const api_links = {
                 method: "POST",
                 data: {}
             },
+            getAllDeleteVoucher: {
+                url: `${authUrl}api/Voucher/all-delete`,
+                method: "GET"
+            },
+            deleteVoucher: {
+                url: `${authUrl}api/Voucher/`,
+                method: "DELETE"
+            },
+            getVoucher: {
+                url: `${authUrl}api/Voucher/`,
+                method: "GET"
+            },
+            updateVoucherStatus: {
+                url: `${authUrl}api/Voucher/`,
+                method: "PATCH",
+                data: []
+            },
+
+            recoverVoucher:{
+                url: `${authUrl}api/Voucher/restore-voucher/`,
+                method:"PATCH"
+            },
             //////////////////// VOUCHER TYPE ///////////////////////
             getAllDeleteVoucherType: {
                 url: `${authUrl}api/VoucherTypes/all-delete`,
@@ -141,6 +163,12 @@ const api_links = {
             },
 
 
+            //////////////////////////// VOUCHER EXTENSION ///////////////////////////
+            createVoucherExtension: {
+                url: `${authUrl}api/VoucherExtensions`,
+                method: "POST",
+                data: {}
+            },
 
             //////////////// USER ////////////////
             updateInformationForUser:

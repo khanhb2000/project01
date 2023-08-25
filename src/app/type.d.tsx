@@ -95,25 +95,28 @@ export type ServiceState = {
 export type ServiceListState = ServiceState[];
 
 export type VoucherState = {
+  "key"?: number,
+  "href"?: string,
+  "image": string,
+  "id": number,
+  "customer": {
     "id": string,
-    "customer": {
-      "id": string,
-      "name": string,
-    },
-    "salesEmployee": {
-      "id": string,
-      "name": string,
-      "phoneNumber": string,
-    },
-    "voucherType": VoucherTypeState,
-    "issuedDate": string,
-    "expiredDate": string,
-    "actualPrice": number,
-    "usedValueDiscount": number | null,
-    "voucherStatus": string,
-    "bookings": BookingListState,
-    "voucherExtensions": VoucherExtensionListState,
-  }
+    "name": string,
+  },
+  "salesEmployee": {
+    "id": string,
+    "name": string,
+    "phoneNumber": string,
+  },
+  "voucherType": VoucherTypeState,
+  "issuedDate": string,
+  "expiredDate": string,
+  "actualPrice": number,
+  "usedValueDiscount": number | null,
+  "voucherStatus": string,
+  "bookings": BookingListState,
+  "voucherExtensions": VoucherExtensionListState,
+}
 
 export type VoucherListState = VoucherState[];
 
@@ -138,17 +141,17 @@ export type VoucherTypeState = {
 export type VoucherTypeListState = VoucherTypeState[];
 
 export type VoucherExtensionState = {
-      "id": 2,
-      "voucher": VoucherState,
-      "salesEmployee": {
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-      }|null,
-      "price": number,
-      "extendedDateTime": string,
-      "oldExpiredDate": string,
-      "newExpiredDate": string,
+  "id": 2,
+  "voucher": VoucherState,
+  "salesEmployee": {
+    "id": string,
+    "name": string,
+    "phoneNumber": string,
+  } | null,
+  "price": number,
+  "extendedDateTime": string,
+  "oldExpiredDate": string,
+  "newExpiredDate": string,
 }
 
 export type VoucherExtensionListState = VoucherExtensionState[];
@@ -181,7 +184,7 @@ export type BookingState = {
 export type BookingListState = BookingState[];
 
 export type CustomerState = {
-  "id": number|string,
+  "id": number | string,
   "name": string,
   "email": string | null,
   "normalizedEmail": string | null,

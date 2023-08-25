@@ -1,56 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { VoucherTypeListState, VoucherTypeState } from '../../../app/type.d';
+import { VoucherListState, VoucherState, VoucherTypeListState, VoucherTypeState } from '../../../app/type.d';
 import { ColumnsType } from 'antd/es/table';
 import Cookies from 'universal-cookie';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
-import { Button, Col, Modal, Row, Space, Tag, message, Table, Popconfirm, Divider, Select } from 'antd';
+import { Button, Col, Modal, Row, Space, Tag, message, Table, Popconfirm, Divider, Select, Form, Input, DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Notification from '../../../component/notification/Notification';
-import './stylesVouchers.scss'
+import './vouchercustomer.scss'
 
 
-interface DataType {
-    "key": React.Key;
-    "href"?: string | undefined;
-    "image"?: string;
-    "id": number,
-    "typeName": string,
-    "isAvailable": boolean,
-    "commonPrice": number,
-    "valueDiscount": number,
-    "availableNumberOfVouchers": number,
-    "percentageDiscount": number,
-    "maximumValueDiscount": number,
-    "conditionsAndPolicies": string,
-    "vouchers": [],
-    "usableServicePackages": []
 
-}
-
-
-export default function Services() {
+export default function VoucherCustomer() {
 
     //useState
-    const [all_data, setAllData] = useState<VoucherTypeListState>([]);
-    const [data, setData] = useState<VoucherTypeListState>(all_data);
-    const [sortType, setSortType] = useState('name');
+    const [all_data, setAllData] = useState<VoucherListState>([]);
+    const [data, setData] = useState<VoucherListState>(all_data);
+    const [sortType, setSortType] = useState('cost');
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [addForm, setAddForm] = useState(false);
     const [addFormRecover, setAddFormRecover] = useState(false);
-    const [dataRecover, setDataRecover] = useState<DataType[]>([])
+    const [dataRecover, setDataRecover] = useState<VoucherListState>([])
     const [addFormInformationService, setAddFormInformationService] = useState(false)
-    const [record, setRecord] = useState<DataType>(undefined!)
-
-    //get data from cookie
-    var cookies = new Cookies()
-    var token = cookies.get("token")?.token;
+    const [record, setRecord] = useState<VoucherState>(undefined!)
+    const [voucherStatus, setVoucherStatus] = useState<string>("")
 
     useEffect(() => {
-        getAllVoucherTypes()
+        getAllVoucher()
             .then((res) => {
                 if (res.status === 200) {
                     setAllData(res.data);
@@ -61,7 +40,7 @@ export default function Services() {
             .catch((reason) => {
                 console.log(reason);
             })
-        getAllDeleteVoucherType()
+        getAllDeleteVoucher()
             .then((res) => {
                 if (res.status === 200) {
                     setDataRecover(res.data)
@@ -74,37 +53,42 @@ export default function Services() {
 
 
     // call api to get data
-    const dataListShow: DataType[] = [];
+    const dataListShow: VoucherListState = [];
     data?.map((dataTemp) => dataListShow.push({
         key: dataTemp.id,//index
         id: dataTemp.id,
         href: 'https://ant.design',
         image: "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png",
-        typeName: dataTemp.typeName,
-        isAvailable: dataTemp.isAvailable,
-        commonPrice: dataTemp.commonPrice,
-        availableNumberOfVouchers: dataTemp.availableNumberOfVouchers,
-        percentageDiscount: dataTemp.percentageDiscount,
-        maximumValueDiscount: dataTemp.maximumValueDiscount,
-        conditionsAndPolicies: dataTemp.conditionsAndPolicies,
-        valueDiscount: dataTemp.valueDiscount,
-        vouchers: dataTemp.vouchers,
-        usableServicePackages: dataTemp.usableServicePackages
+        customer: dataTemp.customer,
+        salesEmployee: dataTemp.salesEmployee,
+        voucherType: dataTemp.voucherType,
+        issuedDate: dataTemp.issuedDate,
+        expiredDate: dataTemp.expiredDate,
+        actualPrice: dataTemp.actualPrice,
+        usedValueDiscount: dataTemp.usedValueDiscount,
+        voucherStatus: dataTemp.voucherStatus,
+        bookings: dataTemp.bookings,
+        voucherExtensions: dataTemp.voucherExtensions
     }));
 
-
-    // ======================================= use to render the format of the table ===============================================
-    // quantity of column, title of column...
-
     const handleDelete = (e: number) => {
-        deleteVoucherType(e)
+        deleteVoucher(e)
             .then((res) => {
                 if (res.status === 200) {
                     message.success(res.data.message)
-                    getAllVoucherTypes()
+                    getAllVoucher()
                         .then((res) => {
                             setAllData(res.data);
                             setData(res.data);
+                        })
+                        .catch((reason) => {
+                            console.log(reason);
+                        })
+                    getAllDeleteVoucher()
+                        .then((res) => {
+                            if (res.status === 200) {
+                                setDataRecover(res.data)
+                            }
                         })
                         .catch((reason) => {
                             console.log(reason);
@@ -117,15 +101,14 @@ export default function Services() {
     }
 
 
-    // not yet
     const handleRecover = (recordId: number) => {
         const recoverData = dataRecover.filter((data) => data.id !== recordId)
-        recoverVoucherType(recordId)
+        recoverVoucher(recordId)
             .then((res_re) => {
                 if (res_re.status === 200) {
                     setDataRecover(recoverData)
                     message.success(res_re.data.message)
-                    getAllVoucherTypes()
+                    getAllVoucher()
                         .then((res) => {
                             if (res.status === 200) {
                                 setAllData(res.data)
@@ -139,7 +122,7 @@ export default function Services() {
     }
 
 
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<VoucherState> = [
         {
             title: 'Lựa chọn',
             dataIndex: 'image',
@@ -158,15 +141,11 @@ export default function Services() {
             dataIndex: 'service',
             render: (text, record, index) => <>
                 <div className="item-content">
-                    <a style={{ fontWeight: "bold" }}>{record?.typeName}</a>
-                    <span>
-                        Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount}đ`}
-                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('vi-VN')}đ )`) : ""}
-
-                    </span>
+                    <span><b style={{ color: "#4096ff" }}>Thời gian bắt đầu:</b> {new Date(record?.issuedDate).toLocaleString("vi-VN")}</span>
+                    <span><b style={{ color: "#4096ff" }}>Hết hạn:</b> {new Date(record?.expiredDate).toLocaleString("vi-VN")}</span>
                 </div>
                 <div className="bonus-content">
-                    <div>Số lượng còn lại: {record?.availableNumberOfVouchers}</div>
+                    <div>Giá trị: {record?.actualPrice}</div>
                 </div></>,
         },
         {
@@ -175,11 +154,9 @@ export default function Services() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Link to={"updatevoucher"} state={record}>
-                        <Button
-                            title='Sửa đổi'
-                            size={"large"} >
-                            <FontAwesomeIcon icon={faPenToSquare} />
+                    <Link to={"createvoucherextension"} state={record}>
+                        <Button type='default' size='large'>
+                            <FontAwesomeIcon title='Sửa đổi' icon={faPenToSquare} />
                         </Button>
                     </Link>
                 </Space>
@@ -188,23 +165,23 @@ export default function Services() {
         },
     ];
 
-    const columnsRecover: ColumnsType<DataType> = [
+    const columnsRecover: ColumnsType<VoucherState> = [
         {
-            title: 'Gói khuyến mãi',
+            title: 'Khách hàng',
             dataIndex: 'typeName',
             render: (text, record, index) =>
                 <div className="item-content-recover">
-                    <a style={{ fontWeight: "bold" }}>{record.typeName}</a>
+                    <a style={{ fontWeight: "bold" }}>{record?.customer?.name}</a>
                 </div>
 
         },
         {
-            title: 'Điều kiện',
+            title: 'Nhân viên',
             dataIndex: 'conditionsAndPolicies',
             render: (text, record, index) =>
                 <div className="item-content-recover">
 
-                    <p>Nội dung: {record.conditionsAndPolicies}</p>
+                    <p>{record?.salesEmployee?.name}</p>
                 </div>
         },
         {
@@ -218,75 +195,47 @@ export default function Services() {
     ]
 
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
 
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-
-    const hasSelected = selectedRowKeys.length > 0;
-    //===================================================================================================================================
-
-
-    const selectedRowData = all_data.filter((row, index) => {
-        if (selectedRowKeys.includes(row.id)) {
-            return row
-        }
-    })
-
-    // search data
-    const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value !== '') {
-            let search_results = all_data?.filter((item) => {
-                return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
-                    item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
-            }
-            );
-            setData(search_results);
-        }
-        else {
-            setData(all_data);
-        }
-    };
+    // // search data
+    // const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.value !== '') {
+    //         let search_results = all_data?.filter((item) => {
+    //             return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
+    //                 item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
+    //         }
+    //         );
+    //         setData(search_results);
+    //     }
+    //     else {
+    //         setData(all_data);
+    //     }
+    // };
 
     // sort data by descending or increment
     function sortList(tang_dan: boolean, sorttype: string) {
         if (tang_dan) {
             switch (sorttype) {
-                case "name":
-                    data?.sort((a, b) => (a.typeName > b.typeName) ? 1 : -1);
+                case "date":
+                    data?.sort((a, b) => (a.issuedDate > b.issuedDate) ? 1 : -1);
                     break;
                 case "cost":
-                    data?.sort((a, b) => (a.commonPrice > b.commonPrice) ? 1 : -1);
+                    data?.sort((a, b) => (a.actualPrice > b.actualPrice) ? 1 : -1);
                     break;
-                case "maxvalue":
-                    data?.sort((a, b) => (a.maximumValueDiscount > b.maximumValueDiscount) ? 1 : -1);
-                    break;
-                case "remain":
-                    data?.sort((a, b) => (a.availableNumberOfVouchers > b.availableNumberOfVouchers) ? 1 : -1);
-                    break;
+
                 default:
                     break;
             }
         }
         else {
             switch (sorttype) {
-                case "name":
-                    data?.sort((a, b) => (a.typeName < b.typeName) ? 1 : -1);
+                case "date":
+                    data?.sort((a, b) => (a.issuedDate < b.issuedDate) ? 1 : -1);
                     break;
                 case "cost":
-                    data?.sort((a, b) => (a.commonPrice < b.commonPrice) ? 1 : -1);
+                    data?.sort((a, b) => (a.actualPrice < b.actualPrice) ? 1 : -1);
                     break;
-                case "maxvalue":
-                    data?.sort((a, b) => (a.maximumValueDiscount < b.maximumValueDiscount) ? 1 : -1);
-                    break;
-                case "remain":
-                    data?.sort((a, b) => (a.availableNumberOfVouchers < b.availableNumberOfVouchers) ? 1 : -1);
-                    break;
+
                 default:
                     break;
             }
@@ -294,34 +243,37 @@ export default function Services() {
     }
 
     //=========================== GET API ====================================
-    const getAllVoucherTypes = () => {
+    const getVoucher = (voucherId: number) => {
         const api_link = {
-            url: api_links.user.superAdmin.getAllVoucherType,
+            url: `${api_links.user.superAdmin.getVoucher.url}${voucherId}`,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
+    const getAllVoucher = () => {
+        const api_link = {
+            url: api_links.user.superAdmin.getAllVoucher,
             method: "GET",
-            token: token
         }
         return fetch_Api(api_link)
     }
-    const deleteVoucherType = (e: number) => {
+    const deleteVoucher = (e: number) => {
         const api_link = {
-            url: `${api_links.user.superAdmin.deleteVoucherType.url}${e}`,
+            url: `${api_links.user.superAdmin.deleteVoucher.url}${e}`,
             method: "DELETE",
-            token: token
         }
         return fetch_Api(api_link)
     }
 
-    const getAllDeleteVoucherType = () => {
-        const api_link = api_links.user.superAdmin.getAllDeleteVoucherType
-        api_link.token = token
+    const getAllDeleteVoucher = () => {
+        const api_link = api_links.user.superAdmin.getAllDeleteVoucher
         return fetch_Api(api_link)
     }
 
-    const recoverVoucherType = (recordId: number) => {
+    const recoverVoucher = (recordId: number) => {
         const api_link = {
-            url: `${api_links.user.superAdmin.recoverVoucherType.url}${recordId}`,
+            url: `${api_links.user.superAdmin.recoverVoucher.url}${recordId}`,
             method: "PATCH",
-            token: token
         }
         return fetch_Api(api_link)
     }
@@ -330,13 +282,39 @@ export default function Services() {
 
     // ====================================================================
 
-    // not yet
-    const handleTableRowClick = (record: DataType) => {
+    const handleTableRowClick = (record: VoucherState) => {
         setAddFormInformationService(!addFormInformationService)
-        setRecord(record)
+        // setRecord(record)
+        getVoucher(record.id)
+            .then((res) => {
+                if (res.status === 200) {
+                    setRecord(res.data)
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+
     }
 
 
+    // voucher status 
+    const getVoucherStatus = () => {
+        switch (record?.voucherStatus) {
+            case "Expired":
+                return "Hết hạn"
+
+
+            case "Usable":
+                return "Sử dụng"
+
+            case "OutOfValue":
+                return "Không có giá trị"
+
+            case "Blocked":
+                return "Khoá"
+        }
+    }
 
     return (
         <React.Fragment>
@@ -344,23 +322,19 @@ export default function Services() {
                 open={addForm}
                 footer={[]}
                 onCancel={() => setAddForm(false)}
-                style={{ top: "25vh", width: " 500px" }}
+                style={{ top: "25vh" }}
             >
-                <Space direction='horizontal' wrap style={{ justifyContent: "space-between" }}>
-                    <Row gutter={[17, 0]}>
-                        <Col span={10}>
-                            <Link to={"createvoucher"}>
-                                <Button style={{ width: "100%" }} type='default' size='large'>
-                                    Tạo voucher
-                                </Button>
-                            </Link>
-                        </Col>
-                        <Col span={14}>
+                <Space direction='horizontal' style={{ justifyContent: "space-between" }}>
+                    <Row gutter={[10, 10]}>
+                        <Col>
                             <Link to={"createvouchercustomer"}>
                                 <Button type='default' size='large'>
                                     Tạo voucher cho khách hàng
                                 </Button>
                             </Link>
+                        </Col>
+                        <Col>
+
                         </Col>
                     </Row>
                 </Space>
@@ -373,7 +347,7 @@ export default function Services() {
                 title="Khôi phục"
                 onCancel={() => {
                     setAddFormRecover(!addFormRecover)
-                    getAllVoucherTypes()
+                    getAllVoucher()
                         .then((res) => {
                             if (res.status === 200) {
                                 setAllData(res.data);
@@ -404,7 +378,7 @@ export default function Services() {
                 <Space size={[25, 0]} direction='horizontal' className='uservoucher-record' align='center'>
                     <Space.Compact className='coupon-left' direction='vertical'>
                         <div>
-                            <img src={record?.image} alt="image" width="250px" />
+                            <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="image" width="250px" />
                         </div>
                         <Popconfirm
                             className="ant-popconfirm"
@@ -425,45 +399,66 @@ export default function Services() {
                         <Divider orientation='left'>Thông tin</Divider>
                         <Space direction='vertical' className='uservoucher-record--information'>
                             <Space>
-                                <span style={{ color: "#0958d9" }}>Tên gói khuyến mãi: </span>
-                                <span>{record?.typeName}</span>
-                            </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9", display: "inline-block", width: "4vw" }}>Điều kiện: </span>
-                                <span>{record?.conditionsAndPolicies}</span>
-                            </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9" }}>Giá trị: </span>
-                                <span>{record?.commonPrice.toLocaleString("en")}đ</span>
-                            </Space>
-                            <Space>
-                                <span style={{ color: "#0958d9" }}>Số lượng khuyến mãi còn lại: </span>
-                                <span>{record?.availableNumberOfVouchers}</span>
-                            </Space>
-                            <Space>
-                                {record?.percentageDiscount ?
-                                    <>
-                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
-                                        <span>{record?.percentageDiscount}%</span>
-                                    </>
-                                    :
-                                    <>
-                                        <span style={{ color: "#0958d9" }}>Giảm giá: </span>
-                                        <span>{record?.valueDiscount.toLocaleString("en")}</span>
-                                    </>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Tên khách hàng: </span>
+                                        <span>{record?.customer?.name}</span>
 
-                                }
+                                    </Col>
+                                </Row>
                             </Space>
                             <Space>
-                                <span style={{ color: "#0958d9" }}>Giảm giá tối đa: </span>
-                                <span>{record?.maximumValueDiscount ? record?.maximumValueDiscount.toLocaleString("en") : "0"}đ</span>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Tên nhân viên: </span>
+                                        <span>{record?.salesEmployee?.name}</span>
+
+                                    </Col>
+                                </Row>
+
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Giá trị: </span>
+                                        <span>{record?.actualPrice}</span>
+
+                                    </Col>
+                                </Row>
+
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày bắt đầu: </span>
+                                        <span>{new Date(record?.issuedDate).toLocaleString("vi-VN")}</span>
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày hết hạn: </span>
+                                        <span>{new Date(record?.expiredDate).toLocaleString("vi-VN")}</span>
+                                    </Col>
+                                </Row>
+
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Trạng thái: </span>
+                                        <span>{getVoucherStatus()}</span>
+                                    </Col>
+                                </Row>
+
                             </Space>
                         </Space>
                     </Space.Compact>
                 </Space>
             </Modal>
 
-            <div className="user-vouchers">
+            <div className="user-voucherextension">
                 <div className="dashboard-content-header1">
                     <h2>Danh sách voucher</h2>
 
@@ -480,18 +475,6 @@ export default function Services() {
                         <Button type="primary" onClick={() => setAddForm(true)}>
                             Tạo
                         </Button>
-                        <Notification
-                            type='voucher'
-                            setSelectedRowKeys={setSelectedRowKeys}
-                            setDataRecover={setDataRecover}
-                            setData={setData}
-                            isDisable={!hasSelected}
-                            selectedRowData={selectedRowData}
-                            description={`Bạn có chắc chắn muốn xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ này không `}
-                            placement='top'
-                            buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
-                        >
-                        </Notification>
                         <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
                     </div>
 
@@ -499,7 +482,7 @@ export default function Services() {
                         <div className="dashboard-content-search">
                             <input
                                 type='text'
-                                onChange={e => __handleSearch(e)}
+                                // onChange={e => __handleSearch(e)}
                                 placeholder='Search..'
                                 className="dashboard-content-input"
                             />
@@ -523,25 +506,24 @@ export default function Services() {
                     <Select
                         className="text-bold"
                         size='large'
-                        defaultValue="name"
+                        defaultValue="cost"
                         style={{ width: 120 }}
                         onChange={(e) => {
                             sortList(ascending, e);
                             setSortType(e)
                         }}
                         options={[
-                            { value: 'name', label: 'Tên' },
+                            { value: 'date', label: 'Ngày' },
                             { value: 'cost', label: 'Giá bán' },
-                            { value: 'maxValue', label: 'Giá trị tối đa' },
-                            { value: 'remain', label: 'Số lượng tồn' },
-
                         ]}
                     />
                 </div>
 
-                <Table rowSelection={rowSelection} columns={columns} dataSource={dataListShow} onRow={(record) => ({
-                    onClick: () => handleTableRowClick(record),
-                })} />
+                <Table columns={columns} dataSource={dataListShow}
+                    onRow={(record) => ({
+                        onClick: () => handleTableRowClick(record),
+                    })}
+                />
 
             </div>
         </React.Fragment>

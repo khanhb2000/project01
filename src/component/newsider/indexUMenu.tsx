@@ -89,6 +89,16 @@ function UMenuNew() {
           Vouchers
         </Menu.Item>
         <Menu.Item
+          key="vouchers-customer"
+          icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faMoneyBills} />}
+          style={{
+            padding: '2em',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{overflow:"unset",textOverflow:"unset"}}>Vouchers khách hàng</span> 
+        </Menu.Item>
+        <Menu.Item
           key="nhan-vien"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faIdCard} />}
           style={{
