@@ -7,7 +7,6 @@ import { faUser, faMoneyBills, faIdCard, faTags, faCalendarCheck } from '@fortaw
 
 import { useSubMenu } from "./useSubMenu";
 import { LogoutOutlined } from '@ant-design/icons/lib/icons';
-import { havePermission } from '../../utils/permission_proccess';
 const { SubMenu } = Menu;
 
 function UMenuNew() {
@@ -15,7 +14,7 @@ function UMenuNew() {
   const location = useLocation();
 
   const onClick: MenuProps['onClick'] = (e) => {
-    navigate("/dashboard/" + e.key);
+    navigate("/dashboard/"+e.key);
   };
   const handleTitleClick: Pick<SubMenuProps, "onTitleClick">["onTitleClick"] = (
     e
@@ -46,18 +45,16 @@ function UMenuNew() {
         }}
 
       >
-        {havePermission("Customer", "read") &&
-          <Menu.Item
-            key="khach-hang"
-            icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faUser} />}
-            style={{
-              padding: '2em',
-              textAlign: 'left',
-            }}
-          >Khách hàng
-          </Menu.Item>}
-        {havePermission("Service", "read") && 
-          <SubMenu
+        <Menu.Item
+          key="khach-hang"
+          icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faUser} />}
+          style={{
+            padding: '2em',
+            textAlign: 'left',
+          }}
+        >Khách hàng
+        </Menu.Item>
+        <SubMenu
           style={{
             textAlign: 'left',
             paddingLeft: '10px'
@@ -65,7 +62,6 @@ function UMenuNew() {
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faTags} />}
           {...subMenuProps("service", "Dịch vụ", handleTitleClick)}
         >
-          {havePermission("ServicePackage", "read") && 
           <Menu.Item
             key="goi-dich-vu"
             style={{
@@ -73,8 +69,7 @@ function UMenuNew() {
             }}
           >
             Các gói dịch vụ
-          </Menu.Item> }
-          {havePermission("Service", "read") && 
+          </Menu.Item>
           <Menu.Item
             key="loai-dich-vu"
             style={{
@@ -82,10 +77,9 @@ function UMenuNew() {
             }}
           >
             Các loại dịch vụ
-          </Menu.Item> }
-        </SubMenu> }
-        {havePermission("VoucherType", "read") && 
-          <Menu.Item
+          </Menu.Item>
+        </SubMenu>
+        <Menu.Item
           key="vouchers"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faMoneyBills} />}
           style={{
@@ -94,24 +88,22 @@ function UMenuNew() {
           }}
         >
           Vouchers
-        </Menu.Item> }
-        {havePermission("User", "read") && 
+        </Menu.Item>
         <Menu.Item
           key="nhan-vien"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faIdCard} />}
           style={{
             padding: '2em',
             textAlign: 'left',
-          }}>Nhân viên</Menu.Item> }
-        {havePermission("Booking", "read") && 
-          <Menu.Item
+          }}>Nhân viên</Menu.Item>
+        <Menu.Item
           key="giao-dich"
           icon={<FontAwesomeIcon style={{ marginRight: '10px' }} icon={faCalendarCheck} />}
           style={{
             padding: '2em',
             textAlign: 'left',
           }}>Giao dịch
-        </Menu.Item> }
+        </Menu.Item>
       </Menu>
     </div>
   );

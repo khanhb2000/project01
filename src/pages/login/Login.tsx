@@ -47,7 +47,7 @@ export default function Login() {
     token: token,
     information: information,
     role: role,
-    //permissions: permission,
+    permissions: permission,
   }
   const location = useLocation();
   const checked = location.pathname;
@@ -78,7 +78,6 @@ export default function Login() {
 
   // Navigate to dashboard page if login successful
   if (cookies.get("token")?.token !== undefined) { 
-    console.log(`cookies.get("token")=`,cookies.get("token"))
     return <Navigate to='/dashboard' />;
   }
 

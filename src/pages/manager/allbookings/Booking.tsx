@@ -321,7 +321,7 @@ export default function Booking() {
 
                 {!addForm && <>
                     <div className='dashboard-content-header1'>
-                        <div className='dashboard-content-header2'>
+                        <div className='dashboard-content-header2-left'>
                             <h2>Danh sách giao dịch</h2>
                             <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/giao-dich")}>
                                 Trở về

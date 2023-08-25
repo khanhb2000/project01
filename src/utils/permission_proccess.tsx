@@ -2,7 +2,7 @@ import { LoginPermissionState } from '../app/type.d';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies()
-const permissions = cookies.get("token")?.information.permission;
+const permissions = cookies.get("token")?.permissions;
 
 var permission: LoginPermissionState = {
   Customer: {
