@@ -26,6 +26,7 @@ interface DataType {
 
 export default function Employees() {
     const [addForm, setAddForm] = useState(false);
+    const [deleteForm, setDeleteForm] = useState(false);
     const [all_data, setAllData] = useState<UserListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
@@ -145,7 +146,7 @@ export default function Employees() {
             .then(data => {
                 setDataRecover(data.data);
             })
-    }, [data, dataRecover]);
+        }, [addForm, addFormRecover, deleteForm]);
 
     data?.map((dataTemp, index) => dataListShow.push({
         key: dataTemp.id,//index
@@ -232,7 +233,8 @@ export default function Employees() {
             method: 'delete',
         })
             .then(data => {
-                console.log(data.data);
+                //console.log(data.data);
+                setDeleteForm(!deleteForm);            
             })
         message.destroy('openloading');
         message.success({
@@ -253,8 +255,8 @@ export default function Employees() {
                 method: 'delete',
             })
                 .then(data => {
-                    console.log(data.data);
-                })
+                //console.log(data.data);
+                setDeleteForm(!deleteForm);                })
         })
         message.destroy('openloading');
         message.success({
@@ -296,7 +298,7 @@ export default function Employees() {
 
                 {!addForm && <>
                     <div className='dashboard-content-header1'>
-                        <div className='dashboard-content-header2-left'>
+                        <div className='dashboard-content-header2'>
                             <h2>Danh sách nhân viên</h2>
                             <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/nhan-vien")}>
                                 Trở về

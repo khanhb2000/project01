@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { CompoundedComponent } from "antd/es/float-button/interface";
+import { havePermission } from "../../../utils/permission_proccess";
 
 
 interface DataType {
@@ -88,9 +89,10 @@ export default function Service() {
     const serviceNameRef = useRef<InputRef>(undefined!)
     const descriptionRef = useRef<InputRef>(undefined!)
 
-
-
-
+    const addPermission = havePermission("Service", "write");
+    const deletePermission = havePermission("Service", "delete");
+    const restorePermission = havePermission("Service", "restore");
+    const editPermission = havePermission("Service", "update");
 
     useEffect(() => {
         getAllService()
@@ -393,10 +395,10 @@ export default function Service() {
                 </div>
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
-                        <Button type="primary" onClick={() => setAddForm(true)}>
+                       {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
                             Thêm
-                        </Button>
-                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                        </Button>}
+                        {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                     </div>
 
                     <div className="dashboard-content-header2-right">
@@ -487,9 +489,9 @@ export default function Service() {
                                                     </div>
 
                                                     <div>
-                                                        <Button onClick={handleUpdate} className="ant-update--service" size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                                                        {editPermission && <Button onClick={handleUpdate} className="ant-update--service" size={"large"} ><FontAwesomeIcon icon={faPenToSquare} /></Button>}
                                                     </div>
-                                                    <div className="service--popover">
+                                                    {deletePermission && <div className="service--popover">
                                                         <Button className="ant-popconfirm--service" size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
                                                         <div className="deleteForm--service">
                                                             <div className="form--service">
@@ -504,7 +506,7 @@ export default function Service() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>}
                                                 </Space>
                                             </Space>
                                             <Space className="service" align="start" style={{ marginLeft: "10px" }} direction="vertical">

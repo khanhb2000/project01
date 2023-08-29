@@ -61,14 +61,23 @@ export default function Dashboard() {
   }
 
 const unauthorized:boolean=
-  ((path == "/managerdashboard/khach-hang" && !permission.Customer.all)
-    || (path == "/managerdashboard/nhan-vien" && !permission.User.all)
-    || (path == "/managerdashboard/giao-dich" && !permission.Booking.all)
-    || (path == "/dashboard/khach-hang" && !permission.Customer.read)
+  ((path == "/dashboard/khach-hang" && !permission.Customer.read)
     || (path == "/dashboard/nhan-vien" && !permission.User.read)
     || (path == "/dashboard/giao-dich" && !permission.Booking.read)
+    || (path == "/dashboard/giao-dich/updatebooking" && !permission.Booking.update)
+    || (path == "/dashboard/giao-dich/createbooking" && !permission.Booking.write)
+    || (path == "/dashboard/goi-dich-vu" && !permission.ServicePackage.read)
+    || (path == "/dashboard/goi-dich-vu/createservicepackage" && !permission.ServicePackage.write)
+    || (path == "/dashboard/goi-dich-vu/updateservicepackage" && !permission.ServicePackage.update)
+    || (path == "/dashboard/loai-dich-vu" && !permission.Service.read)
+    || (path == "/dashboard/loai-dich-vu/createservice" && !permission.Service.write)
+    || (path == "/dashboard/vouchers" && !permission.VoucherType.read)
+    || (path == "/dashboard/vouchers/createvoucher" && !permission.VoucherType.write)
+    || (path == "/dashboard/vouchers/updatevoucher" && !permission.VoucherType.update)
+    || (path == "/dashboard/vouchers-customer" && !permission.Voucher.read)
+    || (path == "/dashboard/vouchers-customer/createvoucherextension" && !permission.VoucherExtension.write)
+    || (path == "/dashboard/vouchers-customer/createvouchercustomer" && !permission.Voucher.write)
   ) ? true:false;
-
 
   return (
     <div className='dashboard-container'>
@@ -92,16 +101,12 @@ const unauthorized:boolean=
           <Route path="loai-dich-vu" element={<Service />} />
           <Route path="loai-dich-vu/createservice" element={<NewService />} />
           <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
-          {/* <Route path="goidichvu" element={<Services />} /> */}
-          {/* <Route path="loaidichvu" element={<Services />} /> */}
           <Route path="vouchers" element={<Vouchers />} />
           <Route path="vouchers/createvoucher" element={<Newvoucher />} />
           <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
           <Route path="vouchers-customer" element={<VoucherCustomer />} />
           <Route path="vouchers-customer/createvoucherextension" element={<VoucherExtension />} />
           <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
-
-          <Route path="employee" element={<Employees />} />
           <Route path="nhan-vien" element={<Employees />} />
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />

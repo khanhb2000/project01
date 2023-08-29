@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Notification from '../../../component/notification/Notification';
 import './stylesVouchers.scss'
+import { havePermission } from '../../../utils/permission_proccess';
 
 
 interface DataType {
@@ -44,6 +45,12 @@ export default function Services() {
     const [dataRecover, setDataRecover] = useState<DataType[]>([])
     const [addFormInformationService, setAddFormInformationService] = useState(false)
     const [record, setRecord] = useState<DataType>(undefined!)
+
+    const addPermission = havePermission("VoucherType", "write");
+    const deletePermission = havePermission("VoucherType", "delete");
+    const restorePermission = havePermission("VoucherType", "restore");
+    const editPermission = havePermission("VoucherType", "update");
+    const addVoucherCustomerPermission = havePermission("Voucher", "write");
 
     //get data from cookie
     var cookies = new Cookies()
@@ -175,13 +182,13 @@ export default function Services() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Link to={"updatevoucher"} state={record}>
+                    {editPermission && <Link to={"updatevoucher"} state={record}>
                         <Button
                             title='Sửa đổi'
                             size={"large"} >
                             <FontAwesomeIcon icon={faPenToSquare} />
                         </Button>
-                    </Link>
+                    </Link>}
                 </Space>
 
             )
@@ -356,9 +363,9 @@ export default function Services() {
                         </Col>
                         {/* <Col span={14}>
                             <Link to={"createvouchercustomer"}>
-                                <Button type='default' size='large'>
+                                {addVoucherCustomerPermission && <Button type='default' size='large'>
                                     Tạo voucher cho khách hàng
-                                </Button>
+                                </Button>}
                             </Link>
                         </Col> */}
                     </Row>
@@ -405,7 +412,7 @@ export default function Services() {
                         <div>
                             <img src={record?.image} alt="image" width="250px" />
                         </div>
-                        <Popconfirm
+                        {deletePermission && <Popconfirm
                             className="ant-popconfirm"
                             title="Xoá dịch vụ"
                             description="Bạn có chắc chắn xoá không ?"
@@ -418,7 +425,7 @@ export default function Services() {
                             placement='bottomLeft'
                         >
                             <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                        </Popconfirm>
+                        </Popconfirm>}
                     </Space.Compact>
                     <Space.Compact className='coupon-con' direction='vertical'>
                         <Divider orientation='left'>Thông tin</Divider>
@@ -476,10 +483,10 @@ export default function Services() {
                 </div>
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
-                        <Button type="primary" onClick={() => setAddForm(true)}>
+                        {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
                             Tạo
-                        </Button>
-                        <Notification
+                        </Button>}
+                        {deletePermission && <Notification
                             type='voucher'
                             setSelectedRowKeys={setSelectedRowKeys}
                             setDataRecover={setDataRecover}
@@ -490,8 +497,8 @@ export default function Services() {
                             placement='top'
                             buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
                         >
-                        </Notification>
-                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                        </Notification>}
+                        {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                     </div>
 
                     <div className="dashboard-content-header2-right">

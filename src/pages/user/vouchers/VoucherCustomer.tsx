@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Notification from '../../../component/notification/Notification';
 import './vouchercustomer.scss'
-import { log } from 'console';
+import { havePermission } from '../../../utils/permission_proccess';
 
 
 
@@ -28,6 +28,11 @@ export default function VoucherCustomer() {
     const [addFormInformationService, setAddFormInformationService] = useState(false)
     const [record, setRecord] = useState<VoucherState>(undefined!)
     const [voucherStatus, setVoucherStatus] = useState<string>("")
+
+    const addPermission = havePermission("Voucher", "write");
+    const deletePermission = havePermission("Voucher", "delete");
+    const restorePermission = havePermission("Voucher", "restore");
+    const editPermission = havePermission("Voucher", "update");
 
     useEffect(() => {
         getAllVoucher()
@@ -155,11 +160,11 @@ export default function VoucherCustomer() {
             width: '112px',
             render: (text, record, index) => (
                 <Space size="small">
-                    <Link to={"createvoucherextension"} state={record}>
+                    {editPermission && <Link to={"createvoucherextension"} state={record}>
                         <Button type='default' size='large'>
                             <FontAwesomeIcon title='Sửa đổi' icon={faPenToSquare} />
                         </Button>
-                    </Link>
+                    </Link>}
                 </Space>
 
             )
@@ -380,7 +385,7 @@ export default function VoucherCustomer() {
                         <div>
                             <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="image" width="250px" />
                         </div>
-                        <Popconfirm
+                        {deletePermission && <Popconfirm
                             className="ant-popconfirm"
                             title="Xoá dịch vụ"
                             description="Bạn có chắc chắn xoá không ?"
@@ -393,7 +398,7 @@ export default function VoucherCustomer() {
                             placement='bottomLeft'
                         >
                             <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                        </Popconfirm>
+                        </Popconfirm>}
                     </Space.Compact>
                     <Space.Compact className='coupon-con' direction='vertical'>
                         <Divider orientation='left'>Thông tin</Divider>
@@ -472,10 +477,10 @@ export default function VoucherCustomer() {
                 </div>
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
-                        <Button type="primary" onClick={() => setAddForm(true)}>
+                        {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
                             Tạo
-                        </Button>
-                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                        </Button>}
+                        {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                     </div>
 
                     <div className="dashboard-content-header2-right">

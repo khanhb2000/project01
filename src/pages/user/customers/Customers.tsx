@@ -28,6 +28,8 @@ interface DataType {
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
     // const [messageApi, contextHolder] = message.useMessage();
+    const [deleteForm, setDeleteForm] = useState(false);
+    // const [messageApi, contextHolder] = message.useMessage();
     const [all_data, setAllData] = useState<CustomerListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
@@ -94,7 +96,7 @@ export default function Customers() {
                 setData(data.data);
             })
 
-    }, [data]);
+    }, [addForm, deleteForm]);
 
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
@@ -205,6 +207,9 @@ export default function Customers() {
             .then(data => {
                 console.log(data.data);
             })
+        //console.log(data.data);
+        setDeleteForm(!deleteForm);
+
         message.destroy('openloading');
         message.success({
             type: 'success',
@@ -224,7 +229,8 @@ export default function Customers() {
                 method: 'delete',
             })
                 .then(data => {
-                    console.log(data.data);
+                    //console.log(data.data);
+                    setDeleteForm(!deleteForm);
                 })
         })
         message.destroy('openloading');
