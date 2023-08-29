@@ -38,6 +38,7 @@ export default function Customers() {
     const [record, setRecord] = useState<DataType>(undefined!)
     const [addFormRecover, setAddFormRecover] = useState(false);
     const [dataRecover, setDataRecover] = useState<DataType[]>([])
+    const [deleteForm, setDeleteForm] = useState(false);
 
     const navigate = useNavigate();
 
@@ -126,7 +127,7 @@ export default function Customers() {
             .then(data => {
                 setDataRecover(data.data);
             })
-    }, [data, dataRecover]);
+    }, [addForm, addFormRecover, deleteForm]);
 
     const dataListShow: DataType[] = [];
     data?.map((dataTemp, index) => dataListShow.push({
@@ -213,10 +214,10 @@ export default function Customers() {
             method: 'delete',
         })
             .then(data => {
-                console.log(data.data);
+                //console.log(data.data);
+                setDeleteForm(!deleteForm);
             })
-        console.log(itemId);
-        console.log(itemName);
+
         message.destroy('openloading');
         message.success({
             type: 'success',
@@ -236,7 +237,8 @@ export default function Customers() {
                 method: 'delete',
             })
                 .then(data => {
-                    console.log(data.data);
+                    //console.log(data.data);
+                    setDeleteForm(!deleteForm);
                 })
         })
         message.destroy('openloading');

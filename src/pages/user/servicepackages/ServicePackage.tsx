@@ -12,6 +12,7 @@ import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
 import Notification from '../../../component/notification/Notification';
 import { Link } from 'react-router-dom';
+import { havePermission } from '../../../utils/permission_proccess';
 
 
 
@@ -41,6 +42,9 @@ export default function ServicePackage() {
     const [addFormInformationService, setAddFormInformationService] = useState(false)
     const [record, setRecord] = useState<DataType>(undefined!)
 
+    const addPermission = havePermission("ServicePackage", "write");
+    const deletePermission = havePermission("ServicePackage", "delete");
+    const restorePermission = havePermission("ServicePackage", "restore");
 
     //get data from cookie
     var cookies = new Cookies()
@@ -260,7 +264,7 @@ export default function ServicePackage() {
     //=========================== GET API ====================================
     const getAllServicePackages = () => {
         const api_link = api_links.user.superAdmin.getAllServicePackages
-        api_link.token = token        
+        api_link.token = token
         return fetch_Api(api_link)
 
     }
@@ -311,7 +315,7 @@ export default function ServicePackage() {
                 <Row>
                     <Col span={24}>
                         <Link to={"createservicepackage"}>
-                            <Button style={{width:"100%"}} type='default' size='large'>
+                            <Button style={{ width: "100%" }} type='default' size='large'>
                                 Thêm dịch vụ
                             </Button>
                         </Link>
@@ -359,7 +363,7 @@ export default function ServicePackage() {
                         <div>
                             <img src={record?.image} alt="image" width="300px" />
                         </div>
-                        <Popconfirm
+                        {deletePermission && <Popconfirm
                             className="ant-popconfirm"
                             title="Xoá dịch vụ"
                             description="Bạn có chắc chắn xoá không ?"
@@ -372,7 +376,7 @@ export default function ServicePackage() {
                             placement='bottomLeft'
                         >
                             <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                        </Popconfirm>
+                        </Popconfirm>}
                     </Space.Compact>
                     <Space.Compact direction='vertical'>
                         <Divider orientation='left'>Thông tin</Divider>
@@ -398,7 +402,7 @@ export default function ServicePackage() {
                     </Space.Compact>
                 </Space>
                 <Divider orientation='left'>Mã khuyến mãi</Divider>
-                <Space className='userservice-record--voucher' size={[10, 8]} style={{ width: "100%", alignItems:"start" }} direction='horizontal' wrap>
+                <Space className='userservice-record--voucher' size={[10, 8]} style={{ width: "100%", alignItems: "start" }} direction='horizontal' wrap>
                     {record?.valuableVoucherTypes.map((voucher) => {
                         return (
                             <Space align='baseline' className='userservice-record--information-voucher' direction='vertical'>
@@ -429,10 +433,10 @@ export default function ServicePackage() {
                 </div>
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
-                        <Button type="primary" onClick={() => setAddForm(true)}>
+                        {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
                             Thêm
-                        </Button>
-                        <Notification
+                        </Button>}
+                        {deletePermission && <Notification
                             type='service'
                             setSelectedRowKeys={setSelectedRowKeys}
                             setDataRecover={setDataRecover}
@@ -443,8 +447,8 @@ export default function ServicePackage() {
                             placement='top'
                             buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
                         >
-                        </Notification>
-                        <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>
+                        </Notification>}
+                        {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
                     </div>
 
                     <div className="dashboard-content-header2-right">

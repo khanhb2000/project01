@@ -143,8 +143,10 @@ function Add() {
                 method: 'GET',
                 data: undefined
             }).then(data => {
-                setNV(data.data);
-                setFilterNV(data.data);
+                //setNV(data.data);
+                setNV([...data.data,cookies.get("token").information]);
+                setFilterNV([...data.data,cookies.get("token").information]);
+                console.log(nhan_vien);
             });
         }
     }, []);
