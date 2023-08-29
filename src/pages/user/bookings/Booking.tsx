@@ -137,18 +137,18 @@ export default function Booking() {
                     <>
                         {record.bookingStatus === "Đang xử lí" ?
                             <Space size="small">
-                            {editPermission && <Link to={"updatebooking"} state={record}>
-                                <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
-                            </Link>}
-                            <Popconfirm
+                                {editPermission && <Link to={"updatebooking"} state={record}>
+                                    <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
+                                </Link>}
+                                {/* <Popconfirm
                                 title="Xoá dịch vụ"
                                 description="Bạn có chắc chắn xoá không ?"
                                 onConfirm={() => handleDelete(record.id)}
                             >
                                 {deletePermission && <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>}
-                            </Popconfirm>
-                        </Space>
-                        :
+                            </Popconfirm> */}
+                            </Space>
+                            :
                             <></>}
                     </>
                 )
@@ -179,7 +179,6 @@ export default function Booking() {
 
     const __handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value
-        console.log(value);
 
         if (value !== "") {
             let search_results = all_data.filter((item) => {
@@ -297,6 +296,9 @@ export default function Booking() {
         return fetch_Api(api_link)
     }
 
+
+    console.log(record?.bookingStatus);
+    
     return (
         <>
             <Modal
@@ -327,20 +329,22 @@ export default function Booking() {
                         <div>
                             <img src={"https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"} alt="image" width="250px" />
                         </div>
-                        <Popconfirm
-                            className="ant-popconfirm"
-                            title="Xoá dịch vụ"
-                            description="Bạn có chắc chắn xoá không ?"
-                            onConfirm={() => {
-                                handleDelete(record.id)
-                                setAddFormInformationService(!addFormInformationService)
-                            }}
-                            okText="Xoá"
-                            cancelText="Huỷ"
-                            placement='bottomLeft'
-                        >
-                            <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
-                        </Popconfirm>
+                        {record?.bookingStatus === "Pending" ?
+                            <Popconfirm
+                                className="ant-popconfirm"
+                                title="Xoá dịch vụ"
+                                description="Bạn có chắc chắn xoá không ?"
+                                onConfirm={() => {
+                                    handleDelete(record.id)
+                                    setAddFormInformationService(!addFormInformationService)
+                                }}
+                                okText="Xoá"
+                                cancelText="Huỷ"
+                                placement='bottomLeft'
+                            >
+                                <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                            </Popconfirm>
+                            : <></>}
                     </Space.Compact>
                     <Space.Compact className='coupon-con' direction='vertical'>
                         <Divider orientation='left'>Thông tin</Divider>
@@ -496,3 +500,11 @@ export default function Booking() {
         </>
     );
 };
+
+
+
+
+
+
+
+

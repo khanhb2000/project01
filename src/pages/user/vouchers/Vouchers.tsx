@@ -356,18 +356,18 @@ export default function Services() {
                     <Row gutter={[17, 0]}>
                         <Col span={10}>
                             <Link to={"createvoucher"}>
-                                <Button style={{ width: "100%" }} type='default' size='large'>
+                                <Button type='default' size='large'>
                                     Tạo voucher
                                 </Button>
                             </Link>
                         </Col>
-                        <Col span={14}>
+                        {/* <Col span={14}>
                             <Link to={"createvouchercustomer"}>
                                 {addVoucherCustomerPermission && <Button type='default' size='large'>
                                     Tạo voucher cho khách hàng
                                 </Button>}
                             </Link>
-                        </Col>
+                        </Col> */}
                     </Row>
                 </Space>
             </Modal>

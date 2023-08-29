@@ -24,6 +24,8 @@ import Newvoucher from './manager/allvouchers/NewVoucher';
 import UpdateVoucher from './manager/allvouchers/UpdateVoucher';
 import handlePermission from '../utils/permission_proccess';
 import Unauthorized from './Unauthorized';
+import UpdateBooking from './manager/allbookings/UpdateBooking';
+import NewBooking from './manager/allbookings/NewBooking';
 
 export default function ManagerDashboard() {
 
@@ -74,6 +76,8 @@ export default function ManagerDashboard() {
           <Route path="nhan-vien/role" element={<Role />} />
           <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
           <Route path="giao-dich" element={<AllBooking />} />
+          <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
+          <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
         </Routes>}
       </div>

@@ -13,23 +13,23 @@ import Cookies from 'universal-cookie';
 import Notification from '../../../component/notification/Notification';
 import { havePermission } from '../../../utils/permission_proccess';
 
-interface DataType {
-    key: React.Key;
-    id: number;
-    vouchers: [],
-    servicePackage: null,
-    bookingTitle: string,
-    bookingDate: string,
-    bookingStatus: string,
-    totalPrice: any,
-    priceDetails: string,
-    note: string,
-    descriptions: string,
-    startDateTime: string,
-    endDateTime: string,
-    customer: string,
-    salesEmployee: string | undefined,
-}
+// interface DataType {
+//     key: React.Key;
+//     id: number;
+//     vouchers: [],
+//     servicePackage: null,
+//     bookingTitle: string,
+//     bookingDate: string,
+//     bookingStatus: string,
+//     totalPrice: any,
+//     priceDetails: string,
+//     note: string,
+//     descriptions: string,
+//     startDateTime: string,
+//     endDateTime: string,
+//     customer: string,
+//     salesEmployee: string | undefined,
+// }
 
 export default function Booking() {
     const [addForm, setAddForm] = useState(false)
@@ -40,14 +40,16 @@ export default function Booking() {
     const [ascending, setAscending] = useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [addFormRecover, setAddFormRecover] = useState(false);
+    const [addFormInformationService, setAddFormInformationService] = useState(false)
+    const [record, setRecord] = useState<BookingState>(undefined!)
 
-    const dataListShow: DataType[] = [];
+    const dataListShow: BookingState[] = [];
     const navigate = useNavigate();
 
     const addPermission = havePermission("Booking", "write");
     const deletePermission = havePermission("Booking", "delete");
+    const allPermission = havePermission("Booking", "all");
     const editPermission = havePermission("Booking", "update");
-    const restorePermission = havePermission("Booking", "restore");
 
     useEffect(() => {
         getAllBooking()
@@ -61,11 +63,11 @@ export default function Booking() {
             })
     }, []);
 
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<BookingState> = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            render: (text, record) => <a onClick={() => navigate("detail/" + record.id)}>{text}</a>,
+            dataIndex: 'key',
+            render: (text, record) => <a>{text}</a>,
         },
         {
             title: 'Tên',
@@ -138,13 +140,13 @@ export default function Booking() {
                                 {editPermission && <Link to={"updatebooking"} state={record}>
                                     <Button size={"middle"}><FontAwesomeIcon icon={faPenToSquare} /></Button>
                                 </Link>}
-                                <Popconfirm
-                                    title="Xoá dịch vụ"
-                                    description="Bạn có chắc chắn xoá không ?"
-                                    onConfirm={() => handleDelete(record.id)}
-                                >
-                                    {deletePermission && <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>}
-                                </Popconfirm>
+                                {/* <Popconfirm
+                                title="Xoá dịch vụ"
+                                description="Bạn có chắc chắn xoá không ?"
+                                onConfirm={() => handleDelete(record.id)}
+                            >
+                                {deletePermission && <Button size={"middle"}><FontAwesomeIcon icon={faTrashCan} /></Button>}
+                            </Popconfirm> */}
                             </Space>
                             :
                             <></>}
@@ -154,23 +156,11 @@ export default function Booking() {
         },
     ];
 
-    /*useEffect(() => {
-        //setLoading(true);
-        fetch_Api({
-            url: api_links.user.saleAdmin.getUserBooking,
-            method: 'GET',
-        }).then(data => {
-            setAllData(data.data);
-            setData(data.data);
-        })
-
-    }, [data]);*/
-
-    data?.map((dataTemp) => {
+    data?.map((dataTemp, index) => {
         const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
-            key: dataTemp.id,//index
-            id: dataTemp.id,
+            id: dataTemp.id,//index
+            key: index,
             vouchers: [],
             servicePackage: null,
             bookingTitle: dataTemp.bookingTitle,
@@ -182,14 +172,13 @@ export default function Booking() {
             descriptions: dataTemp.descriptions,
             startDateTime: new Date(dataTemp.startDateTime).toLocaleString("en-EN"),
             endDateTime: String(new Date(dataTemp.endDateTime).toLocaleString("en-EN")),
-            customer: dataTemp.customer?.name,
-            salesEmployee: dataTemp.salesEmployee?.name
+            customer: dataTemp.customer,
+            salesEmployee: dataTemp.salesEmployee
         });
     });
 
     const __handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value
-        console.log(value);
 
         if (value !== "") {
             let search_results = all_data.filter((item) => {
@@ -260,6 +249,20 @@ export default function Booking() {
     const hasSelected = selectedRowKeys.length > 0;
     const selectedRowData = all_data.filter((row, index) => selectedRowKeys.includes(index))
 
+
+    const handleTableRowClick = (record: BookingState) => {
+        setAddFormInformationService(!addFormInformationService)
+        getBooking(record.id)
+            .then((res) => {
+                if (res.status === 200) {
+                    setRecord(res.data)
+                }
+            })
+            .catch((error) => {
+                message.error("Vui lòng đăng nhập lại")
+            })
+
+    }
     ////////////////////// GET API ///////////////////////////////
     const getAllCustomer = () => {
         const api_link = {
@@ -269,9 +272,17 @@ export default function Booking() {
         return fetch_Api(api_link)
     }
 
+    const getBooking = (bookingId: number) => {
+        const api_link = {
+            url: `${api_links.user.superAdmin.getBooking.url}${bookingId}`,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
+
     const getAllBooking = () => {
         const api_link = {
-            url: api_links.user.superAdmin.getAllBooking,
+            url: api_links.user.saleAdmin.getUserBooking,
             method: "GET"
         }
         return fetch_Api(api_link)
@@ -303,12 +314,105 @@ export default function Booking() {
                     </Col>
                 </Row>
             </Modal>
+
+            <Modal
+                open={addFormInformationService}
+                onCancel={() => setAddFormInformationService(!addFormInformationService)}
+                footer={[]}
+                width="65vw"
+            >
+                <Space size={[25, 0]} direction='horizontal' className='uservoucher-record' align='center'>
+                    <Space.Compact className='coupon-left' direction='vertical'>
+                        <div>
+                            <img src={"https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"} alt="image" width="250px" />
+                        </div>
+                        {record?.bookingStatus === "Pending" ?
+                            <Popconfirm
+                                className="ant-popconfirm"
+                                title="Xoá dịch vụ"
+                                description="Bạn có chắc chắn xoá không ?"
+                                onConfirm={() => {
+                                    handleDelete(record.id)
+                                    setAddFormInformationService(!addFormInformationService)
+                                }}
+                                okText="Xoá"
+                                cancelText="Huỷ"
+                                placement='bottomLeft'
+                            >
+                                <Button size={"large"} ><FontAwesomeIcon icon={faTrashCan} /></Button>
+                            </Popconfirm>
+                            : <></>}
+                    </Space.Compact>
+                    <Space.Compact className='coupon-con' direction='vertical'>
+                        <Divider orientation='left'>Thông tin</Divider>
+                        <Space direction='vertical' className='uservoucher-record--information'>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Khách hàng: </span>
+                                        <span>{record?.customer?.name}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Nhân viên: </span>
+                                        <span>{record?.salesEmployee?.name}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Tổng tiền: </span>
+                                        <span>{record?.totalPrice.toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày thực hiện: </span>
+                                        <span>{new Date(record?.bookingDate).toLocaleString("vi-VN")}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Ngày kết thúc: </span>
+                                        <span>{new Date(record?.endDateTime).toLocaleString("vi-VN")}</span>
+
+                                    </Col>
+                                </Row>
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Giao dịch: </span>
+                                        <span>{record?.bookingTitle}</span>
+                                    </Col>
+                                </Row>
+                            </Space>
+                        </Space>
+                    </Space.Compact>
+                </Space>
+            </Modal>
+
             <div className='user-bookinglist'>
                 <div className='dashboard-content-header1'>
                     <div className='dashboard-content-header2'>
                         <h2>Danh sách giao dịch</h2>
                         <Button type="primary" className="btnAdd" onClick={() => navigate("/dashboard/giao-dich")}>
-                        Trở về
+                            Trở về
                         </Button>
                     </div>
                     <hr
@@ -324,7 +428,7 @@ export default function Booking() {
                         {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
                             Thêm
                         </Button>}
-                        {/*<Notification
+                        {/* <Notification
                         isDisable={!hasSelected}
                         type='booking'
                         buttonContent={`Xoá ${hasSelected ? selectedRowKeys.length : ''} dịch vụ`}
@@ -335,7 +439,7 @@ export default function Booking() {
                         setDataRecover={setDataRecover}
                         setSelectedRowKeys={setSelectedRowKeys}
                     /> */}
-                        {/*restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button> */}
+                        {/* <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button> */}
                     </div>
 
                     <div className='dashboard-content-header2-right'>
@@ -381,8 +485,16 @@ export default function Booking() {
                     />
                 </div>
 
-                <Table columns={columns} dataSource={dataListShow} />
+                {deletePermission &&
+                    <Table
+                        columns={columns}
+                        dataSource={dataListShow}
+                        onRow={(record) => ({
+                            onClick: () => handleTableRowClick(record),
+                        })}
+                    />}
             </div>
         </>
     );
 };
+
