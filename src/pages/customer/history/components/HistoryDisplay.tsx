@@ -1,61 +1,120 @@
 import React, { useState } from 'react';
 import './stypeHistoryDis.css';
 import { Link, Route, Routes } from 'react-router-dom';
-interface Book {
-    bookingDate: string;
-    bookingStatus: string;
-    bookingTitle: string;
-    customer: string;
-    descriptions: string;
-    endDateTime: string;
-    id: null;
-    note: string;
-    priceDetails: string;
-    salesEmployee: string;
-    servicePackage: string;
-    startDateTime: string;
-    totalPrice: number;
-    vouchers: []
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { BookingListState, BookingState } from '../../../../app/type.d';
+
+interface HistoryProps {
+    booking: BookingListState
 }
-interface Props {
-    b: [];
-}
-const HistoryDisplay: React.FC<Props> = (props) => {
-    const { b } = props;
+
+const HistoryDisplay: React.FC<HistoryProps> = (props) => {
+    const [totalMoneyUsed, setTotalMoneyUsed] = useState<number>()
+    const dataListShow: BookingListState = [];
+    const columns: ColumnsType<BookingState> = [
+        {
+            title: 'ID',
+            dataIndex: 'key',
+            render: (text, record) => <a>{text}</a>,
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'bookingTitle',
+            render: (text, record) => <a>{text}</a>,
+        },
+        {
+            title: 'Ngày thực hiện',
+            dataIndex: 'bookingDate',
+            render: (_, record) => {
+                return (
+                    <span>{new Date(record.startDateTime).toLocaleString("vi-VN")}</span>
+                )
+            }
+        },
+        {
+            title: 'Ngày kết thúc',
+            dataIndex: 'endDateTime',
+            render: (_, record) => {
+                return (
+                    <span>{new Date(record.endDateTime).toLocaleString("vi-VN")}</span>
+                )
+            }
+        },
+        {
+            title: 'Tình trạng',
+            dataIndex: 'bookingStatus',
+            width: '150px',
+            filters: [
+                {
+                    text: 'Đã thanh toán',
+                    value: "Đã thanh toán",
+                },
+                {
+                    text: 'Chưa thanh toán',
+                    value: "Chưa thanh toán",
+                },
+                {
+                    text: 'Đã hủy',
+                    value: "Đã huỷ",
+                },
+            ],
+            onFilter: (value: any, record) => {
+                return record.bookingStatus.includes(value)
+            }
+
+        },
+        {
+            title: 'Tổng tiền',
+            dataIndex: 'totalPrice',
+            align: 'right',
+            render: (_, record) => {
+                return (
+                    <span>{record.totalPrice.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                    })}</span>
+                )
+            }
+        }
+    ];
+
+    const totalMoney = () => {
+        var money = 0
+        props.booking.map((data) => {
+            if (data.bookingStatus === "Confirmed") {
+                money += data.totalPrice
+            }
+        })
+        return money
+    }
+
+
+    props.booking?.map((dataTemp, index) => {
+        dataListShow.push({
+            id: dataTemp.id,//index
+            key: index,
+            vouchers: [],
+            servicePackage: null,
+            bookingTitle: dataTemp.bookingTitle,
+            bookingDate: String(new Date(dataTemp.bookingDate)),
+            bookingStatus: dataTemp.bookingStatus === "Confirmed" ? "Đã thanh toán" : dataTemp.bookingStatus === "Cancelled" ? "Đã huỷ" : "Chưa thanh toán",
+            totalPrice: dataTemp.totalPrice,
+            priceDetails: dataTemp.priceDetails,
+            note: dataTemp.note,
+            descriptions: dataTemp.descriptions,
+            startDateTime: new Date(dataTemp.startDateTime).toLocaleString("en-EN"),
+            endDateTime: String(new Date(dataTemp.endDateTime).toLocaleString("en-EN")),
+            customer: dataTemp.customer,
+            salesEmployee: dataTemp.salesEmployee
+        });
+    });
     return (
-
-        <div className="container mt-5 mb-5">
-            <div className="d-flex justify-content-center row">
-                <div className="col-md-10">
-                    {b.map((booking: Book) => {
-                        return (
-                            <div key={booking.id} className="row p-2 bg-white border rounded">
-                                <div className="col-md-3 mt-1">
-                                    <img className="img-fluid img-responsive rounded product-image" src="https://static.vecteezy.com/system/resources/previews/002/962/894/original/travelling-vacation-design-illustration-with-cartoon-style-free-vector.jpg" />
-                                </div>
-                                <div className="col-md-6 mt-1">
-                                    <h5>{booking.bookingTitle}</h5>
-
-                                    <p >
-                                        {booking.note}
-                                        <br /><br />
-                                    </p>
-                                </div>
-                                <div className="align-items-center align-content-center col-md-3 border-left mt-1">
-                                    <div className="d-flex flex-row align-items-center">
-                                        <h4 className="mr-1">{booking.totalPrice.toLocaleString()} đ</h4>
-                                        <span className="strike-text"></span>
-                                    </div>
-
-                                </div>
-                            </div>
-                        );
-                    })
-
-                    }
-
-                </div>
+        <div>
+            <div style={{ padding: "0px 0px 10px 25px" }}>
+                <h3>Tổng chi phí đã thanh toán: {totalMoney().toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</h3>
             </div>
+            <Table columns={columns} dataSource={dataListShow} />
         </div>
 
     )

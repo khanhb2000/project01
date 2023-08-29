@@ -6,6 +6,9 @@ import Cookies from "universal-cookie";
 import React, { ChangeEvent, MouseEvent, useRef, useState } from "react";
 import api_links from "../../utils/api_links";
 import fetch_Api_MultiForm from "../../utils/api_function_multi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquare, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
+import fetch_Api from "../../utils/api_function";
 
 interface DataType {
     name: string,
@@ -22,6 +25,7 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
 
     //get data
     const cookies = new Cookies()
+    const token = cookies.get("token")?.token
     const data = cookies.get("token")?.information
     const role = cookies.get("token")?.role
 
@@ -88,12 +92,34 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
         }
     }
 
+    const handleVerifyEmail = () => {
+        verifyEmail()
+            .then((res) => {
+                if (res.status === 200) {
+                    message.success(res.data.message)
+                }
+            })
+            .catch((error) => {
+                message.error(error.message)
+            })
+    }
+
+    ////////////////////////// GET API /////////////////////////////////////
 
     const updateInformation = (values: any) => {
         const api_link = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
         api_link.data = { ...values, avatar: fileAvatar }
         api_link.token = cookies.get("token").token
         return fetch_Api_MultiForm(api_link)
+    }
+
+    const verifyEmail = () => {
+        const user = role.isManager ? api_links.user.superAdmin.getVerifyEmail : api_links.user.customer.getVerifyEmail
+        const api_link = {
+            url: `${user.url}?userid=${data?.id}&token=${token}`,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
     }
 
     return (
@@ -150,8 +176,8 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Row>
-                            <Col span={24}>
+                        <Row gutter={[10, 0]}>
+                            <Col span={20}>
                                 <Form.Item
                                     label="Email"
                                     name="email"
@@ -159,8 +185,19 @@ export default function PopupScreenInformation({ isPopup, setPopup }: { isPopup?
                                     initialValue={data?.email}
                                 >
                                     <Input />
+
                                 </Form.Item>
                             </Col>
+                            {data.emailConfirmed ?
+                                <Col span={3}>
+                                    <FontAwesomeIcon icon={faSquareCheck} size="2x" title="Đã xác thực email" />
+                                </Col>
+                                :
+                                <Col span={3}>
+                                    <FontAwesomeIcon onClick={handleVerifyEmail} className="verifyEmail" icon={faSquare} size="2x" title="Chưa xác thực email" />
+                                </Col>
+
+                            }
                         </Row>
                         <Row>
                             <Col span={24}>

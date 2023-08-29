@@ -3,6 +3,9 @@ import './stylesVoucher.css';
 import DisplayVoucher from './components/DisplayVoucher';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
+import api_links from '../../../utils/api_links';
+import fetch_Api from '../../../utils/api_function';
+import { message } from 'antd';
 
 
 
@@ -11,30 +14,31 @@ import Cookies from 'universal-cookie';
 export default function MyVoucher() {
     const [voucher, setVoucher] = useState<[]>([]);
     var cookies = new Cookies();
-    var token = cookies.get("token")?.token;
     useEffect(() => {
-        const getCus = () => {
-            cookies = new Cookies()
-            token = cookies.get("token")?.token;
-            axios.get(`http://bevm.e-biz.com.vn/api/Voucher/Customer`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+        getVoucherCustomer()
+            .then((res) => {
+                if (res.status === 200) {
+                    setVoucher(res.data)
                 }
             })
-                .then((res) => {
-                    setVoucher(res.data)
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-        }
-        getCus();
+            .catch((error) => {
+                message.error("Vui lòng đăng nhập lại")
+            })
     }, []);
-    console.log(voucher)
+    //////////////////////// GET API /////////////////////////////
+    const getVoucherCustomer = () => {
+        const api_link = {
+            url: api_links.user.customer.getCustomerVoucher,
+            method: "GET"
+        }
+        return fetch_Api(api_link)
+    }
     return (
         <div className='customer-voucher'>
             <div className='dashboard-content-header'>
-                <h2>Voucher của tôi</h2>
+                <div style={{ padding: "25px" }}>
+                    <h1>Voucher của tôi</h1>
+                </div>
                 <DisplayVoucher voucher={voucher} />
             </div>
         </div>

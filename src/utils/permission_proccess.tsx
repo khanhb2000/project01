@@ -4,6 +4,7 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies()
 const permissions = cookies.get("token")?.information.permission;
 
+
 var permission: LoginPermissionState = {
   Customer: {
     read: false,
@@ -144,6 +145,12 @@ export default function handlePermission(permissionString: string[] | undefined)
 
   return handleProcessPermission();
 };
+
+
+
+
+
+
 
 export function havePermission(title: string, action: string) {
   var r=false;

@@ -263,7 +263,7 @@ export default function Employees() {
                             onClick={() => //openNotification(placement)
                             { handleDeleteMulti(); setSelectedRowKeys([]) }}
                         >
-                            Xóa
+                            Xóa {hasSelected ? `${selectedRowKeys.length} nhân viên` : ''}
                         </Button>}
                     </div>
 
@@ -280,9 +280,6 @@ export default function Employees() {
                 </div>
 
                 <div className='dashboard-content-header3'>
-                    <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
-                        {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                    </span>
                     <Button
                         size='large'
                         type="default"

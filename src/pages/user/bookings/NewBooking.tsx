@@ -31,21 +31,28 @@ interface BookingStateProps {
 }
 
 
+interface SelectProp extends Array<SelectProp> {
+    id: number,
+    label: string,
+    value: number,
+    price: number
+}
+
+
 export default function NewBooking() {
-    const { RangePicker } = DatePicker
+    const [form] = Form.useForm()
     const [allCustomer, setAllCustomer] = useState<CustomerListState>([])
     const [customerVoucher, setCustomerVoucher] = useState<VoucherListState>([])
     const [allservicePackage, setAllServicePackage] = useState<ServicePackageListState>([])
-    const [servicePackage, setServicePackage] = useState<ServicePackageState>()
+    const [servicePackage, setServicePackage] = useState<ServicePackageState>(undefined!)
     const [startDateTime, setStartDateTime] = useState<string>("")
     const [endDateTime, setEndDateTime] = useState<string>("")
     const [popupVoucher, setPopUpVoucher] = useState(false)
     const [options, setOptions] = useState<VoucherTypeState[]>([])
-    const [selectOptions, setSelectOptions] = useState<SelectProps["options"]>([])
-    const totolMoneyRef = useRef<InputRef | null>(null)
+    const [selectOptions, setSelectOptions] = useState<SelectProp[]>([])
+    const [tempMoney, setTempMoney] = useState<string>("")
     const [totalMoney, setTotalMoney] = useState<number>(0)
-    const [moneyDiscount, setMoneyDiscount] = useState<number>(0)
-
+    const [moneyDiscount, setMoneyDiscount] = useState<number | undefined>(0)
 
     useEffect(() => {
         getAllCustomer()
@@ -69,6 +76,45 @@ export default function NewBooking() {
             })
 
     }, []);
+
+    useEffect(() => {
+        handleClearSelected()
+
+    }, [selectOptions])
+
+
+    const handleChangeDiscount = (value: any, option: any) => {
+        if (option.length > 0) {
+            const _moneyDiscount = option?.reduce((total: number, current: SelectProp) => {
+                return total + Number(current.price)
+            }, 0)
+
+
+            setTotalMoney(Number(tempMoney) - _moneyDiscount)
+            setMoneyDiscount(_moneyDiscount)
+
+
+
+
+        } else {
+            setMoneyDiscount(0)
+            setTotalMoney(Number(tempMoney))
+        }
+    }
+
+    const handlePriceServicePackage = (e: ChangeEvent<HTMLInputElement>) => {
+        // const moneyDiscount = selectOptions?.reduce((total, current) => {
+        //     return total + Number(current.price)
+        // }, 0)
+        setTempMoney(e.target.value)
+        if (e.target.value && moneyDiscount) {
+            const totalMoney = Number(e.target.value) - moneyDiscount
+            setTotalMoney(totalMoney)
+        } else {
+            setTotalMoney(Number(e.target.value))
+        }
+    }
+
     const handleFinish = (values: BookingStateProps) => {
         values.StartDateTime = startDateTime
         values.EndDateTime = endDateTime
@@ -85,6 +131,10 @@ export default function NewBooking() {
             })
 
 
+    }
+
+    const handleClearSelected = () => {
+        form.setFieldsValue({ VoucherIds: [] })
     }
 
     const handleSelectCustomer = (value: string) => {
@@ -198,6 +248,7 @@ export default function NewBooking() {
                 return [...prev as Array<DefaultOptionType>, checkedValues.target.value]
             })
         } else {
+
             const filterData = selectOptions?.filter((option) => option.id !== checkedValues.target.value.id)
             setSelectOptions(filterData)
         }
@@ -216,20 +267,7 @@ export default function NewBooking() {
         setEndDateTime(dateString)
     }
 
-    console.log(selectOptions);
-    
-    const handlePriceServicePackage = (e: ChangeEvent<HTMLInputElement>) => {
-        const moneyDiscount = selectOptions?.reduce((total, current) => {
-            return total + Number(current.price)
-        }, 0)
-        if (e.target.value && moneyDiscount) {
-            const totalMoney = Number(e.target.value) - moneyDiscount
-            setMoneyDiscount(moneyDiscount)
-            setTotalMoney(totalMoney)
-        } else {
-            setTotalMoney(Number(e.target.value))
-        }
-    }
+
     ////////////////////// GET API ///////////////////////////////
     const getAllCustomer = () => {
         const api_link = {
@@ -273,14 +311,6 @@ export default function NewBooking() {
     }
 
 
-
-
-
-    // const voucherCustomersId = customerVoucher.map((cus) => cus.id)
-    // console.log(voucherCustomersId);
-
-
-
     return (
         <div className="user-newbooking">
             <Modal
@@ -288,13 +318,14 @@ export default function NewBooking() {
                 title="Voucher"
                 onCancel={() => {
                     setPopUpVoucher(false)
+
                 }}
                 footer={[]}
-                style={{ height: "auto", overflowY: "scroll" }}
+                style={{ height: "80vh", overflowY: "scroll" }}
             >
 
                 {/* <Checkbox.Group style={{ display: "grid" }} name="" onChange={handleCheckBoxGroup}> */}
-                {options.map((option,index) => {
+                {options.map((option, index) => {
                     return (
                         <>
                             <Space direction="vertical">
@@ -341,7 +372,7 @@ export default function NewBooking() {
                                     option !== null ?
 
                                         <Checkbox style={{ border: "1px solid black" }} className="uservoucher-invalid" disabled>
-                                            {option.isAvailable === false ? <span style={{ color: "red" }}>Không thể sử dụng</span> : <span style={{ color: "red" }}>Không áp dụng cho gói dịch vụ này</span>}
+                                            {option.isAvailable === false ? <span style={{ color: "red" }}>Không thể sử dụng</span> : <span style={{ color: "red" }}>{servicePackage?.valuableVoucherTypes.length === 0 ? "Gói dịch vụ chưa áp dụng voucher" : options.length > servicePackage?.valuableVoucherTypes?.length ? "Gói dịch vụ không áp dụng voucher này" : "Khách hàng không có voucher này"}</span>}
                                             <Space direction='vertical' className='uservoucher-invalid'>
                                                 <Space>
                                                     <span style={{ color: "#0958d9" }}>Tên gói khuyến mãi: </span>
@@ -397,6 +428,7 @@ export default function NewBooking() {
                 <Form
                     className="newservice-form"
                     onFinish={handleFinish}
+                    form={form}
                 >
                     {/* customer */}
                     <Row >
@@ -409,6 +441,7 @@ export default function NewBooking() {
                                 name="CustomerId"
                             >
                                 <Select
+                                    value={[]}
                                     showSearch
                                     onSelect={handleSelectCustomer}
                                     placeholder="Khách hàng"
@@ -424,6 +457,7 @@ export default function NewBooking() {
                                         )
                                     })}
                                 ></Select>
+
                             </Form.Item>
                         </Col>
                     </Row>
@@ -434,7 +468,7 @@ export default function NewBooking() {
                                 rules={[
                                     { required: true, message: "Vui lòng nhập tên dịch vụ" },
                                 ]}
-                                label="Tên dịch vụ"
+                                label="Gói dịch vụ"
                                 name="ServicePackageId"
                                 initialValue={null}
                             >
@@ -567,14 +601,18 @@ export default function NewBooking() {
                                 <Form.Item
                                     label="Voucher áp dụng"
                                     name="VoucherIds"
+                                    initialValue={[]}
                                 >
-                                    {/* bo selectttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt */}
                                     <Select
+                                        onChange={handleChangeDiscount}
                                         mode="multiple"
                                         options={selectOptions?.map((option) => {
                                             return ({
+                                                id: option.id,
                                                 label: option.label,
-                                                value: option.value
+                                                value: option.value,
+                                                price: option.price
+
                                             })
                                         })}
                                         placeholder="Voucher áp dụng"
@@ -616,7 +654,7 @@ export default function NewBooking() {
                             </Form.Item>
                         </Col>
                         <Col span={3}>
-                            <h4 style={{ position: "relative", top: "6px" }}>{moneyDiscount.toLocaleString("vi-VN")} đồng</h4>
+                            <h4 style={{ position: "relative", top: "6px" }}>{moneyDiscount?.toLocaleString("vi-VN")} đồng</h4>
                         </Col>
                     </Row>
 
@@ -625,7 +663,6 @@ export default function NewBooking() {
                         <Col span={2}>
                             <Form.Item
                                 label="Tổng tiền"
-
                             >
                             </Form.Item>
                         </Col>

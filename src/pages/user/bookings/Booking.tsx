@@ -157,7 +157,6 @@ export default function Booking() {
     ];
 
     data?.map((dataTemp, index) => {
-        const date = new Date(dataTemp.bookingDate);
         dataListShow.push({
             id: dataTemp.id,//index
             key: index,
@@ -295,9 +294,6 @@ export default function Booking() {
         }
         return fetch_Api(api_link)
     }
-
-
-    console.log(record?.bookingStatus);
     
     return (
         <>
@@ -311,7 +307,7 @@ export default function Booking() {
                     <Col span={24}>
                         <Link to={"createbooking"}>
                             <Button style={{ width: "100%" }} type='default' size='large'>
-                                Thêm dịch vụ
+                                Thêm booking
                             </Button>
                         </Link>
                     </Col>
@@ -413,7 +409,7 @@ export default function Booking() {
             <div className='user-bookinglist'>
                 <div className='dashboard-content-header1'>
                     <div className='dashboard-content-header2'>
-                        <h2>Danh sách giao dịch</h2>
+                        <h2>Danh sách booking</h2>
                         {allPermission && <Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/giao-dich")}>
                             Xem tất cả
                         </Button>}

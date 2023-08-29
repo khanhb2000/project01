@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import Notification from '../../../component/notification/Notification';
 import './vouchercustomer.scss'
+import { log } from 'console';
 
 
 
@@ -145,7 +146,7 @@ export default function VoucherCustomer() {
                     <span><b style={{ color: "#4096ff" }}>Hết hạn:</b> {new Date(record?.expiredDate).toLocaleString("vi-VN")}</span>
                 </div>
                 <div className="bonus-content">
-                    <div>Giá trị: {record?.actualPrice.toLocaleString("vi-VN")}</div>
+                    <div>Giá bán: {record?.actualPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</div>
                 </div></>,
         },
         {
@@ -198,19 +199,18 @@ export default function VoucherCustomer() {
 
 
     // // search data
-    // const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.value !== '') {
-    //         let search_results = all_data?.filter((item) => {
-    //             return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
-    //                 item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
-    //         }
-    //         );
-    //         setData(search_results);
-    //     }
-    //     else {
-    //         setData(all_data);
-    //     }
-    // };
+    const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value !== '') {
+            let search_results = all_data.filter((item) => {
+                if (item.customer.name.toLowerCase().includes(event.target.value.toLowerCase())) return item.customer.name.toLowerCase()
+            });
+
+            setData(search_results);
+        }
+        else {
+            setData(all_data);
+        }
+    };
 
     // sort data by descending or increment
     function sortList(tang_dan: boolean, sorttype: string) {
@@ -420,8 +420,8 @@ export default function VoucherCustomer() {
                             <Space>
                                 <Row>
                                     <Col span={24}>
-                                        <span style={{ color: "#0958d9" }}>Giá trị: </span>
-                                        <span>{record?.actualPrice}</span>
+                                        <span style={{ color: "#0958d9" }}>Giá bán: </span>
+                                        <span>{record?.actualPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
 
                                     </Col>
                                 </Row>
@@ -482,7 +482,7 @@ export default function VoucherCustomer() {
                         <div className="dashboard-content-search">
                             <input
                                 type='text'
-                                // onChange={e => __handleSearch(e)}
+                                onChange={e => __handleSearch(e)}
                                 placeholder='Search..'
                                 className="dashboard-content-input"
                             />

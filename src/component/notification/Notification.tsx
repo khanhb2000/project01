@@ -52,8 +52,8 @@ interface NotificationProps {
     isDisable?: boolean,
     setSelectedRowKeys: React.Dispatch<React.SetStateAction<React.Key[]>>,
     selectedRowData: BookingState[] | ServicePackageState[] | CustomerState[] | VoucherTypeState[],
-    setDataRecover:React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<DataType[]>> | React.Dispatch<React.SetStateAction<DataType_Customer[]>> | React.Dispatch<React.SetStateAction<DataType_Voucher[]>>,
-    setData:  React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<ServicePackageListState>> | React.Dispatch<React.SetStateAction<CustomerListState>> | React.Dispatch<React.SetStateAction<VoucherTypeListState>>
+    setDataRecover: React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<DataType[]>> | React.Dispatch<React.SetStateAction<DataType_Customer[]>> | React.Dispatch<React.SetStateAction<DataType_Voucher[]>>,
+    setData: React.Dispatch<React.SetStateAction<CustomerListState>> |  React.Dispatch<React.SetStateAction<CustomerListState>> | React.Dispatch<React.SetStateAction<BookingListState>> | React.Dispatch<React.SetStateAction<ServicePackageListState>> | React.Dispatch<React.SetStateAction<CustomerListState>> | React.Dispatch<React.SetStateAction<VoucherTypeListState>>
 }
 const Notification: React.FC<NotificationProps> = ({ type, setSelectedRowKeys, setDataRecover, setData, selectedRowData, description, placement, buttonContent, isDisable }) => {
     const key = `open${Date.now()}`;
@@ -145,7 +145,7 @@ const Notification: React.FC<NotificationProps> = ({ type, setSelectedRowKeys, s
     }
 
     const selectedRowDataById = selectedRowData.map((data) => data.id)
-    
+
 
     /////////////////////////// GET API //////////////////////////////////
     const deleteBatchServicePackages = () => {

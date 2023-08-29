@@ -36,7 +36,7 @@ export default function NewService() {
             <div className="user-services--form">
                 <Row>
                     <Col span={24}>
-                        <h1>Thêm dịch vụ</h1>
+                        <h1>Thêm loại dịch vụ</h1>
                     </Col>
                 </Row>
                 <Form
@@ -50,7 +50,7 @@ export default function NewService() {
                                     { required: true, message: "Vui lòng nhập tên dịch vụ" },
                                     { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" }
                                 ]}
-                                label="Tên gói dịch vụ"
+                                label="Tên loại dịch vụ"
                                 name="ServiceName"
                             >
                                 <Input placeholder="Tên gói dịch vú" />
@@ -61,7 +61,7 @@ export default function NewService() {
                         <Col span={10}>
                             <Form.Item
                                 rules={[
-                                    { min: 5, max: 50, message: "Vui lòng nhập trên 5 hoặc dưới 50 ký tự" },
+                                    { min: 1, max: 50, message: "Vui lòng nhập trên 1 hoặc dưới 50 ký tự" },
                                     { max: 50, required: true, message: "Vui lòng nhập miêu tả dịch vụ" }]}
                                 label="Miêu tả"
                                 name="Description"
@@ -73,7 +73,7 @@ export default function NewService() {
                     <Row>
                         <Col span={10}>
                             <Form.Item>
-                                <Button htmlType="submit" type="primary">Tạo dịch vụ</Button>
+                                <Button htmlType="submit" type="primary">Tạo loại dịch vụ</Button>
                             </Form.Item>
                         </Col>
                     </Row>

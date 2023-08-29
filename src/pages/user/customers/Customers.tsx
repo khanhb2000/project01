@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './stylesCustomers.scss';
 import Add from '../addNew/newCustomer';
 import { CustomerListState } from '../../../app/type.d';
-import { Button, Table, Space, Divider, Select, message, Modal } from 'antd';
+import { Button, Table, Space, Divider, Select, message, Modal, Popconfirm, notification } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -11,6 +11,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import api_links from '../../../utils/api_links';
 import fetch_Api from '../../../utils/api_function';
 import { havePermission } from '../../../utils/permission_proccess';
+import { NotificationPlacement } from 'antd/es/notification/interface';
 
 interface DataType {
     key: React.Key;
@@ -26,7 +27,7 @@ interface DataType {
 
 export default function Customers() {
     const [addForm, setAddForm] = useState(false);
-    const [messageApi, contextHolder] = message.useMessage();
+    // const [messageApi, contextHolder] = message.useMessage();
     const [all_data, setAllData] = useState<CustomerListState>();
     const [search, setSearch] = useState('');
     const [data, setData] = useState(all_data);
@@ -40,7 +41,8 @@ export default function Customers() {
     const addPermission = havePermission("Customer", "write");
     const deletePermission = havePermission("Customer", "delete");
     const allPermission = havePermission("Customer", "all");
-
+    const [api, contextHolder] = notification.useNotification()
+    const key = `open${Date.now()}`;
     const columns: ColumnsType<DataType> = [
         {
             title: 'Tên khách hàng',
@@ -80,7 +82,7 @@ export default function Customers() {
             ),
         },
     ];
-   
+
     useEffect(() => {
         fetch_Api({
             url: api_links.user.saleAdmin.getUserCustomer,
@@ -158,6 +160,28 @@ export default function Customers() {
         }
     }
 
+
+    const openNotification = (placement: NotificationPlacement, selectedRowKeys: number) => {
+        api.warning({
+            message: `Lưu ý`,
+            description: `Bạn có chắc chắn xoá ${selectedRowKeys} khách hàng không`,
+            placement: `${placement}`,
+            btn,
+            key
+        })
+    }
+
+    const btn = (
+        <Space>
+            <Button type="default" size="middle" onClick={() => api.destroy()}>
+                Huỷ bỏ
+            </Button>
+            <Button type="primary" size="middle" onClick={() => { handleDeleteMulti(); api.destroy(); setSelectedRowKeys([]) }}>
+                Xoá
+            </Button>
+        </Space>
+    );
+
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -181,8 +205,6 @@ export default function Customers() {
             .then(data => {
                 console.log(data.data);
             })
-        console.log(itemId);
-        console.log(itemName);
         message.destroy('openloading');
         message.success({
             type: 'success',
@@ -213,15 +235,16 @@ export default function Customers() {
     }
 
     return (
-            <div className='user-customerlist'>
-                {!addForm && <>
+        <div className='user-customerlist'>
+            {!addForm &&
+                <>
                     <div className='dashboard-content-header1'>
-                   <div className='dashboard-content-header2'>
+                        <div className='dashboard-content-header2'>
                             <h2>Danh sách khách hàng</h2>
-                             {allPermission &&<Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/khach-hang")}>
+                            {allPermission && <Button type="primary" className="btnAdd" onClick={() => navigate("/managerdashboard/khach-hang")}>
                                 Xem tất cả
                             </Button>}
-                            </div>
+                        </div>
                         <hr
                             style={{
                                 borderTop: '1px solid black',
@@ -232,20 +255,26 @@ export default function Customers() {
                     </div>
                     <div className='dashboard-content-header2'>
                         <div className='dashboard-content-header2-left'>
-                            {addPermission && <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
-                                Thêm
-                            </Button>}
-                            {deletePermission && <Button
-                                disabled={!hasSelected}
-                                type="primary"
-                                style={!hasSelected ?
-                                    { backgroundColor: "rgba(0,0,0,0.45)" }
-                                    : { backgroundColor: "red" }}
-                                onClick={() => //openNotification(placement)
-                                { handleDeleteMulti(); setSelectedRowKeys([]) }}
-                            >
-                                Xóa
-                            </Button>}
+                            {contextHolder}
+
+                            {addPermission &&
+                                <Button type="primary" className="btnAdd" onClick={() => setAddForm(!addForm)}>
+                                    Thêm
+                                </Button>}
+                            {deletePermission &&
+
+                                <Button
+                                    onClick={() => openNotification("top", selectedRowKeys.length)}
+                                    disabled={!hasSelected}
+                                    type="primary"
+                                    style={!hasSelected ?
+                                        { backgroundColor: "rgba(0,0,0,0.45)" }
+                                        : { backgroundColor: "red" }}
+                                >
+                                    Xóa   {hasSelected ? `${selectedRowKeys.length}` : ''} khách hàng
+                                </Button>
+
+                            }
                         </div>
 
                         <div className='dashboard-content-header2-right'>
@@ -261,9 +290,9 @@ export default function Customers() {
                     </div>
 
                     <div className='dashboard-content-header3'>
-                        <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
-                            {hasSelected ? `Đã chọn ${selectedRowKeys.length}` : ''}
-                        </span>
+                        {/* <span style={{ textAlign: 'left', fontSize: 'initial', alignSelf: 'center', width: '100%' }}>
+                      
+                    </span> */}
                         <Button
                             size='large'
                             type="default"
@@ -294,14 +323,14 @@ export default function Customers() {
                         : <Table columns={columns} dataSource={dataListShow} />}
                 </>}
 
-                {addForm && <><div className='dashboard-content-header2'>
-                    <h2>Thông tin khách hàng</h2>
-                    <Button className="btn btn-primary"
-                        onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
-                    <Add />
+            {addForm && <><div className='dashboard-content-header2'>
+                <h2>Thông tin khách hàng</h2>
+                <Button className="btn btn-primary"
+                    onClick={() => setAddForm(!addForm)}>Cancel</Button></div>
+                <Add />
 
-                </>}
-            </div>
+            </>}
+        </div>
 
     )
 };

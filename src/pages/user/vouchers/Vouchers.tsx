@@ -160,8 +160,8 @@ export default function Services() {
                 <div className="item-content">
                     <a style={{ fontWeight: "bold" }}>{record?.typeName}</a>
                     <span>
-                        Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount}đ`}
-                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString('vi-VN')}đ )`) : ""}
+                        Giá trị: {record?.percentageDiscount ? `${record?.percentageDiscount}%` : `${record?.valueDiscount.toLocaleString("vi-VN",{style:"currency",currency:"VND"})}`}
+                        {record?.maximumValueDiscount ? (` ( Tối đa: ${record.maximumValueDiscount?.toLocaleString("vi-VN",{style:"currency",currency:"VND"})} )`) : ""}
 
                     </span>
                 </div>
@@ -433,7 +433,7 @@ export default function Services() {
                             </Space>
                             <Space>
                                 <span style={{ color: "#0958d9" }}>Giá trị: </span>
-                                <span>{record?.commonPrice.toLocaleString("en")}đ</span>
+                                <span>{record?.commonPrice.toLocaleString("vi-VN",{style:"currency",currency:"VND"})}</span>
                             </Space>
                             <Space>
                                 <span style={{ color: "#0958d9" }}>Số lượng khuyến mãi còn lại: </span>
@@ -448,14 +448,14 @@ export default function Services() {
                                     :
                                     <>
                                         <span style={{ color: "#0958d9" }}>Giảm giá: </span>
-                                        <span>{record?.valueDiscount.toLocaleString("en")}</span>
+                                        <span>{record?.valueDiscount.toLocaleString("vi-VN",{style:"currency",currency:"VND"})}</span>
                                     </>
 
                                 }
                             </Space>
                             <Space>
                                 <span style={{ color: "#0958d9" }}>Giảm giá tối đa: </span>
-                                <span>{record?.maximumValueDiscount ? record?.maximumValueDiscount.toLocaleString("en") : "0"}đ</span>
+                                <span>{record?.maximumValueDiscount ? record?.maximumValueDiscount.toLocaleString("vi-VN",{style:"currency",currency:"VND"}) : "0"}</span>
                             </Space>
                         </Space>
                     </Space.Compact>

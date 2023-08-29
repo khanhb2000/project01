@@ -29,6 +29,13 @@ const api_links = {
             blockUser: `${authUrl}api/Users`,
             blockCustomer: `${authUrl}api/Customers`,
 
+
+            ////////////////////// EMAIL //////////////////////
+            getVerifyEmail:{
+                url:`${authUrl}api/Auth/confirmemail/user`,
+                method:"GET",
+            },
+
             ///////////// SERVICE PACKAGES ////////////////////
             getAllServicePackages: {
                 url: `${authUrl}api/ServicePackages/all`,
@@ -274,6 +281,12 @@ const api_links = {
             getCustomerBooking: `${authUrl}api/Bookings/Customer`,
             getCustomerSupport: `${authUrl}api/Users/All-Supporting-Users`,
             getCustomerVoucher: `${authUrl}api/Voucher/Customer`,
+
+
+            getVerifyEmail:{
+                url:`${authUrl}api/Auth/confirmemail/customer`,
+                method:"GET",
+            },
 
             updateInformation: {
                 url: `${authUrl}api/Customers`,

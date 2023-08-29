@@ -131,13 +131,13 @@ function Add() {
     useEffect(() => {
         if (role.isManager) {
             fetch_Api({
-            url: api_links.user.superAdmin.getAllRole,
-            method: 'GET',
-            data: undefined
-        }).then(data => {
-            setCV(data.data);
-        });
-        
+                url: api_links.user.superAdmin.getAllRole,
+                method: 'GET',
+                data: undefined
+            }).then(data => {
+                setCV(data.data);
+            });
+
             fetch_Api({
                 url: api_links.user.saleAdmin.getUserUser,
                 method: 'GET',
@@ -162,19 +162,19 @@ function Add() {
     };
 
     const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
-        register.CitizenId = values.citizenId;
-        register.ConfirmPassword = values.confirm;
-        register.Email = values.email;
-        register.Name = values.username;
-        register.Password = values.password;
-        register.PhoneNumber = values.phone;
+        // console.log('Received values of form: ', values);
+        // register.CitizenId = values.citizenId;
+        // register.ConfirmPassword = values.confirm;
+        // register.Email = values.email;
+        // register.Name = values.username;
+        // register.Password = values.password;
+        // register.PhoneNumber = values.phone;
         //register.PhoneNumberConfirmed = null;
         //register.EmailConfirmed = null;
         //register.TwoFactorEnabled = null;
-        register.IsBlocked = null;
-        values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
-        console.log('Received register: ', register);
+        // register.IsBlocked = null;
+        // values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
+        // console.log('Received register: ', register);
 
         formData.append("CitizenId", values.citizenId ?? "");
         formData.append("ConfirmPassword", values.confirm);
@@ -182,34 +182,33 @@ function Add() {
         formData.append("Name", values.username);
         formData.append("Password", values.password);
         formData.append("PhoneNumber", values.phone ?? "");
-        if (role.isManager){
-        values.employeeList?.map((d: { employeename: string; }) => formData.append("SalesEmployeeIds", d.employeename));
+        if (role.isManager) {
+            values.employeeList?.map((d: { employeename: string; }) => formData.append("SalesEmployeeIds", d.employeename));
         }
-        else{formData.append("SalesEmployeeIds", thisUserId)}
+        else { formData.append("SalesEmployeeIds", thisUserId) }
         formData.append("Avatar", values.upload?.[0].originFileObj);
-        console.log('Received formdata: ', formData.getAll('Avatar'));
+        console.log(formData.get("CitizenId"));
 
-        axios({
-            url: api_links.user.superAdmin.createNewCustomer,
-            method: "post",
-            headers: {
-                "Authorization": `Bearer  ${token}`,
-                "Content-Type": "multipart/form-data",//"application/x-www-form-urlencoded",
-            },
-            data: formData,
-        }).then((response) => {
-            if (response.status == 200) {
-                form.resetFields();
-                message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
-            }
-            setjsonData(response.data);
-            console.log(response.data);
-        })
-            .catch((error) => {
-                setjsonData(error.response.data);
-                console.log(error.response.data);
-            }
-            );
+        // axios({
+        //     url: api_links.user.superAdmin.createNewCustomer,
+        //     method: "post",
+        //     headers: {
+        //         "Authorization": `Bearer  ${token}`,
+        //         "Content-Type": "multipart/form-data",//"application/x-www-form-urlencoded",
+        //     },
+        //     data: formData,
+        // }).then((response) => {
+        //     if (response.status == 200) {
+        //         form.resetFields();
+        //         message.success("Đã thêm khách hàng " + register.Name + ". Tiếp tục thêm khách hàng hoặc nhấn Cancel để trở về.");
+        //     }
+        //     setjsonData(response.data);
+        // })
+        //     .catch((error) => {
+        //         setjsonData(error.response.data);
+        //         console.log(error.response.data);
+        //     }
+        //     );
     };
 
     return (

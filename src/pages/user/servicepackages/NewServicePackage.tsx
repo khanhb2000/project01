@@ -141,6 +141,9 @@ export default function NewServicePackage() {
                                     allowClear
                                     placeholder="Lựa chọn dịch vụ"
                                     options={options}
+                                    filterOption={(input, option) =>
+                                        (String(option?.label) ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                 />
                             </Form.Item>
                         </Col>
