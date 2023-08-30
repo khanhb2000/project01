@@ -42,7 +42,7 @@ interface DataType {
 };
 
 
-export default function AssignSupportersPopupScreen({ isPopup, setPopup, customerId }: { isPopup?: boolean, setPopup?: any,customerId?:string }) {
+export default function AssignSupportersPopupScreen({ isPopup, setPopup, customerId }: { isPopup?: boolean, setPopup?: any, customerId?: string }) {
 
     // watch value in form
     const [form] = Form.useForm()
@@ -63,15 +63,27 @@ export default function AssignSupportersPopupScreen({ isPopup, setPopup, custome
         }).then(data => {
             setCV(data.data);
         });
-
-        fetch_Api({
-            url: api_links.user.superAdmin.getAllUser,
-            method: 'GET',
-            data: undefined
-        }).then(data => {
-            setNV(data.data);
-            setFilterNV(data.data);
-        });
+        if (window.location.pathname.includes("managerdashboard")) {
+            fetch_Api({
+                url: api_links.user.superAdmin.getAllUser,
+                method: 'GET',
+                data: undefined
+            }).then(data => {
+                setNV(data.data);
+                setFilterNV(data.data);
+            });
+        }
+        else {
+            fetch_Api({
+                url: api_links.user.saleAdmin.getUserUser,
+                method: 'GET',
+                data: undefined
+            }).then(data => {
+                setNV(data.data);
+                setFilterNV(data.data);
+                console.log(data.data)
+            });
+        }
     }, []);
 
     const handleCancel = () => {
@@ -83,28 +95,28 @@ export default function AssignSupportersPopupScreen({ isPopup, setPopup, custome
         form
             .validateFields()
             .then((values) => {
-                var d: { UserId: any; IsDeleted: false; }[]=[];
-                values.employeeList?.map((v: any)=>d.push({
+                var d: { UserId: any; IsDeleted: false; }[] = [];
+                values.employeeList?.map((v: any) => d.push({
                     "UserId": v.employeename,
                     "IsDeleted": false,
-            }))
-            fetch_Api({
-                url: "http://bevm.e-biz.com.vn/api/Customers/assign-supporters/" + customerId,
-                method: 'PATCH',
-                data: JSON.stringify(d),
-            })
-                .then((res) => {
-                    if (res.status == 200) {
-                        message.success(res.data.message)
-                        form.resetFields();
-                        setPopup(false);
-                    }
+                }))
+                fetch_Api({
+                    url: "http://bevm.e-biz.com.vn/api/Customers/assign-supporters/" + customerId,
+                    method: 'PATCH',
+                    data: JSON.stringify(d),
                 })
-                .catch((reason) => {
-                    message.error("Dữ liệu không đổi")
-                })
+                    .then((res) => {
+                        if (res.status == 200) {
+                            message.success(res.data.message)
+                            form.resetFields();
+                            setPopup(false);
+                        }
+                    })
+                    .catch((reason) => {
+                        message.error("Dữ liệu không đổi")
+                    })
             })
-            
+
             .catch((info) => {
                 console.log('Validate Failed:', info);
             })
@@ -134,15 +146,15 @@ export default function AssignSupportersPopupScreen({ isPopup, setPopup, custome
                         <>
                             {fields.map((field) => (
                                 <Space key={field.key} align="baseline"
-                                style={{ width: '100%'}}
+                                    style={{ width: '100%' }}
                                 >
                                     <Form.Item
                                         noStyle
                                         shouldUpdate={(prevValues, curValues) =>
                                             prevValues.employeefilter !== curValues.employeefilter
                                         }
-                                        style={{ width: '100%'}}
-                                        >
+                                        style={{ width: '100%' }}
+                                    >
                                         {() => (
                                             <Form.Item
                                                 {...field}
@@ -167,7 +179,7 @@ export default function AssignSupportersPopupScreen({ isPopup, setPopup, custome
                                         {...field}
                                         name={[field.name, 'employeename']}
                                         rules={[{ required: true, message: 'Thông tin này là bắt buộc!' }]}
-                                        style={{ width: '100%'}}
+                                        style={{ width: '100%' }}
                                     >
                                         <Select
                                             showSearch

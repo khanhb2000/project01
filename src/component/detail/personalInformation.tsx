@@ -75,7 +75,7 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
             }).then(data => {
                 setCV(data.data);
             });
-    }, [id, data]);
+    }, [id, isChangeInformation,isChangeRoles,isAddChangeEmployees]);
 
     var isDelete: boolean;
     const changeRoles = () => {
@@ -154,6 +154,12 @@ export default function PersonalInformation({ api_link }: { api_link: string }) 
                 })
                 .catch((reason) => {
                     message.error("Dữ liệu không đổi")
+                })
+                fetch_Api({
+                    url: api_link + '/' + id,
+                    method: 'GET',
+                }).then(data => {
+                    setData(data.data);
                 })
         }
         return (
