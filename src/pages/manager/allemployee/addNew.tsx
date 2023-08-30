@@ -158,7 +158,7 @@ function Add() {
     };
 
     const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
+        //console.log('Received values of form: ', values);
         register.CitizenId = values.citizenId;
         register.ConfirmPassword = values.confirm;
         register.Email = values.email;
@@ -173,7 +173,7 @@ function Add() {
         register.TwoFactorEnabled = null;*/
         register.IsBlocked = null;
         values.roleList?.map((d: { roleid: string; }) => register.RoleIds.push(d.roleid));
-        console.log('Received register: ', register);
+        //console.log('Received register: ', register);
 
         formData.append("UserName", values.username);
         formData.append("CitizenId", values.citizenId??"");
@@ -185,7 +185,7 @@ function Add() {
         formData.append("ManagerId", values.managername);
         values.roleList?.map((d: { roleid: string; }) => formData.append("RoleIds",d.roleid));
         formData.append("Avatar", values.upload?.[0].originFileObj);
-        console.log('Received formdata: ', formData.getAll('ManagerId'));
+        //console.log('Received formdata: ', formData.getAll('ManagerId'));
 
         axios({
             url: api_links.user.superAdmin.createNewUser,
@@ -201,11 +201,11 @@ function Add() {
                 message.success("Đã thêm nhân viên " + register.Name + ". Tiếp tục thêm nhân viên hoặc nhấn Cancel để trở về.");
             } 
             setjsonData(response.data);
-            console.log(response.data);
+            //console.log(response.data);
         })
             .catch((error) => {
                 setjsonData(error.response.data);
-                console.log(error.response.data);
+                //console.log(error.response.data);
             }
             );
             /*

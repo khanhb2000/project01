@@ -62,7 +62,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
 
         getAllServicePackages()
@@ -72,7 +72,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
 
     }, []);
@@ -147,7 +147,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
 
             })
     }
@@ -162,7 +162,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
     }
 

@@ -81,7 +81,6 @@ export default function AssignSupportersPopupScreen({ isPopup, setPopup, custome
             }).then(data => {
                 setNV(data.data);
                 setFilterNV(data.data);
-                console.log(data.data)
             });
         }
     }, []);

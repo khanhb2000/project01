@@ -146,7 +146,7 @@ function Add() {
                 //setNV(data.data);
                 setNV([...data.data,cookies.get("token").information]);
                 setFilterNV([...data.data,cookies.get("token").information]);
-                console.log(nhan_vien);
+                //console.log(nhan_vien);
             });
         }
     }, []);
@@ -164,7 +164,7 @@ function Add() {
     };
 
     const onFinish = (values: any) => {
-        // console.log('Received values of form: ', values);
+        // //console.log('Received values of form: ', values);
         // register.CitizenId = values.citizenId;
         // register.ConfirmPassword = values.confirm;
         // register.Email = values.email;
@@ -176,7 +176,7 @@ function Add() {
         //register.TwoFactorEnabled = null;
         // register.IsBlocked = null;
         // values.employeeList?.map((d: { employeename: string; }) => register.SalesEmployeeIds.push(d.employeename));
-        // console.log('Received register: ', register);
+        // //console.log('Received register: ', register);
 
         formData.append("CitizenId", values.citizenId ?? "");
         formData.append("ConfirmPassword", values.confirm);
@@ -189,7 +189,7 @@ function Add() {
         }
         else { formData.append("SalesEmployeeIds", thisUserId) }
         formData.append("Avatar", values.upload?.[0].originFileObj);
-        console.log(formData.get("CitizenId"));
+        //console.log(formData.get("CitizenId"));
 
         // axios({
         //     url: api_links.user.superAdmin.createNewCustomer,
@@ -208,7 +208,7 @@ function Add() {
         // })
         //     .catch((error) => {
         //         setjsonData(error.response.data);
-        //         console.log(error.response.data);
+        //         //console.log(error.response.data);
         //     }
         //     );
     };

@@ -94,8 +94,8 @@ export default function PersonalInformationPopupScreen({ isPopup, setPopup, data
         form
             .validateFields()
             .then((values) => {
-                console.log(values);
-                console.log(data);
+                //console.log(values);
+                //console.log(data);
                 const api_link = role.normalizedName == "Customer" ? api_links.user.customer.updateInformation : api_links.user.superAdmin.updateInformationForUser
                 api_link.data = values
                 api_link.token = cookies.get("token").token
@@ -119,7 +119,7 @@ export default function PersonalInformationPopupScreen({ isPopup, setPopup, data
                     })
             })
             .catch((info) => {
-                console.log('Validate Failed:', info);
+                //console.log('Validate Failed:', info);
             })
     }
 

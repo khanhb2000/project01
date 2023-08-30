@@ -57,7 +57,7 @@ export default function ServicePackage() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
             })
         getAllDeleteServicePackages()
             .then((res) => {
@@ -66,7 +66,7 @@ export default function ServicePackage() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
 
             })
     }, []);
@@ -85,7 +85,7 @@ export default function ServicePackage() {
                             setData(res.data);
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                 }
             })
@@ -336,7 +336,7 @@ export default function ServicePackage() {
                             }
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
 
                 }}

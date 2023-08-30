@@ -83,7 +83,7 @@ export default function NewServicePackage() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
 
             })
     }, [])

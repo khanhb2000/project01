@@ -58,7 +58,7 @@ export default function Booking() {
                 setData(res.data);
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
 
             })
     }, []);
@@ -234,7 +234,7 @@ export default function Booking() {
                             setData(res.data);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            //console.log(error);
 
                         })
                 }

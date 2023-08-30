@@ -55,7 +55,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
 
         getAllServicePackages()
@@ -65,7 +65,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
 
     }, []);
@@ -97,7 +97,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
 
             })
     }
@@ -112,7 +112,7 @@ export default function NewBooking() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
     }
 
@@ -216,7 +216,7 @@ export default function NewBooking() {
         setEndDateTime(dateString)
     }
 
-    console.log(selectOptions);
+    //console.log(selectOptions);
     
     const handlePriceServicePackage = (e: ChangeEvent<HTMLInputElement>) => {
         const moneyDiscount = selectOptions?.reduce((total, current) => {
@@ -277,7 +277,7 @@ export default function NewBooking() {
 
 
     // const voucherCustomersId = customerVoucher.map((cus) => cus.id)
-    // console.log(voucherCustomersId);
+    // //console.log(voucherCustomersId);
 
 
 

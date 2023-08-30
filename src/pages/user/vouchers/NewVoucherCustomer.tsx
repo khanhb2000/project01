@@ -32,7 +32,7 @@ export default function NewVoucherCustomer() {
                 }
             })
             .catch((error) => {
-                console.log(error.message);
+                //console.log(error.message);
             })
 
         getAllVoucherType()

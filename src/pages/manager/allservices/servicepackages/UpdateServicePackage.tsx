@@ -72,7 +72,7 @@ export default function UpdateServicePackage() {
                 }
             })
             .catch((error) => {
-                console.log(error.message);
+                //console.log(error.message);
 
             })
         getAllVoucher()
@@ -82,7 +82,7 @@ export default function UpdateServicePackage() {
                 }
             })
             .catch((error) => {
-                console.log(error.message);
+                //console.log(error.message);
 
             })
 
