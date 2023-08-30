@@ -32,8 +32,8 @@ export default function PersonalInformation() {
         })
             .then(data => {
                 setBook(data);
-                console.log(data);
-                console.log(id);
+                //console.log(data);
+                //console.log(id);
 
             })
 

@@ -44,7 +44,7 @@ export default function VoucherCustomer() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
             })
         getAllDeleteVoucher()
             .then((res) => {
@@ -53,7 +53,7 @@ export default function VoucherCustomer() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
             })
     }, [])
 
@@ -88,7 +88,7 @@ export default function VoucherCustomer() {
                             setData(res.data);
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                     getAllDeleteVoucher()
                         .then((res) => {
@@ -97,7 +97,7 @@ export default function VoucherCustomer() {
                             }
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                 }
             })
@@ -360,7 +360,7 @@ export default function VoucherCustomer() {
                             }
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
 
                 }}

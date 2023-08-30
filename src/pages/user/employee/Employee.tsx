@@ -159,7 +159,6 @@ export default function Employees() {
                     break;
             }
         }
-        console.log(addPermission);
     }
 
     function filterList(filtype: number) {

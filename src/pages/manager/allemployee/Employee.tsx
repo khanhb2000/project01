@@ -233,7 +233,7 @@ export default function Employees() {
             method: 'delete',
         })
             .then(data => {
-                //console.log(data.data);
+                ////console.log(data.data);
                 setDeleteForm(!deleteForm);            
             })
         message.destroy('openloading');
@@ -255,7 +255,7 @@ export default function Employees() {
                 method: 'delete',
             })
                 .then(data => {
-                //console.log(data.data);
+                ////console.log(data.data);
                 setDeleteForm(!deleteForm);                })
         })
         message.destroy('openloading');

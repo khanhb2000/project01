@@ -101,7 +101,7 @@ export default function Service() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
         getAllDeleteService()
             .then((res) => {
@@ -110,7 +110,7 @@ export default function Service() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
             })
 
     }, [])
@@ -159,7 +159,7 @@ export default function Service() {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                //console.log(error);
 
             })
     }
@@ -195,7 +195,7 @@ export default function Service() {
                             setData(res.data);
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                     getAllDeleteService()
                         .then((res) => {
@@ -204,7 +204,7 @@ export default function Service() {
                             }
                         })
                         .catch((error) => {
-                            console.log(error);
+                            //console.log(error);
                         })
                 }
             })
@@ -230,7 +230,7 @@ export default function Service() {
                             setData(res.data);
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                     getServiceById(id)
                         .then((res) => {
@@ -239,7 +239,7 @@ export default function Service() {
                             }
                         })
                         .catch((error) => {
-                            console.log(error);
+                            //console.log(error);
 
                         })
                 }
@@ -367,7 +367,7 @@ export default function Service() {
                             }
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
 
                 }}

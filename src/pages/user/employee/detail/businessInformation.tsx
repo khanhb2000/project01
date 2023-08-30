@@ -61,8 +61,8 @@ export default function BusinessInformation() {
         })
             .then(data => {
                 setBook(data);
-                console.log(data);
-                console.log(id);
+                //console.log(data);
+                //console.log(id);
 
             })
 

@@ -59,17 +59,17 @@ export default function Services() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
             })
         getAllDeleteVoucherType()
             .then((res) => {
                 if (res.status === 200) {
-                    console.log(res);
+                    //console.log(res);
                     setDataRecover(res.data)
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
             })
     }, [])
 
@@ -108,7 +108,7 @@ export default function Services() {
                             setData(res.data);
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
                 }
             })
@@ -379,7 +379,7 @@ export default function Services() {
                             }
                         })
                         .catch((reason) => {
-                            console.log(reason);
+                            //console.log(reason);
                         })
 
                 }}

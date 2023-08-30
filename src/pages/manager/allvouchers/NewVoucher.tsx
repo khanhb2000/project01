@@ -64,7 +64,7 @@ export default function Newvoucher() {
                 }
             })
             .catch((reason) => {
-                console.log(reason);
+                //console.log(reason);
 
             })
     }, [])

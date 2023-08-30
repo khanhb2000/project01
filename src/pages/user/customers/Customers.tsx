@@ -230,7 +230,7 @@ export default function Customers() {
                 method: 'delete',
             })
                 .then(data => {
-                    //console.log(data.data);
+                    ////console.log(data.data);
                     setDeleteForm(!deleteForm);
                 })
         })
