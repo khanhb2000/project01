@@ -205,16 +205,17 @@ export default function Customers() {
             method: 'delete',
         })
             .then(data => {
-                console.log(data.data);
+                if (data.status === 200) {
+                    message.destroy('openloading');
+                    message.success({
+                        type: 'success',
+                        content: 'Xóa thành công khách hàng ' + itemName + '!'
+                    }, 1.5)
+                }
             })
-        //console.log(data.data);
         setDeleteForm(!deleteForm);
 
-        message.destroy('openloading');
-        message.success({
-            type: 'success',
-            content: 'Xóa thành công khách hàng ' + itemName + '!'
-        }, 1.5)
+
     }
 
     function handleDeleteMulti() {
