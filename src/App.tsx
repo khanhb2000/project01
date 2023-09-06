@@ -29,7 +29,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/" element={<PreLogin />} />
+          {/*<Route path="/" element={<PreLogin />} />*/}
           <Route path="login/nhanvien" element={<Login />} />
           <Route path="login/khachhang" element={<Login />} />
           <Route path="login/*" element={<PreLogin />} />

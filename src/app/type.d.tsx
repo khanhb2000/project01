@@ -190,7 +190,7 @@ export type ServiceListState = ServiceState[];
 
 export type VoucherState = {
   "key"?: number,
-  "href"?: string,
+  "href"?: string;
   "image": string,
   "id": number,
   "customer": {
@@ -205,7 +205,7 @@ export type VoucherState = {
   "voucherType": VoucherTypeState,
   "issuedDate": string,
   "expiredDate": string,
-  "actualPrice": number,
+  "actualPrice": number|string,
   "usedValueDiscount": number | null,
   "voucherStatus": string,
   "bookings": BookingListState,

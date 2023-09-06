@@ -79,6 +79,8 @@ const unauthorized:boolean=
     || (path == "/dashboard/vouchers-customer/createvouchercustomer" && !permission.Voucher.write)
   ) ? true:false;
 
+if (path== "/dashboard/khach-hang") return <Customers/>;
+else
   return (
     <div className='dashboard-container'>
       <Header />
@@ -94,7 +96,7 @@ const unauthorized:boolean=
           <Route path="myservice" element={<MyService />} />
           <Route path="myvoucher" element={<MyVoucher />} />
           <Route path="history" element={< History />} />
-          <Route path="khach-hang" element={<Customers />} />
+          {/*<Route path="khach-hang" element={<Customers />} />*/}
           <Route path="goi-dich-vu" element={<ServicePackage />} />
           <Route path="goi-dich-vu/createservicepackage" element={<NewServicePackage />} />
           <Route path="goi-dich-vu/updateservicepackage" element={<UpdateServicePackage />} />
