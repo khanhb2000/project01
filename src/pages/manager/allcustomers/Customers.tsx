@@ -318,7 +318,7 @@ export default function Customers() {
                                 <input
                                     type='text'
                                     onChange={e => __handleSearch(e)}
-                                    placeholder='Search..'
+                                    placeholder='Tên khách hàng..'
                                     className='dashboard-content-input'
                                 />
                             </div>

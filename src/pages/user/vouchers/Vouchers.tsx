@@ -249,8 +249,7 @@ export default function Services() {
     const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
             let search_results = all_data?.filter((item) => {
-                return String(item.id).toLowerCase().includes(event.target.value.toLowerCase()) ||
-                    item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
+                return item.typeName.toLowerCase().includes(event.target.value.toLowerCase())
             }
             );
             setData(search_results);
@@ -506,7 +505,7 @@ export default function Services() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Tên voucher..'
                                 className="dashboard-content-input"
                             />
                         </div>

@@ -425,6 +425,16 @@ export default function VoucherCustomer() {
                             <Space>
                                 <Row>
                                     <Col span={24}>
+                                        <span style={{ color: "#0958d9" }}>Loại voucher: </span>
+                                        <span>{record?.voucherType?.typeName}</span> <span style={{ color: "red" }}>( Mã voucher: {record?.voucherType?.id} )</span>
+
+                                    </Col>
+                                </Row>
+
+                            </Space>
+                            <Space>
+                                <Row>
+                                    <Col span={24}>
                                         <span style={{ color: "#0958d9" }}>Giá bán: </span>
                                         <span>{record?.actualPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
 
@@ -488,7 +498,7 @@ export default function VoucherCustomer() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Tên khách hàng...'
                                 className="dashboard-content-input"
                             />
                         </div>

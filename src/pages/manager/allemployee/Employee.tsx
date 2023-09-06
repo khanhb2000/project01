@@ -339,7 +339,7 @@ export default function Employees() {
                                 <input
                                     type='text'
                                     onChange={e => __handleSearch(e)}
-                                    placeholder='Search..'
+                                    placeholder='Tên nhân viên...'
                                     className='dashboard-content-input'
                                 />
                             </div>

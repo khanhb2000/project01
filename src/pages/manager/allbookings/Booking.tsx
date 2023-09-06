@@ -177,13 +177,12 @@ export default function Booking() {
         });
     });
 
-    const __handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value
-
-        if (value !== "") {
+    const __handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value !== '') {
             let search_results = all_data.filter((item) => {
-                return item.bookingTitle.toLowerCase().includes(value.toLowerCase())
+                if (item.customer.name.toLowerCase().includes(event.target.value.toLowerCase())) return item.customer.name.toLowerCase()
             });
+
             setData(search_results);
         }
         else {
@@ -447,7 +446,7 @@ export default function Booking() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Tên khách hàng..'
                                 className='dashboard-content-input'
                             />
                         </div>

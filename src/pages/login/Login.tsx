@@ -47,14 +47,18 @@ export default function Login() {
     token: token,
     information: information,
     role: role,
-    //permissions: permission,
+    // permissions: permission
   }
   const location = useLocation();
   const checked = location.pathname;
+  const navigate = useNavigate()
+
+
   //api_link
   const userLoginAPI = api_links.user.superAdmin.login;
   const customerLoginAPI = api_links.user.customer.login;
-  const loginLink = checked == "/login/nhanvien" ? userLoginAPI : customerLoginAPI;
+  // const loginLink = checked === "/login/nhanvien" ? userLoginAPI : customerLoginAPI;
+  const loginLink = userLoginAPI;
 
   const errorMessage = () => {
     if (errorMessage2) {
@@ -65,7 +69,7 @@ export default function Login() {
     }
     if (errorMessage1)
       return errorMessage1;
-  }; 
+  };
 
   const onFinish = (values: any) => {
     dispatch(login({ "AccountInformation": values.username, "UserName": values.username, "Password": values.password, "link": loginLink }))
@@ -77,9 +81,9 @@ export default function Login() {
   }
 
   // Navigate to dashboard page if login successful
-  if (cookies.get("token")?.token !== undefined) { 
+  if (cookies.get("token")?.token !== undefined) {
+    navigate('/dashboard/khach-hang');
     //return 
-    window.location.pathname= checked == "/login/nhanvien" ? '/dashboard/khach-hang':'/dashboard/profile' ;
   }
 
   return (

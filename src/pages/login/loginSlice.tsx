@@ -67,6 +67,7 @@ export const loginSlice = createSlice({
 
     // Request successful
     builder.addCase(login.fulfilled, (state, action) => {
+      state.isSuccess = false;
       state.token = action.payload.token;
       state.errors = action.payload.errors;
       state.isSuccess = action.payload.isSuccess;
@@ -79,7 +80,7 @@ export const loginSlice = createSlice({
         "isManager": false,
         "users": null,
       };
-      state.permission = (action.payload.userInformation?.permission)? action.payload.userInformation.permissions: ["Customer"] ;
+      state.permission = action.payload.userInformation.permission;
     });
 
     // Request error

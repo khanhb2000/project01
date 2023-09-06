@@ -40,6 +40,8 @@ export default function ManagerDashboard() {
   const permission = handlePermission(cookies.get("token")?.information.permission);
   const path = window.location.pathname;
 
+  console.log(permission.Customer.read);
+  
   if (cookies.get("token")?.token == undefined) {
     return (<Navigate replace to="/login" />)
   }

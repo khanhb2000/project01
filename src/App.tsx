@@ -1,17 +1,12 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, Navigate } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import Login from "./pages/login/Login";
 import PreLogin from "./pages/login/preLogin";
 //import Orders from './pages/Orders';
-
-import Profile from './pages/customer/profile/Profile';
-import MyService from './pages/customer/myservice/MyService';
-import MyVoucher from './pages/customer/myvoucher/MyVoucher';
-import History from './pages/customer/history/History';
 import Customers from './pages/user/customers/Customers';
 import Services from './pages/user/servicepackages/ServicePackage';
 import Vouchers from './pages/user/vouchers/Vouchers';
@@ -23,30 +18,21 @@ import CustomerDetail from './pages/user/customers/detail/customer-detail';
 import PopupScreen from './component/popupscreeninformation/PopupScreen';
 import NewService from './pages/user/servicepackages/NewServicePackage';
 import UpdateService from './pages/user/servicepackages/UpdateServicePackage';
+import Cookies from 'universal-cookie';
 
 function App() {
+  const cookies = new Cookies();
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/" element={<PreLogin />} />
-          <Route path="login/nhanvien" element={<Login />} />
-          <Route path="login/khachhang" element={<Login />} />
-          <Route path="login/*" element={<PreLogin />} />
+          <Route path="/" element={<Login />} />
+          {
+            cookies.get("token")?.token !== undefined ?
+              <Route path="/*" element={<Navigate replace to="dashboard/" />} />
+              : <Route path="/*" element={<Navigate replace to="/" />} />
+          }
           <Route path="dashboard/*" element={<Dashboard />} />
-          <Route path="*" element={<div></div>} />
-          {/*<Route path="profile" element={< Profile />} />*/}
-          {/* <Route path="myservice" element={<MyService />} />
-          <Route path="myvoucher" element={<MyVoucher />} />
-          <Route path="history" element={< History />} />
-          <Route path="customers" element={<Customers />} />
-          <Route path="detail/:id" element={<CustomerDetail />} />
-          <Route path="services" element={<Services />} />
-          <Route path="vouchers" element={<Vouchers />} />
-          <Route path="employee" element={<Employees />} />
-          <Route path="profile" element={<PopupScreen />} /> */}
-          {/* <Route path="testing" element={<UpdateService />} /> */}
-          {/* <Route path="/detail/:id" element={<BookDetail />} /> */}
           <Route path="managerdashboard/*" element={<ManagerDashboard />} />
         </Routes>
       </div >

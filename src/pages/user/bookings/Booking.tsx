@@ -181,7 +181,7 @@ export default function Booking() {
 
         if (value !== "") {
             let search_results = all_data.filter((item) => {
-                return item.bookingTitle.toLowerCase().includes(value.toLowerCase())
+                if (item.customer.name.toLowerCase().includes(event.target.value.toLowerCase())) return item.customer.name.toLowerCase()
             });
             setData(search_results);
         }
@@ -446,7 +446,7 @@ export default function Booking() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Tên khách hàng...'
                                 className='dashboard-content-input'
                             />
                         </div>

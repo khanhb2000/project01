@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import dayjs from 'dayjs';
 
 
 interface BookingStateProps {
@@ -53,6 +54,9 @@ export default function NewBooking() {
     const [tempMoney, setTempMoney] = useState<string>("")
     const [totalMoney, setTotalMoney] = useState<number>(0)
     const [moneyDiscount, setMoneyDiscount] = useState<number | undefined>(0)
+
+    console.log(startDateTime);
+
 
     useEffect(() => {
         getAllCustomer()
@@ -120,15 +124,18 @@ export default function NewBooking() {
         values.EndDateTime = endDateTime
         values.TotalPrice = totalMoney
 
-        createNewBooking(values)
-            .then((res) => {
-                if (res.status === 201) {
-                    message.success("Tạo thành công")
-                }
-            })
-            .catch((error) => {
-                message.error(error.message)
-            })
+
+        console.log(values);
+
+        // createNewBooking(values)
+        //     .then((res) => {
+        //         if (res.status === 201) {
+        //             message.success("Tạo thành công")
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         message.error(error.message)
+        //     })
 
 
     }
@@ -267,6 +274,43 @@ export default function NewBooking() {
         setEndDateTime(dateString)
     }
 
+
+    const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+        // Can not select days before today
+        return current && current < dayjs().startOf('day');
+    };
+
+    const range = (start: number, end: number) => {
+        const result = [];
+        for (let i = start; i < end; i++) {
+            result.push(i);
+        }
+        return result;
+    };
+
+    const disabledDateTime = () => ({
+        disabledHours: () => {
+            if (dayjs().hour() === 0) {
+                return []
+            } else {
+                return range(0, dayjs().hour())
+            }
+        },
+        disabledMinutes: () => {
+            if (dayjs().minute() === 0) {
+                return []
+            } else {
+                return range(0, dayjs().minute())
+            }
+        },
+        disabledSeconds: () => {
+            if (dayjs().second() === 0) {
+                return []
+            } else {
+                return range(0, dayjs().second())
+            }
+        }
+    });
 
     ////////////////////// GET API ///////////////////////////////
     const getAllCustomer = () => {
@@ -574,12 +618,16 @@ export default function NewBooking() {
                             <Form.Item
                                 label="Thời gian bắt đầu"
                                 name="StartDateTime"
+
                                 rules={[
                                     { required: true, message: "Vui lòng chọn thời gian bắt đầu" }
                                 ]}
 
                             >
-                                <DatePicker showTime onChange={handleStartTime} />
+                                <DatePicker showTime onChange={handleStartTime}
+                                //  disabledDate={disabledDate} 
+                                // disabledTime={disabledDateTime}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -590,7 +638,9 @@ export default function NewBooking() {
                                 label="Thời gian kết thúc"
                                 name="EndDateTime"
                             >
-                                <DatePicker showTime onChange={handleEndTime} />
+                                <DatePicker showTime onChange={handleEndTime}
+                                // disabledDate={disabledDate}  
+                                />
                             </Form.Item>
                         </Col>
                     </Row>

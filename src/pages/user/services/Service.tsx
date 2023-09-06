@@ -395,7 +395,7 @@ export default function Service() {
                 </div>
                 <div className="dashboard-content-header2">
                     <div className="dashboard-content-header2-left">
-                       {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
+                        {addPermission && <Button type="primary" onClick={() => setAddForm(true)}>
                             Thêm
                         </Button>}
                         {restorePermission && <Button type='primary' onClick={() => setAddFormRecover(true)} style={{ background: "#465d65" }}>Khôi phục</Button>}
@@ -406,7 +406,7 @@ export default function Service() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Loại dịch vụ...'
                                 className="dashboard-content-input"
                             />
                         </div>

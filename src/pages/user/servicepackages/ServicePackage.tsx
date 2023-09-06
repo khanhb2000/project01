@@ -456,7 +456,7 @@ export default function ServicePackage() {
                             <input
                                 type='text'
                                 onChange={e => __handleSearch(e)}
-                                placeholder='Search..'
+                                placeholder='Gói dịch vụ...'
                                 className="dashboard-content-input"
                             />
                         </div>

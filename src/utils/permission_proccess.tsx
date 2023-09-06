@@ -1,10 +1,6 @@
 import { LoginPermissionState } from '../app/type.d';
 import Cookies from 'universal-cookie';
 
-const cookies = new Cookies()
-const permissions = cookies.get("token")?.information.permission;
-
-
 var permission: LoginPermissionState = {
   Customer: {
     read: false,
@@ -153,12 +149,14 @@ export default function handlePermission(permissionString: string[] | undefined)
 
 
 export function havePermission(title: string, action: string) {
-  var r=false;
-  if (permissions) {
+  const cookies = new Cookies()
+  const permissions = cookies.get("token")?.information?.permission;
+  var r = false;
+  if (permissions !== undefined) {
     permissions.map((data: string) => {
       const perData = data.split(':');
       if (perData[0] == title) {
-        if (perData[1]?.includes(action)) r= true;
+        if (perData[1]?.includes(action)) r = true;
         //else return false;
       }
     })
