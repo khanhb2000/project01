@@ -79,54 +79,56 @@ export default function Dashboard() {
       || (path === "/dashboard/vouchers-customer/createvouchercustomer" && !permission.Voucher.write)
     ) ? true : false;
 
-  return (
-    <div className='dashboard-container'>
-      <Header />
-      <div className='dashboard-body'>
-        {isMenu && <UMenuNew />
-          // ((
-          //   cookies.get("token")?.role.id === "0") ? <CMenuNew />
-          //   : <UMenuNew />
-          // )
-        }
-        {unauthorized ?
-          <Unauthorized />
-          :
+  // if (path == "/dashboard/khach-hang") return <Routes><Route path="khach-hang" element={<Customers />} /></Routes>;
+  // else
+    return (
+      <div className='dashboard-container'>
+        <Header />
+        <div className='dashboard-body'>
+          {isMenu && <UMenuNew />
+            // ((
+            //   cookies.get("token")?.role.id === "0") ? <CMenuNew />
+            //   : <UMenuNew />
+            // )
+          }
+          {unauthorized ?
+            <Unauthorized />
+            :
 
-          <Routes>
-            <Route path="*" element={<Navigate replace to="/dashboard" />} />
-            {/* <Route path="profile" element={< Profile />} />
+            <Routes>
+              <Route path="*" element={<Navigate replace to="/dashboard" />} />
+              {/* <Route path="profile" element={< Profile />} />
             <Route path="myservice" element={<MyService />} />
             <Route path="myvoucher" element={<MyVoucher />} />
             <Route path="history" element={< History />} /> */}
-            <Route path="khach-hang" element={<Customers />} />
-            <Route path="goi-dich-vu" element={<ServicePackage />} />
-            <Route path="goi-dich-vu/createservicepackage" element={<NewServicePackage />} />
-            <Route path="goi-dich-vu/updateservicepackage" element={<UpdateServicePackage />} />
-            <Route path="loai-dich-vu" element={<Service />} />
-            <Route path="loai-dich-vu/createservice" element={<NewService />} />
-            <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
-            <Route path="vouchers" element={<Vouchers />} />
-            <Route path="vouchers/createvoucher" element={<Newvoucher />} />
-            <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
-            <Route path="vouchers-customer" element={<VoucherCustomer />} />
-            <Route path="vouchers-customer/createvoucherextension" element={<VoucherExtension />} />
-            <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
-            <Route path="nhan-vien" element={<Employees />} />
-            <Route path="nhan-vien/role" element={<Role />} />
-            <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
-            {/*<Route path="employee" element={<Employees />} />
+              <Route path="khach-hang" element={<Customers />} />
+              <Route path="goi-dich-vu" element={<ServicePackage />} />
+              <Route path="goi-dich-vu/createservicepackage" element={<NewServicePackage />} />
+              <Route path="goi-dich-vu/updateservicepackage" element={<UpdateServicePackage />} />
+              <Route path="loai-dich-vu" element={<Service />} />
+              <Route path="loai-dich-vu/createservice" element={<NewService />} />
+              <Route path="khach-hang/detail/:id" element={<CustomerDetail />} />
+              <Route path="vouchers" element={<Vouchers />} />
+              <Route path="vouchers/createvoucher" element={<Newvoucher />} />
+              <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
+              <Route path="vouchers-customer" element={<VoucherCustomer />} />
+              <Route path="vouchers-customer/createvoucherextension" element={<VoucherExtension />} />
+              <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
+              <Route path="nhan-vien" element={<Employees />} />
+              <Route path="nhan-vien/role" element={<Role />} />
+              <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
+              {/*<Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee/detail/:id" element={<EmployeeDetail />} />*/}
-            <Route path="giao-dich" element={<Booking />} />
-            <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
-            <Route path="giao-dich/createbooking" element={<NewBooking />} />
+              <Route path="giao-dich" element={<Booking />} />
+              <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
+              <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
-          </Routes>
+            </Routes>
 
-        }
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
 
 }
