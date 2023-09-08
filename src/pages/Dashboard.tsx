@@ -79,8 +79,11 @@ export default function Dashboard() {
       || (path === "/dashboard/vouchers-customer/createvouchercustomer" && !permission.Voucher.write)
     ) ? true : false;
 
-  // if (path == "/dashboard/khach-hang") return <Routes><Route path="khach-hang" element={<Customers />} /></Routes>;
-  // else
+  if (path == "/dashboard/khach-hang" && permission.Customer.all) 
+    return (<Navigate replace to="/managerdashboard/khach-hang" />)
+  else if (path === "/dashboard/nhan-vien" && permission.User.all) 
+    return (<Navigate replace to="/managerdashboard/nhan-vien" />)
+  else
     return (
       <div className='dashboard-container'>
         <Header />
@@ -111,16 +114,16 @@ export default function Dashboard() {
               <Route path="vouchers" element={<Vouchers />} />
               <Route path="vouchers/createvoucher" element={<Newvoucher />} />
               <Route path="vouchers/updatevoucher" element={<UpdateVoucher />} />
-              <Route path="vouchers-customer" element={<VoucherCustomer />} />
+              {/*<Route path="vouchers-customer" element={<VoucherCustomer />} />*/}
               <Route path="vouchers-customer/createvoucherextension" element={<VoucherExtension />} />
-              <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
+          <Route path="vouchers-customer/createvouchercustomer" element={<NewVoucherCustomer />} />
               <Route path="nhan-vien" element={<Employees />} />
               <Route path="nhan-vien/role" element={<Role />} />
               <Route path="nhan-vien/detail/:id" element={<EmployeeDetail />} />
               {/*<Route path="employee" element={<Employees />} />
           <Route path="employee/role" element={<Role />} />
-          <Route path="employee/detail/:id" element={<EmployeeDetail />} />*/}
-              <Route path="giao-dich" element={<Booking />} />
+          <Route path="employee/detail/:id" element={<EmployeeDetail />} />
+              <Route path="giao-dich" element={<Booking />} />*/}
               <Route path="giao-dich/updatebooking" element={<UpdateBooking />} />
               <Route path="giao-dich/createbooking" element={<NewBooking />} />
 
