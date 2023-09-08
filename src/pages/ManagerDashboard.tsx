@@ -47,13 +47,13 @@ export default function ManagerDashboard() {
   }
 
   const unauthorized: boolean =
-    ((path == "/managerdashboard/khach-hang" && !permission.Customer.all)
-      || (path == "/managerdashboard/nhan-vien" && !permission.User.all)
-      || (path == "/managerdashboard/giao-dich" && !permission.Booking.all)
-      || (path == "/managerdashboard/vouchers" && !permission.Voucher.all)
-      || (path == "/dashboard/khach-hang" && !permission.Customer.read)
-      || (path == "/dashboard/nhan-vien" && !permission.User.read)
-      || (path == "/dashboard/giao-dich" && !permission.Booking.read)
+    ((path.includes("/managerdashboard/khach-hang") && !permission.Customer.all)
+      || (path.includes("/managerdashboard/nhan-vien") && !permission.User.all)
+      || (path.includes("/managerdashboard/giao-dich") && !permission.Booking.all)
+      || (path.includes("/managerdashboard/vouchers") && !permission.Voucher.all)
+      || (path.includes("/dashboard/khach-hang") && !permission.Customer.read)
+      || (path.includes("/dashboard/nhan-vien") && !permission.User.read)
+      || (path.includes("/dashboard/giao-dich") && !permission.Booking.read)
     ) ? true : false;
 
   return (
